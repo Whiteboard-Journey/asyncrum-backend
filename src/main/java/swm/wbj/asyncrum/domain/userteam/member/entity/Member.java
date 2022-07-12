@@ -30,10 +30,8 @@ public class Member{
 
     private String nickname;
 
-    public void update(String name, String email, String pictureUrl, String phone, String nickname){
-        this.name = name;
-        this.email = email;
-        this.pictureUrl = pictureUrl;
+
+    public void update( String phone, String nickname){
         this.phone = phone;
         this.nickname = nickname;
     }

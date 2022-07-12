@@ -2,6 +2,9 @@ package swm.wbj.asyncrum.domain.userteam.member.dto;
 
 import lombok.*;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
