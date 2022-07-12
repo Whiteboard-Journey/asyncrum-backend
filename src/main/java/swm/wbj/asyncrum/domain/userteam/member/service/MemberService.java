@@ -4,16 +4,15 @@ import swm.wbj.asyncrum.domain.userteam.member.dto.MemberDto;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface MemberService {
 
-    List<MemberDto> getListAll();
-    void register(MemberDto memberDto);
-    void delete(MemberDto memberDto);
-    Optional<Member> read(Long id);
-    Long patch(Long id, MemberDto memberDto);
+    List<Member> readAllMember();
+    void createMember(MemberDto memberDto);
+    void deleteMember(Long id);
+    Member readMember(Long id);
+    Long updateMember(Long id, MemberDto memberDto);
 
 
 
