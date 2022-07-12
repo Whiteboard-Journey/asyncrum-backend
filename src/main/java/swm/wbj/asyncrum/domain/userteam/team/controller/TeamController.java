@@ -38,10 +38,13 @@ public class TeamController {
         }
     }
 
-    @GetMapping("")
-    public ResponseEntity<?> readAllTeam(@RequestBody TeamReadAllRequestDto requestDto) {
+    @GetMapping
+    public ResponseEntity<?> readAllTeam(
+            @RequestParam(value = "pageIndex") Integer pageIndex,
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
+    {
         try {
-            TeamReadAllResponseDto responseDto = teamService.readAllTeam(requestDto);
+            TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId);
 
             return ResponseEntity.ok(responseDto);
         }
