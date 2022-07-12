@@ -44,16 +44,13 @@ public class TeamService {
 
     // 팀 전체 조회
     @Transactional(readOnly = true)
-    public TeamReadAllResponseDto readAllTeam(TeamReadAllRequestDto requestDto) {
+    public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId) {
+        int SIZE_PER_PAGE = 10;
+
         Page<Team> teamPage;
+        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
 
-        Integer pageIndex = requestDto.getPageIndex();
-        Integer SIZE_PER_PAGE = 10;
-        Long topId = requestDto.getTopId();
-
-        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC);
-
-        if(topId == null) {
+        if(topId == 0) {
             teamPage = teamRepository.findAll(pageable);
         }
         else {
