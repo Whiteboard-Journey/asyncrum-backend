@@ -13,13 +13,14 @@ import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
 
 @Service
 @RequiredArgsConstructor
-public class TeamServiceImpl {
+public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
 
     // 팀 생성
+    @Override
     @Transactional
-    public Long createTeam(TeamCreateRequestDto requestDto) {
+    public TeamCreateResponseDto createTeam(TeamCreateRequestDto requestDto) {
         String name = requestDto.getCode();
 
         // 팀만의 고유한 코드가 이미 존재한다면 예외처리
@@ -29,10 +30,11 @@ public class TeamServiceImpl {
 
         Team team = requestDto.toEntity();
 
-        return teamRepository.save(team).getId();
+        return new TeamCreateResponseDto(teamRepository.save(team).getId());
     }
 
     // 단일 팀 조회
+    @Override
     @Transactional(readOnly = true)
     public TeamReadResponseDto readTeam(Long id) {
         Team team = teamRepository.findById(id)
@@ -42,6 +44,7 @@ public class TeamServiceImpl {
     }
 
     // 팀 전체 조회
+    @Override
     @Transactional(readOnly = true)
     public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId) {
         int SIZE_PER_PAGE = 10;
@@ -59,18 +62,20 @@ public class TeamServiceImpl {
         return new TeamReadAllResponseDto(teamPage.getContent(), teamPage.getPageable(), teamPage.isLast());
     }
 
-    // 팀 업데이트
+    // 팀 정보 업데이트
+    @Override
     @Transactional
-    public Long updateTeam(Long id, TeamUpdateRequestDto requestDto) {
+    public TeamUpdateResponseDto updateTeam(Long id, TeamUpdateRequestDto requestDto) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
         team.update(requestDto.getName(), requestDto.getPictureUrl());
 
-        return teamRepository.save(team).getId();
+        return new TeamUpdateResponseDto(teamRepository.save(team).getId());
     }
 
     // 팀 삭제
+    @Override
     @Transactional
     public void deleteTeam(Long id) {
         Team team = teamRepository.findById(id)
