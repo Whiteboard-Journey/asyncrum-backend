@@ -15,7 +15,6 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public List<Member> readAllMember() {
-        System.out.println("find:"+memberRepository.findAll());
         return memberRepository.findAll();
     }
 

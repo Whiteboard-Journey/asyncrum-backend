@@ -1,15 +1,16 @@
-package swm.wbj.asyncrum.domain.userteam.team.dao;
+package swm.wbj.asyncrum.domain.userteam.team.entity;
 
 import lombok.*;
+import swm.wbj.asyncrum.global.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class Team {
+public class Team extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     Long id;
 

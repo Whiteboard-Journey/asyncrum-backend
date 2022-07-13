@@ -3,7 +3,7 @@ package swm.wbj.asyncrum.domain.userteam.team.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
-import swm.wbj.asyncrum.domain.userteam.team.dao.Team;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
 import java.util.List;
 

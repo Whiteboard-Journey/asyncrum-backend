@@ -1,18 +1,17 @@
 package swm.wbj.asyncrum.domain.userteam.team.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
-import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
+import swm.wbj.asyncrum.domain.userteam.team.service.TeamServiceImpl;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/teams")
 @RestController
 public class TeamController {
-    private final TeamService teamService;
+    private final TeamServiceImpl teamService;
 
     @PostMapping
     public ResponseEntity<?> createTeam(@RequestBody TeamCreateRequestDto requestDto) {
