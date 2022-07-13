@@ -1,12 +1,15 @@
 package swm.wbj.asyncrum.domain.userteam.team.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.service.TeamServiceImpl;
+import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/teams")
 @RestController
@@ -16,12 +19,12 @@ public class TeamController {
     @PostMapping
     public ResponseEntity<?> createTeam(@RequestBody TeamCreateRequestDto requestDto) {
         try {
-            Long createdId = teamService.createTeam(requestDto);
+            TeamCreateResponseDto responseDto = teamService.createTeam(requestDto);
 
-            return ResponseEntity.ok(createdId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -33,7 +36,7 @@ public class TeamController {
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -48,19 +51,19 @@ public class TeamController {
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateTeam(@PathVariable Long id, @RequestBody TeamUpdateRequestDto requestDto) {
         try {
-            Long updateId = teamService.updateTeam(id, requestDto);
+            TeamUpdateResponseDto responseDto = teamService.updateTeam(id, requestDto);
 
-            return ResponseEntity.ok(updateId);
+            return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -72,7 +75,7 @@ public class TeamController {
             return ResponseEntity.noContent().build();
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 }
