@@ -1,45 +1,17 @@
 package swm.wbj.asyncrum.domain.userteam.member.service;
 
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberDto;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-
-import java.util.List;
+import swm.wbj.asyncrum.domain.userteam.member.dto.MemberCreateRequestDto;
+import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadAllResponseDto;
+import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadResponseDto;
+import swm.wbj.asyncrum.domain.userteam.member.dto.MemberUpdateRequestDto;
+import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
+import swm.wbj.asyncrum.domain.userteam.team.dto.TeamUpdateRequestDto;
 
 
 public interface MemberService {
-
-    List<Member> readAllMember();
-    void createMember(MemberDto memberDto);
+    Long createMember(MemberCreateRequestDto requestDto);
+    MemberReadResponseDto readMember(Long id) throws Exception;
+    MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId);
+    Long updateMember(Long id, MemberUpdateRequestDto requestDto);
     void deleteMember(Long id);
-    Member readMember(Long id);
-    Long updateMember(Long id, MemberDto memberDto);
-
-
-
-
-    default Member dtoToEntity(MemberDto dto) {
-        Member entity = Member.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .pictureUrl(dto.getPictureUrl())
-                .phone(dto.getPhone())
-                .nickname(dto.getNickname())
-                .build();
-
-        return entity;
-    }
-
-    default MemberDto entityToDto(Member entity){
-        MemberDto dto = MemberDto.builder()
-                .name(entity.getName())
-                .email(entity.getEmail())
-                .pictureUrl(entity.getPictureUrl())
-                .phone(entity.getPhone())
-                .nickname(entity.getNickname())
-                .build();
-        return dto;
-    }
-
-
-
 }

@@ -1,7 +1,7 @@
 package swm.wbj.asyncrum.domain.userteam.team.dto;
 
 import lombok.Data;
-import swm.wbj.asyncrum.domain.userteam.team.dao.Team;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
 @Data
 public class TeamCreateRequestDto {

@@ -2,18 +2,18 @@ package swm.wbj.asyncrum.domain.userteam.member.entity;
 
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import swm.wbj.asyncrum.global.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Entity
-@EntityListeners(value= AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
 @Table(name = "member")
-public class Member{
+public class Member extends BaseEntity {
 
     @Id
     @Column(name = "member_id")

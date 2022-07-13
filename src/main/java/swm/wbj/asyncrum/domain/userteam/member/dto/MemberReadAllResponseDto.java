@@ -1,16 +1,17 @@
-package swm.wbj.asyncrum.domain.userteam.team.dto;
+package swm.wbj.asyncrum.domain.userteam.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class TeamReadAllResponseDto {
-    private List<Team> teamList;
+public class MemberReadAllResponseDto {
+
+    private List<Member> memberList;
     private Pageable pageable;
     private Boolean isList;
 }
