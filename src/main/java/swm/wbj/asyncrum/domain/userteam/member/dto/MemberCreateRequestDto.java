@@ -11,7 +11,7 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 @NoArgsConstructor
 public class MemberCreateRequestDto {
 
-    private String name;
+    private String username;
     private String email;
     private String pictureUrl;
     private String phone;
@@ -19,7 +19,7 @@ public class MemberCreateRequestDto {
 
     public Member toEntity(){
         return Member.builder()
-                .name(name)
+                .username(username)
                 .email(email)
                 .pictureUrl(pictureUrl)
                 .phone(phone)
