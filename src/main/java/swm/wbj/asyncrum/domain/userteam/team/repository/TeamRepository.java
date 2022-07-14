@@ -10,7 +10,7 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
-    Page<Team> findAll(Pageable pageable);
+
     @Query(
             value = "SELECT * FROM team AS t WHERE t.id <= :topId",
             countQuery = "SELECT COUNT(*) FROM team AS t WHERE t.id <= :topId",
@@ -20,5 +20,9 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
+
+    Page<Team> findAll(Pageable pageable);
+
     Boolean existsByCode(String code);
+
 }

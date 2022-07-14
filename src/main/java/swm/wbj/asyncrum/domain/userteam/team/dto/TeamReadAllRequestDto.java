@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class TeamReadAllRequestDto {
+
     private Integer pageIndex;
     private Long topId;
+
 }

@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TeamUpdateResponseDto {
+
     private Long id;
+
 }

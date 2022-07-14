@@ -14,6 +14,7 @@ import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 @RequestMapping("/api/v1/teams")
 @RestController
 public class TeamController {
+
     private final TeamServiceImpl teamService;
 
     @PostMapping
@@ -78,4 +79,5 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
+
 }

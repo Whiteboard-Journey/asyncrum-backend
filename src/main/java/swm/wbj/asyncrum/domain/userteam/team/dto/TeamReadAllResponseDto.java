@@ -10,7 +10,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class TeamReadAllResponseDto {
+
     private List<Team> teamList;
     private Pageable pageable;
     private Boolean isList;
+
 }
