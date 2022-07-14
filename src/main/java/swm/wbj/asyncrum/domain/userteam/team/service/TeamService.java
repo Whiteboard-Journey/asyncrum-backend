@@ -3,6 +3,7 @@ package swm.wbj.asyncrum.domain.userteam.team.service;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 
 public interface TeamService {
+
     // 팀 생성
     TeamCreateResponseDto createTeam(TeamCreateRequestDto requestDto);
 
@@ -17,4 +18,5 @@ public interface TeamService {
 
     // 팀 삭제
     void deleteTeam(Long id);
+
 }
