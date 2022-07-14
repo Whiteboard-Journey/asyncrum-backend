@@ -17,16 +17,16 @@ public class Team extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "team_id")
-    Long id;
+    private Long id;
 
     @Column
-    String name;
+    private String name;
 
     @Column(unique = true)
-    String code;
+    private String code;
 
     @Column
-    String pictureUrl;
+    private String pictureUrl;
 
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
