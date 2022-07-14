@@ -23,6 +23,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
-
-//    Boolean existsByCode(String code);
 }

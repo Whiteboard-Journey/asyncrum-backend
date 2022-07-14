@@ -35,9 +35,9 @@ public class Member extends BaseEntity {
     private String nickname;
 
 
-//    @ManyToOne
-//    @JoinColumn(name = "team_id")
-//    private Team team;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Record> records = new ArrayList<>();
