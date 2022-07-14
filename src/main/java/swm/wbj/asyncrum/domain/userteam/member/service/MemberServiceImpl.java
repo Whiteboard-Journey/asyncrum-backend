@@ -7,10 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberCreateRequestDto;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadAllResponseDto;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadResponseDto;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberUpdateRequestDto;
+import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
@@ -38,9 +35,9 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Long createMember(MemberCreateRequestDto requestDto) {
+    public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
         Member member = requestDto.toEntity();
-        return memberRepository.save(member).getId();
+        return new MemberCreateResponseDto(memberRepository.save(member).getId());
     }
 
 
@@ -53,7 +50,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional(readOnly = true)
-    public MemberReadResponseDto readMember(Long id) throws Exception {
+    public MemberReadResponseDto readMember(Long id){
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
@@ -61,12 +58,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Long updateMember(Long id, MemberUpdateRequestDto requestDto) {
+    public MemberUpdateResponseDto updateMember(Long id, MemberUpdateRequestDto requestDto) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
         member.update(requestDto.getPhone(), requestDto.getNickname());
-        return memberRepository.save(member).getId();
+        return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 
 }

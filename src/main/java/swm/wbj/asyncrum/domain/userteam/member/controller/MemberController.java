@@ -22,11 +22,11 @@ public class MemberController {
     @PostMapping("/api/v1/members")
     public ResponseEntity<?> createMember(@RequestBody MemberCreateRequestDto requestDto){
         try{
-            Long createdId = memberService.createMember(requestDto);
-            return ResponseEntity.ok(createdId);
+            MemberCreateResponseDto responseDto= memberService.createMember(requestDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -37,7 +37,7 @@ public class MemberController {
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -51,7 +51,7 @@ public class MemberController {
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -59,12 +59,11 @@ public class MemberController {
     @PatchMapping("/api/v1/members/{id}")
     public ResponseEntity<?> updateMember(@PathVariable Long id, @RequestBody MemberUpdateRequestDto requestDto){
         try {
-            Long updateId = memberService.updateMember(id, requestDto);
-
-            return ResponseEntity.ok(updateId);
+            MemberUpdateResponseDto responseDto = memberService.updateMember(id, requestDto);
+            return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
@@ -76,7 +75,7 @@ public class MemberController {
             return ResponseEntity.noContent().build();
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 }
