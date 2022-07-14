@@ -5,6 +5,7 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
 @Data
 public class TeamReadResponseDto {
+
     private String name;
     private String code;
     private String pictureUrl;
@@ -14,4 +15,5 @@ public class TeamReadResponseDto {
         this.code = team.getCode();
         this.pictureUrl = team.getPictureUrl();
     }
+
 }
