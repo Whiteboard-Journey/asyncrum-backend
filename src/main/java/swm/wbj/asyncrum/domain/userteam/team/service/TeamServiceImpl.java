@@ -11,15 +11,15 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
 
-@Service
 @RequiredArgsConstructor
+@Transactional
+@Service
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
 
     // 팀 생성
     @Override
-    @Transactional
     public TeamCreateResponseDto createTeam(TeamCreateRequestDto requestDto) {
         String name = requestDto.getCode();
 
@@ -64,7 +64,6 @@ public class TeamServiceImpl implements TeamService {
 
     // 팀 정보 업데이트
     @Override
-    @Transactional
     public TeamUpdateResponseDto updateTeam(Long id, TeamUpdateRequestDto requestDto) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
@@ -76,11 +75,11 @@ public class TeamServiceImpl implements TeamService {
 
     // 팀 삭제
     @Override
-    @Transactional
     public void deleteTeam(Long id) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
         teamRepository.delete(team);
     }
+
 }
