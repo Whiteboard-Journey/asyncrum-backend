@@ -17,13 +17,13 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class AuthTokenProvider {
+public class TokenProvider {
 
     private final Key key;
     private static final String AUTHORITIES_KEY = "role";
 
     // 생성자
-    public AuthTokenProvider(String secret) {
+    public TokenProvider(String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

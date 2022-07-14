@@ -41,7 +41,7 @@ public class Member extends BaseEntity {
 
     @JsonIgnore
     @Column(length = 128)
-    @NotNull
+    // @NotNull
     // TODO: 추후 서비스 내 회원가입 관련 추가
     private String password;
 

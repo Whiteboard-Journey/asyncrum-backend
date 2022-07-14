@@ -34,7 +34,7 @@ public class AuthToken {
     private String createAuthToken(String id, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
-                .signWith(key, SignatureAlgorithm.ES256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
     }
@@ -44,7 +44,7 @@ public class AuthToken {
         return Jwts.builder()
                 .setSubject(id)
                 .claim(AUTHORITIES_KEY, role)
-                .signWith(key, SignatureAlgorithm.ES256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
     }

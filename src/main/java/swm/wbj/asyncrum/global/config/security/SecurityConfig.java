@@ -26,7 +26,7 @@ import swm.wbj.asyncrum.global.oauth.handler.TokenAccessDeniedHandler;
 import swm.wbj.asyncrum.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import swm.wbj.asyncrum.global.oauth.service.CustomOAuth2UserService;
 import swm.wbj.asyncrum.global.oauth.service.CustomUserDetailService;
-import swm.wbj.asyncrum.global.oauth.token.AuthTokenProvider;
+import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
 
 import java.util.Arrays;
 
@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsProperties corsProperties;
     private final AppProperties appProperties;
-    private final AuthTokenProvider authTokenProvider;
+    private final TokenProvider tokenProvider;
     private final CustomUserDetailService customUserDetailService;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
@@ -85,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .redirectionEndpoint()
                     .baseUri("/*/oauth2/code/*")
 
-                // OAuth 사용자 정보 엔드포인트 설정
+                // OAuth 로그인 성공 이후 사용자 정보를 가져온 후 진행할 기능 설정
                 .and()
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
@@ -130,7 +130,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(authTokenProvider);
+        return new TokenAuthenticationFilter(tokenProvider);
     }
 
     /**
@@ -148,7 +148,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
-                authTokenProvider,
+                tokenProvider,
                 appProperties,
                 memberRefreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
