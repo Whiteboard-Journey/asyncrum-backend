@@ -17,7 +17,7 @@ import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfo;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfoFactory;
 import swm.wbj.asyncrum.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
-import swm.wbj.asyncrum.global.oauth.token.AuthTokenProvider;
+import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
 import swm.wbj.asyncrum.global.oauth.utils.CookieUtil;
 
 import javax.servlet.ServletException;
@@ -34,7 +34,7 @@ import java.util.Optional;
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final AuthTokenProvider authTokenProvider;
+    private final TokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
@@ -75,19 +75,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
-        // Access 토큰 설정
+        // Access Token 설정
         Date now = new Date();
 
-        AuthToken accessToken = authTokenProvider.createAuthToken(
+        AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
                 roleType.getCode(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
-        // refresh 토큰 설정
+        // Refresh Token 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-        AuthToken refreshToken = authTokenProvider.createAuthToken(
+        AuthToken refreshToken = tokenProvider.createAuthToken(
                 appProperties.getAuth().getTokenSecret(),
                 new Date(now.getTime() + refreshTokenExpiry)
         );

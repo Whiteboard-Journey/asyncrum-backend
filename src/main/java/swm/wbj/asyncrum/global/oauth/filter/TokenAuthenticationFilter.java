@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
-import swm.wbj.asyncrum.global.oauth.token.AuthTokenProvider;
+import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
 import swm.wbj.asyncrum.global.oauth.utils.HeaderUtil;
 
 import javax.servlet.FilterChain;
@@ -19,7 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AuthTokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
