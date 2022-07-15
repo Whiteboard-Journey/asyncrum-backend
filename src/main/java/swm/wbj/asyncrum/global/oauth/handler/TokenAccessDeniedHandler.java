@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Access Denied 예외 핸들러
+ */
 @RequiredArgsConstructor
 @Component
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {

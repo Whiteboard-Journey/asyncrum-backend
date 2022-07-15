@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.Key;
 import java.util.Date;
 
+/**
+ * JWT 토큰 클래스
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class AuthToken {

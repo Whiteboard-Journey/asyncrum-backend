@@ -16,6 +16,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+/**
+ * JWT 토큰 Provider
+ */
 @Slf4j
 public class TokenProvider {
 

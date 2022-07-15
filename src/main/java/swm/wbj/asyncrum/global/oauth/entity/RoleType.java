@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.util.Arrays;
 
+/**
+ * 유저 Role Enum
+ */
 @Getter
 @AllArgsConstructor
 public enum RoleType {
