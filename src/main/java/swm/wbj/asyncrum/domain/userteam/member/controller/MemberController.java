@@ -6,12 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
-import swm.wbj.asyncrum.domain.userteam.team.dto.TeamUpdateRequestDto;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
-
-import java.util.List;
 
 @RestController
 @Log4j2
