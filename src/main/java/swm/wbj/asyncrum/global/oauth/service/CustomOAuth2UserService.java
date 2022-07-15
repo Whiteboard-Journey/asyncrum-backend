@@ -42,13 +42,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    // Provider 로부터 받은 OAuth2 유저 정보를 처리
+    /**
+     * Provider 로부터 받은 OAuth2 User 정보를 Member 엔티티와 연계하여 처리
+     */
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
-        // OAuth2 유저 정보의 고유 id 정보를 통해 해당 id를 가지고 있는 Member 검색
+        // OAuth2 유저 정보의 고유 email 정보를 통해 해당 email을 가지고 있는 Member 검색
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        Member savedMember = memberRepository.findByUserId(userInfo.getId());
+        Member savedMember = memberRepository.findByEmail(userInfo.getEmail());
 
         // 해당 Member가 존재한다면
         if (savedMember != null) {
@@ -74,12 +76,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     // 새로운 Member 생성 (회원가입)
     private Member createMember(OAuth2UserInfo userInfo, ProviderType providerType) {
         Member member = Member.builder()
-                .userId(userInfo.getId())
-                .username(userInfo.getName())
                 .email(userInfo.getEmail())
-                .pictureUrl(userInfo.getImageUrl())
-                .providerType(providerType)
+                .oauthId(userInfo.getId())
+                .username(userInfo.getName())
+                .nickname(userInfo.getName())
+                .profileImageUrl(userInfo.getImageUrl())
                 .roleType(RoleType.USER)
+                .providerType(providerType)
                 .build();
 
         return memberRepository.saveAndFlush(member);
@@ -91,8 +94,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             member.updateUsername(userInfo.getName());
         }
 
-        if (userInfo.getImageUrl() != null && !member.getPictureUrl().equals(userInfo.getImageUrl())) {
-            member.updatePictureUrl(userInfo.getImageUrl());
+        if (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl())) {
+            member.updateProfileImageUrl(userInfo.getImageUrl());
         }
 
         return member;

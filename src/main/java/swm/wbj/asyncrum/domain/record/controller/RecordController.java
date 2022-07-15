@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.service.RecordService;
-import swm.wbj.asyncrum.domain.userteam.member.dto.*;
-import swm.wbj.asyncrum.domain.userteam.member.dto.ErrorResponseDto;
+import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 
 @RestController
 @Log4j2
