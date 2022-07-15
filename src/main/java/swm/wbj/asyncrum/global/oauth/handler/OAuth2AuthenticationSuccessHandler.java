@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
+import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.oauth.entity.RoleType;
@@ -39,13 +40,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final TokenProvider tokenProvider;
     private final AppProperties appProperties;
-    private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+    private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+    private final MemberRepository memberRepository;
 
+    /**
+     *  OAuth2 인증 과정 완료 후 JWT Access Token과 Resfresh Token 생성
+     *  Resfresh Token은 수정 불가능한 쿠키에 저장, Access Token은 프론트엔드 리다이렉트 URI 에 쿼리스트링에 토큰을 담아 리다이렉트
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+        // 리다이렉트 URL 생성
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
@@ -53,13 +60,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
+        // OAuth 인증 과정에서 생성된 인증 관련 attributes 삭제
         clearAuthenticationAttributes(request, response);
+
+        // 리다이렉트 response 전송
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     protected String determineTargetUrl(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) {
+        // 초기 OAuth 로그인에 포함한 redirect_uri 주소 가져오기
         Optional<String> redirectUri = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
@@ -67,8 +78,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
         }
 
+        // 리다이렉트할 타켓 URl 결정
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
+        // Authentication로부터 User 정보 가져오기
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
         ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
 
@@ -78,16 +91,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
-        // Access Token 설정
+        // User의 id(OauthId) 정보를 기반으로 Member의 id(memberId) 가져오기
+        String memberId = memberRepository.findByOauthId(userInfo.getId()).getId().toString();
+
+        // User 정보를 기반으로 Access Token 생성
         Date now = new Date();
 
         AuthToken accessToken = tokenProvider.createAuthToken(
-                userInfo.getId(),
+                memberId,
                 roleType.getCode(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
-        // Refresh Token 설정
+        // (Member Refresh Token에 들어갈) 내부 Refresh Token 생성
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
         AuthToken refreshToken = tokenProvider.createAuthToken(
@@ -95,8 +111,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        // DB 저장
-        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByUserId(userInfo.getId());
+        // Member Refresh Token 생성 후 DB 저장
+        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberId(memberId);
 
         if(memberRefreshToken != null) {
             memberRefreshToken.setRefreshToken(refreshToken.getToken());
@@ -107,9 +123,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
 
+        // 쿠키 갱신
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
+        // 최종 URL 생성 (쿼리스트링에 Access Token을 담음)
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken.getToken())
                 .build().toUriString();

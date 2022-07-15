@@ -18,10 +18,10 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
-    // UserDetailService의 Username == Member의 UserId
+    // UserDetailService의 Username == Member의 Email
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUserId(username);
+        Member member = memberRepository.findByEmail(username);
 
         if(member == null) {
             throw new UsernameNotFoundException("Cannot find username.");

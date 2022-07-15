@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
-import swm.wbj.asyncrum.domain.userteam.team.service.TeamServiceImpl;
+import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 
 @Slf4j
@@ -15,7 +15,7 @@ import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 @RestController
 public class TeamController {
 
-    private final TeamServiceImpl teamService;
+    private final TeamService teamService;
 
     @PostMapping
     public ResponseEntity<?> createTeam(@RequestBody TeamCreateRequestDto requestDto) {
