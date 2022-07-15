@@ -30,6 +30,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * OAuth2 인증 성공 핸들러
+ */
 @RequiredArgsConstructor
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {

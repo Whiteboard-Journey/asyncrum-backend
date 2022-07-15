@@ -73,19 +73,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/admin/v1/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().authenticated()
 
-                // OAuth 로그인 엔드포인트 관련 설정
+                // 1. OAuth 로그인 요청 시 사용하는 엔드포인트 관련 설정
                 .and()
                     .oauth2Login()
                     .authorizationEndpoint()
                     .baseUri("/oauth2/authorization")
                     .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
 
-                // OAuth 리다이렉션 엔드포인트 설정
+                // 2. OAuth 로그인 후 다시 백엔드 서버로 Authorization Code를 받기 위한 리다이렉션 엔드포인트 설정
                 .and()
                     .redirectionEndpoint()
                     .baseUri("/*/oauth2/code/*")
 
-                // OAuth 로그인 성공 이후 사용자 정보를 가져온 후 진행할 기능 설정
+                // 3. Access Token으로 Resource Server에서 사용자 정보를 가져온 후 진행할 추가 로직 설정
                 .and()
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
@@ -134,8 +134,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 쿠키 기반 인가 Repository
-     * 인가 응답을 연계하고 검증할 때 사용
+     * 쿠키 기반 Authorization Request Repository
+     * Authorization Request를 연계하고 검증할 때 사용
      */
     @Bean
     public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {

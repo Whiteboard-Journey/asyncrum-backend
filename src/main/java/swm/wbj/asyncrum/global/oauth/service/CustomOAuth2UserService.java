@@ -19,6 +19,9 @@ import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfoFactory;
 
 import java.time.LocalDateTime;
 
+/**
+ * Provider로부터 받은 OAuth2 유저(User) 정보를 기존 계정(Memeber)과 연계하여 처리(회원가입, 정보 갱신 등)하는 서비스
+ */
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {

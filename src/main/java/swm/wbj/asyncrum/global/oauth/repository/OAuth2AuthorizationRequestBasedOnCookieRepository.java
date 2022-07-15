@@ -8,6 +8,10 @@ import swm.wbj.asyncrum.global.oauth.utils.CookieUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 쿠키 기반 Authorization Request Repository
+ * 진행중인 Authorization Request를 저장/연계/검증하는 Repository
+ */
 public class OAuth2AuthorizationRequestBasedOnCookieRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";

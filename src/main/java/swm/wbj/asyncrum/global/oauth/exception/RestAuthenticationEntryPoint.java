@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 인증 관련 예외처리 엔트리 포인트
+ */
 @Slf4j
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
