@@ -3,9 +3,9 @@ spring:
   # 데이터 소스 설정
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/asyncrum?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
-    username: asyncrum
-    password: asyncrum
+    url: jdbc:mysql://wbj-vpc-rds.cyepajlf3a53.ap-northeast-2.rds.amazonaws.com:3306/asyncrum
+    username: admin
+    password: whiteboardjounrey123!
     hikari:
       pool-name: jpa-hikari-pool
       maximum-pool-size: 5

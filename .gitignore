@@ -37,7 +37,8 @@ logs/
 Footer
 
 # Profile
-application-jihwan.properties
+application-jihwan.yml
+application-prod.yml
 
 # OAuth
 google_oauth_secret.json
