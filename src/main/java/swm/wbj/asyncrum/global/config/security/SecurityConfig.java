@@ -3,6 +3,7 @@ package swm.wbj.asyncrum.global.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
+import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
 import swm.wbj.asyncrum.global.config.properties.CorsProperties;
 import swm.wbj.asyncrum.global.oauth.entity.RoleType;
@@ -41,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 시큐리티 전체 설정
@@ -69,11 +72,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/v1/members").permitAll()
+                    .antMatchers("/api/v1/auth/*").permitAll()
                     .antMatchers("/api/v1/**").hasAnyAuthority(RoleType.USER.getCode())
                     .antMatchers("/api/admin/v1/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().authenticated()
 
                 // 1. OAuth 로그인 요청 시 사용하는 엔드포인트 관련 설정
+                //    authorizationRequestRepository를 통해 OAuth Request 상태를 저장
                 .and()
                     .oauth2Login()
                     .authorizationEndpoint()
@@ -81,16 +87,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
 
                 // 2. OAuth 로그인 후 다시 백엔드 서버로 Authorization Code를 받기 위한 리다이렉션 엔드포인트 설정
+                //    이후 백엔드 Spring OAuth가 자동으로 Authorization Code -> Access Token -> 사용자 정보를 가져옴
                 .and()
                     .redirectionEndpoint()
                     .baseUri("/*/oauth2/code/*")
 
                 // 3. Access Token으로 Resource Server에서 사용자 정보를 가져온 후 진행할 추가 로직 설정
+                //    customOAuth2UserService에서 사용자 정보를 기존 계정(Memeber)과 연계하여 처리(회원가입, 갱신 등)
                 .and()
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
 
-                // OAuth 인증 성공/실패 헨들러 설정
+                // 4. OAuth 인증 성공/실패 헨들러 설정
+                //    OAuth 일련의 과정이 끝나면 oAuth2AuthenticationSuccessHandler 호출,
+                //    OAuth 과정 중간에 실패시 oAuth2AuthenticationFailureHandler 호출
                 .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler())
                     .failureHandler(oAuth2AuthenticationFailureHandler());
@@ -150,8 +160,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new OAuth2AuthenticationSuccessHandler(
                 tokenProvider,
                 appProperties,
+                oAuth2AuthorizationRequestBasedOnCookieRepository(),
                 memberRefreshTokenRepository,
-                oAuth2AuthorizationRequestBasedOnCookieRepository()
+                memberRepository
         );
     }
 

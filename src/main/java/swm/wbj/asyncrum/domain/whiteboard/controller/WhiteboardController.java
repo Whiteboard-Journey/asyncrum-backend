@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
-import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardServiceImpl;
+import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 
 @Slf4j
@@ -15,7 +15,7 @@ import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 @RestController
 public class WhiteboardController {
 
-    private final WhiteboardServiceImpl whiteboardService;
+    private final WhiteboardService whiteboardService;
 
     // 화이트보드 문서 생성
     @PostMapping

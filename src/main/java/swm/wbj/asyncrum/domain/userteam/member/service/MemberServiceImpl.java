@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
@@ -16,7 +17,9 @@ import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
 @RequiredArgsConstructor
 @Transactional
 public class MemberServiceImpl implements MemberService{
+
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,7 +39,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
-        Member member = requestDto.toEntity();
+        Member member = requestDto.toEntity(passwordEncoder);
         return new MemberCreateResponseDto(memberRepository.save(member).getId());
     }
 
@@ -62,7 +65,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.update(requestDto.getPhone(), requestDto.getNickname());
+        member.updateNickname(requestDto.getNickname());
         return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 

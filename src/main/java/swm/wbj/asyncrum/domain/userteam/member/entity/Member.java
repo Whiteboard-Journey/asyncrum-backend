@@ -1,9 +1,7 @@
 package swm.wbj.asyncrum.domain.userteam.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
@@ -11,6 +9,8 @@ import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,64 +19,99 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Builder
 @Table(name = "member")
 public class Member extends BaseEntity {
 
+    /**
+     * Member Primary Key
+     */
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // TODO: 추후 SEQUENCE 형태로 변경
     private Long id;
 
-    private String username;
-
+    /**
+     * Member Primary Key for Local login
+     */
+    @Column(name = "email", length = 512, unique = true)
+    @NotNull
+    @Size(max = 512)
     private String email;
 
-    private String pictureUrl;
-
-    private String phone;
-
-    private String nickname;
+    /**
+     * Member Primary Key for OAuth login
+     */
+    @Column(name = "user_id", length = 64, unique = true)
+    @NotNull
+    private String oauthId;
 
     @JsonIgnore
-    @Column(length = 128)
-    // @NotNull
-    // TODO: 추후 서비스 내 회원가입 관련 추가
+    @Column(name = "password", length = 128)
+    @NotNull
     private String password;
 
-    // OAuth 관련 추가
-    @Column(length = 64, unique = true)
+    @Column(name = "nickname", length = 100)
     @NotNull
-    private String userId;
+    @Size(max = 100)
+    private String nickname;
 
-    @Column
-    @Enumerated(EnumType.STRING)
+    @Column(name = "profile_image_url", length = 512)
     @NotNull
-    private ProviderType providerType;
+    @Size(max = 512)
+    private String profileImageUrl;
 
-    @Column(length = 20)
+    @Column(name = "role_type", length = 20)
     @Enumerated(EnumType.STRING)
     @NotNull
     private RoleType roleType;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Record> records = new ArrayList<>();
 
-    public void update(String phone, String nickname){
-        this.phone = phone;
-        this.nickname = nickname;
+    @Column(name = "provider_type", length = 20)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProviderType providerType;
+
+    @Column(name = "username", length = 100)
+    @NotNull
+    @Size(max = 100)
+    private String username;
+
+    @Builder(builderMethodName = "createMember")
+    public Member(
+            @NotNull @Size(max = 512) String email,
+            @NotNull @Size(max = 64) String oauthId,
+            @NotNull @Size(max = 128) String password,
+            @NotNull @Size(max = 100) String username,
+            @NotNull @Size(max = 100) String nickname,
+            @NotNull @Size(max = 512) String profileImageUrl,
+            @NotNull RoleType roleType,
+            @NotNull ProviderType providerType
+    ) {
+        this.email = email;
+        this.oauthId = oauthId != null ? oauthId : "NO_OAUTH_ID";
+        this.password = password != null ? password : "NO_PASSWORD";
+        this.username = username != null ? username : "NO_USERNAME";
+        this.nickname = nickname != null ? nickname : "NO_NICKNAME";
+        this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "NO_PROFILE_IMAGE_URL";
+        this.roleType = roleType != null ? roleType : RoleType.GUEST;
+        this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
     public void updateUsername(String username) {
         this.username = username;
     }
 
-    public void updatePictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
+
+    public void updateNickname(String nickname) { this.nickname = nickname; }
 }

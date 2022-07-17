@@ -38,3 +38,6 @@ Footer
 
 # Profile
 application-jihwan.properties
+
+# OAuth
+google_oauth_secret.json
