@@ -46,4 +46,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
+
+    /**
+     * AWS Target Group Health Check
+     * 해당 경로로 요청받으면 항상 HTTP 200 OK 반환
+     */
+    @GetMapping("/health")
+    public ResponseEntity<?> refreshToken() {
+        return ResponseEntity.ok(null);
+    }
 }
