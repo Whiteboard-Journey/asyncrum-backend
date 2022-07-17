@@ -17,7 +17,7 @@ public class MemberCreateRequestDto {
     private String nickname;
 
     public Member toEntity(PasswordEncoder passwordEncoder){
-        return Member.builder()
+        return Member.createMember()
                 .nickname(nickname)
                 .password(passwordEncoder.encode(password))
                 .email(email)
