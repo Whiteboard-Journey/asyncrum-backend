@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 
 @Data
@@ -11,19 +12,16 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 @NoArgsConstructor
 public class MemberCreateRequestDto {
 
-    private String username;
     private String email;
-    private String pictureUrl;
-    private String phone;
+    private String password;
     private String nickname;
 
-    public Member toEntity(){
-        return Member.builder()
-                .username(username)
-                .email(email)
-                .pictureUrl(pictureUrl)
-                .phone(phone)
+    public Member toEntity(PasswordEncoder passwordEncoder){
+        return Member.createMember()
                 .nickname(nickname)
+                .password(passwordEncoder.encode(password))
+                .email(email)
                 .build();
     }
+
 }

@@ -14,4 +14,5 @@ public class MemberReadAllResponseDto {
     private List<Member> memberList;
     private Pageable pageable;
     private Boolean isList;
+
 }
