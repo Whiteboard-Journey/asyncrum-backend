@@ -75,7 +75,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 새로운 Member 생성 (회원가입)
     private Member createMember(OAuth2UserInfo userInfo, ProviderType providerType) {
-        Member member = Member.builder()
+        Member member = Member.createMember()
                 .email(userInfo.getEmail())
                 .oauthId(userInfo.getId())
                 .username(userInfo.getName())

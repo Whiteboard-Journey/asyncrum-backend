@@ -84,7 +84,7 @@ public class Member extends BaseEntity {
     @Size(max = 100)
     private String username;
 
-    @Builder
+    @Builder(builderMethodName = "createMember")
     public Member(
             @NotNull @Size(max = 512) String email,
             @NotNull @Size(max = 64) String oauthId,

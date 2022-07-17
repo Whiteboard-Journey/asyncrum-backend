@@ -50,8 +50,8 @@ spring:
             - email
             - public_profile
         naver:
-          clientId: '{네이버 client-id}'
-          clientSecret: '{네이버 client-secret}'
+          clientId: wHJi4Un9K0BpskYbP9eu
+          clientSecret: rtE8jpGk3b
           clientAuthenticationMethod: post
           authorizationGrantType: authorization_code
           redirectUri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
