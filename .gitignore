@@ -38,7 +38,7 @@ Footer
 
 # Profile
 /src/main/resources/application-jihwan.yml
-/src/main/resources/application-prod.yml
+# /src/main/resources/application-prod.yml
 
 # OAuth
 google_oauth_secret.json
