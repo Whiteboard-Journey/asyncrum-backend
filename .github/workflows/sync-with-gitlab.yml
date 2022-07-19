@@ -1,0 +1,35 @@
+# This is a workflow that syncs everthing on this repository to another repository
+ 
+name: Sync this repository to another repository
+ 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+ 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+ 
+jobs:
+  push-to-gitlab:
+    runs-on: ubuntu-latest
+ 
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+      
+      - name: Set remote repository
+        env: # Retrieve env variable from GiGHub secrets
+          gitlab_url: ${{ secrets.TARGET_URL }}
+          gitlab_username: ${{ secrets.TARGET_USERNAME }}
+          gitlab_token: ${{ secrets.TARGET_TOKEN }}
+        run: | # 토큰을 조합해서 저렇게 URL을 만들면 비번없이 push가 됩니다.
+          git remote add gitlab https://${gitlab_username}:${gitlab_token}@${gitlab_url#https://};
+      - name: Force push everthing
+        run: | # 모든 브랜치와 태그에 대하여 push합니다. gitlab에서 보호설정이 걸려있으면 Fail할 수 있습니다.
+          git push -f --all gitlab;
+          git push -f --tags gitlab;
