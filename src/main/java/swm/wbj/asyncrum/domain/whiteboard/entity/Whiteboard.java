@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.whiteboard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,11 @@ public class Whiteboard extends BaseEntity {
     private Long id;
 
     @Column
+    @JsonIgnore
     private String whiteboardFileKey;
+
+    @Column
+    private String whiteboardFileUrl;
 
     @Column
     private String title;
@@ -45,10 +50,11 @@ public class Whiteboard extends BaseEntity {
         this.author = author;
     }
 
-    public void update(String title, String description, String whiteboardFileKey, String scope) {
+    public void update(String title, String description, String whiteboardFileKey, String whiteboardFileUrl, String scope) {
         if(title != null ) this.title = title;
         if(description != null ) this.description = description;
         if(whiteboardFileKey != null ) this.whiteboardFileKey = whiteboardFileKey;
+        if(whiteboardFileUrl != null ) this.whiteboardFileUrl = whiteboardFileUrl;
         if(scope != null ) this.scope = scope;
     }
 }
