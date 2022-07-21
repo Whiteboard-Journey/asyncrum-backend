@@ -1,6 +1,5 @@
 package swm.wbj.asyncrum.domain.whiteboard.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
@@ -13,7 +12,7 @@ public class WhiteboardReadResponseDto {
     private String scope;
 
     public WhiteboardReadResponseDto(Whiteboard whiteboard) {
-        this.whiteboardUrl = whiteboard.getWhiteboardUrl();
+        this.whiteboardUrl = whiteboard.getWhiteboardFileKey();
         this.title = whiteboard.getTitle();
         this.description = whiteboard.getDescription();
         this.scope = whiteboard.getScope();

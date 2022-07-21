@@ -6,41 +6,57 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
+import java.util.Date;
 
+@Slf4j
+@RequiredArgsConstructor
+@Component
 public class AwsService {
 
-    public static void generatePresignedURL() throws IOException {
-        Regions clientRegion = Regions.DEFAULT_REGION;
-        String bucketName = "*** Bucket name ***";
-        String objectKey = "*** Object key ***";
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    public String generatePresignedURL(String uploadFileKey, String dirName, HttpMethod httpMethod) throws IOException {
+        String preSignedURL = "";
+        String fileName = dirName + "/" + uploadFileKey;
 
         try {
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(clientRegion)
-                    .withCredentials(new ProfileCredentialsProvider())
-                    .build();
-
-            // Set the presigned URL to expire after one hour.
-            java.util.Date expiration = new java.util.Date();
+            // Set the presigned URL to expire after 2 mins
+            Date expiration = new Date();
             long expTimeMillis = Instant.now().toEpochMilli();
-            expTimeMillis += 1000 * 60 * 60;
+            expTimeMillis += 1000 * 60 * 2;
             expiration.setTime(expTimeMillis);
 
-            // Generate the presigned URL.
-            System.out.println("Generating pre-signed URL.");
+            // Generate the presigned URL Request
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucketName, objectKey)
-                            .withMethod(HttpMethod.GET)
+                    new GeneratePresignedUrlRequest(bucket, fileName)
+                            .withContentType("application/octet-stream")
+                            .withMethod(httpMethod)
                             .withExpiration(expiration);
-            URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
 
-            System.out.println("Pre-Signed URL: " + url.toString());
+            // Add ACL
+            generatePresignedUrlRequest.putCustomQueryParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
+
+            // Generate the presigned URL
+            URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
+            preSignedURL = url.toString();
+
+            log.info("Pre-Signed URL: " + url.toString());
         } catch (AmazonServiceException e) {
             // The call was transmitted successfully, but Amazon S3 couldn't process
             // it, so it returned an error response.
@@ -50,5 +66,7 @@ public class AwsService {
             // couldn't parse the response from Amazon S3.
             e.printStackTrace();
         }
+
+        return preSignedURL;
     }
 }

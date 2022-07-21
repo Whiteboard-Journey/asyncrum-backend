@@ -7,14 +7,12 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 @Data
 public class WhiteboardCreateRequestDto {
 
-    private String whiteboardUrl;
     private String title;
     private String description;
     private String scope;
 
     public Whiteboard toEntity(Member author) {
         return Whiteboard.createWhiteboard()
-                .whiteboardUrl(whiteboardUrl)
                 .title(title)
                 .description(description)
                 .scope(scope)
