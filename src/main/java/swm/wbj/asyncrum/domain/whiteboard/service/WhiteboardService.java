@@ -16,9 +16,8 @@ public interface WhiteboardService {
     WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId);
 
     // 화이트보드 문서 정보 업데이트
-    WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto);
+    WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) throws IOException;
 
     // 화이트보드 문서 삭제
     void deleteWhiteboard(Long id);
-
 }
