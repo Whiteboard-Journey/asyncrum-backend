@@ -104,3 +104,16 @@ app:
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth/redirect
+
+# AWS
+cloud:
+  aws:
+    s3:
+      bucket: wbj-media
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AKIARUI6PQGKHHXIRMHW
+      secret-key: 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
