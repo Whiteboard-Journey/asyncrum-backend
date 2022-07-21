@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
@@ -19,6 +20,7 @@ import swm.wbj.asyncrum.domain.whiteboard.repository.WhiteboardRepository;
 public class WhiteboardServiceImpl implements WhiteboardService {
 
     private final WhiteboardRepository whiteboardRepository;
+    private final MemberService memberService;
 
     // 화이트보드 문서 생성
     @Override
@@ -28,9 +30,8 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(whiteboardRepository.existsByTitle(title)) {
             throw new IllegalArgumentException("해당 제목은 이미 사용중입니다.");
         }
-
-        // TODO: 로그인 구현 후 JWT를 통해 작성자 객체를 가져온 후 추가
-        Whiteboard whiteboard = requestDto.toEntity();
+        
+        Whiteboard whiteboard = requestDto.toEntity(memberService.getCurrentMember());
 
         return new WhiteboardCreateResponseDto(whiteboardRepository.save(whiteboard).getId());
     }

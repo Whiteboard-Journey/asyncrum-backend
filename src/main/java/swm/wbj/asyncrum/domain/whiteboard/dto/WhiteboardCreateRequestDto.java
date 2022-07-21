@@ -12,14 +12,13 @@ public class WhiteboardCreateRequestDto {
     private String description;
     private String scope;
 
-    // TODO: 로그인 구현 후 JWT를 통해 작성자 객체를 가져온 후 추가
-    public Whiteboard toEntity() {
-        return Whiteboard.builder()
+    public Whiteboard toEntity(Member author) {
+        return Whiteboard.createWhiteboard()
                 .whiteboardUrl(whiteboardUrl)
                 .title(title)
                 .description(description)
                 .scope(scope)
-                //.author(author)
+                .author(author)
                 .build();
     }
 }

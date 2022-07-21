@@ -37,13 +37,13 @@ public class Whiteboard extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member author;
 
-    @Builder
-    public Whiteboard(String title, String description, String whiteboardUrl, String scope) {
+    @Builder(builderMethodName = "createWhiteboard")
+    public Whiteboard(String title, String description, String whiteboardUrl, String scope, Member author) {
         this.title = title;
         this.description = description;
         this.whiteboardUrl = whiteboardUrl;
         this.scope = scope;
-        //this.author = author;
+        this.author = author;
     }
 
     public void update(String title, String description, String scope) {
