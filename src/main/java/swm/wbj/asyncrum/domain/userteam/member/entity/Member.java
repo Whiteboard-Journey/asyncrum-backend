@@ -42,21 +42,18 @@ public class Member extends BaseEntity {
      * Member Primary Key for OAuth login
      */
     @Column(name = "user_id", length = 64, unique = true)
-    @NotNull
     private String oauthId;
 
     @JsonIgnore
     @Column(name = "password", length = 128)
-    @NotNull
     private String password;
 
-    @Column(name = "nickname", length = 100)
+    @Column(name = "fullname", length = 100)
     @NotNull
     @Size(max = 100)
-    private String nickname;
+    private String fullname;
 
     @Column(name = "profile_image_url", length = 512)
-    @NotNull
     @Size(max = 512)
     private String profileImageUrl;
 
@@ -80,27 +77,26 @@ public class Member extends BaseEntity {
     private ProviderType providerType;
 
     @Column(name = "username", length = 100)
-    @NotNull
     @Size(max = 100)
     private String username;
 
     @Builder(builderMethodName = "createMember")
     public Member(
             @NotNull @Size(max = 512) String email,
-            @NotNull @Size(max = 64) String oauthId,
-            @NotNull @Size(max = 128) String password,
-            @NotNull @Size(max = 100) String username,
-            @NotNull @Size(max = 100) String nickname,
-            @NotNull @Size(max = 512) String profileImageUrl,
+            @Size(max = 64) String oauthId,
+            @Size(max = 128) String password,
+            @Size(max = 100) String username,
+            @Size(max = 100) String fullname,
+            @Size(max = 512) String profileImageUrl,
             @NotNull RoleType roleType,
             @NotNull ProviderType providerType
     ) {
         this.email = email;
-        this.oauthId = oauthId != null ? oauthId : "NO_OAUTH_ID";
-        this.password = password != null ? password : "NO_PASSWORD";
-        this.username = username != null ? username : "NO_USERNAME";
-        this.nickname = nickname != null ? nickname : "NO_NICKNAME";
-        this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "NO_PROFILE_IMAGE_URL";
+        this.oauthId = oauthId;
+        this.password = password;
+        this.username = username;
+        this.fullname = fullname;
+        this.profileImageUrl = profileImageUrl;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
@@ -113,5 +109,5 @@ public class Member extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void updateNickname(String nickname) { this.nickname = nickname; }
+    public void updateNickname(String nickname) { this.fullname = nickname; }
 }

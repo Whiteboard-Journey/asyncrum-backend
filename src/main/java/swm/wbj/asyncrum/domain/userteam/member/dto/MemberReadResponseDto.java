@@ -13,7 +13,7 @@ public class MemberReadResponseDto {
     private RoleType roleType;
 
     public MemberReadResponseDto(Member member){
-        this.nickname = member.getNickname();
+        this.nickname = member.getFullname();
         this.email = member.getEmail();
         this.profileImageUrl = member.getProfileImageUrl();
         this.roleType = member.getRoleType();
