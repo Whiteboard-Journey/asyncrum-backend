@@ -7,13 +7,13 @@ import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 @Data
 public class MemberReadResponseDto {
 
-    private String nickname;
+    private String fullname;
     private String profileImageUrl;
     private String email;
     private RoleType roleType;
 
     public MemberReadResponseDto(Member member){
-        this.nickname = member.getNickname();
+        this.fullname = member.getFullname();
         this.email = member.getEmail();
         this.profileImageUrl = member.getProfileImageUrl();
         this.roleType = member.getRoleType();

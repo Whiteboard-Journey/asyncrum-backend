@@ -12,6 +12,7 @@ import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
+import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 
 @Service
@@ -24,6 +25,11 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
+        String email = requestDto.getEmail();
+        if(memberRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("해당 이메일은 이미 사용중입니다.");
+        }
+
         Member member = requestDto.toEntity(passwordEncoder);
         return new MemberCreateResponseDto(memberRepository.save(member).getId());
     }
@@ -40,21 +46,54 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
     }
 
+    /**
+     * 사용자 조희
+     * 사용자의 role에 따라 fetch policy가 달라짐
+     * Role.USER : 자신의 정보만 조회
+     * Role.ADMIN: id로 특정 사용자 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public MemberReadResponseDto readMember(Long id){
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        Member member;
+        Member currentMember = this.getCurrentMember();
+        RoleType memberRoleType = currentMember.getRoleType();
+
+        switch (memberRoleType) {
+            case ADMIN:
+                member = memberRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+                break;
+            case USER:
+                member = currentMember;
+                break;
+            case GUEST:
+            default:
+                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+        }
 
         return new MemberReadResponseDto(member);
     }
 
+    // TODO: Role에 따른 Member Fetch Policy 추후 개선하기
+    /**
+     * 사용자 전체 조희
+     * 사용자의 role에 따라 fetch policy가 달라짐
+     * Role.USER : 허용되지 않은 작업으로 처리
+     * Role.ADMIN : 사용자 리스트 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId) {
+        Member currentMember = this.getCurrentMember();
+        if(!currentMember.getRoleType().equals(RoleType.ADMIN)) {
+            throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+        }
+
         int SIZE_PER_PAGE = 10;
         Page<Member> memberPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
+
         if(topId == 0) {
             memberPage = memberRepository.findAll(pageable);
         }
@@ -70,7 +109,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.updateNickname(requestDto.getNickname());
+        member.updateNickname(requestDto.getFullname());
         return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 
