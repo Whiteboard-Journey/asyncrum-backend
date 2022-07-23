@@ -8,5 +8,4 @@ public class WhiteboardUpdateRequestDto {
     private String title;
     private String description;
     private String scope;
-
 }

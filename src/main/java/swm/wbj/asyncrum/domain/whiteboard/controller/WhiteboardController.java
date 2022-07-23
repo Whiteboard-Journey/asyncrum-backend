@@ -84,5 +84,4 @@ public class WhiteboardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto((e.getMessage())));
         }
     }
-
 }

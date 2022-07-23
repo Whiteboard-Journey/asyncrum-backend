@@ -14,5 +14,4 @@ public class WhiteboardReadAllResponseDto {
     private List<Whiteboard> whiteboards;
     private Pageable pageable;
     private Boolean isList;
-
 }

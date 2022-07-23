@@ -10,12 +10,14 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
 @Repository
 public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
-
+    /**
+     * ADMIN QUERY
+     */
     Page<Whiteboard> findAll(Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM whiteboard AS w WHERE w.id <= :topId",
-            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.id <= :topId",
+            value = "SELECT * FROM whiteboard AS w WHERE w.whiteboard_id <= :topId",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.whiteboard_id <= :topId",
             nativeQuery = true
     )
     Page<Whiteboard> findAllByTopId(
@@ -23,5 +25,33 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
             Pageable pageable
     );
 
+
+    /**
+     * USER QUERY
+     */
+    @Query(
+            value = "SELECT * FROM whiteboard AS w WHERE w.member_id = :memberId",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id = :memberId",
+            nativeQuery = true
+    )
+    Page<Whiteboard> findAllByAuthor(
+            @Param("memberId") Long memberId,
+            Pageable pageable
+    );
+
+    @Query(
+            value = "SELECT * FROM whiteboard AS w WHERE w.member_id = :memberId AND w.whiteboard_id <= :topId",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id = :memberId AND w.whiteboard_id <= :topId",
+            nativeQuery = true
+    )
+    Page<Whiteboard> findAllByAuthorAndTopId(
+            @Param("memberId") Long memberId,
+            @Param("topId") Long topId,
+            Pageable pageable
+    );
+
+    /**
+     * UNIVERSAL QUERY
+     */
     Boolean existsByTitle(String title);
 }
