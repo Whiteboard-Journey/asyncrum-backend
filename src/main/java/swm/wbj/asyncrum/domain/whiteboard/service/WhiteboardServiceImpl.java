@@ -78,8 +78,8 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "whiteboard_id");
 
-        Member member = memberService.getCurrentMember();
-        RoleType memberRoleType = member.getRoleType();
+        Member currentMember = memberService.getCurrentMember();
+        RoleType memberRoleType = currentMember.getRoleType();
 
         // TODO: JPA 학습 후 JPA Specification 사용
         switch (memberRoleType) {
@@ -93,10 +93,10 @@ public class WhiteboardServiceImpl implements WhiteboardService {
                 break;
             case USER:
                 if(topId == 0) {
-                    whiteboardPage = whiteboardRepository.findAllByAuthor(member.getId(),pageable);
+                    whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(),pageable);
                 }
                 else {
-                    whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(member.getId(),topId, pageable);
+                    whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(currentMember.getId(),topId, pageable);
                 }
                 break;
             case GUEST:

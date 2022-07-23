@@ -15,13 +15,13 @@ public class MemberCreateRequestDto {
 
     private String email;
     private String password;
-    private String nickname;
+    private String fullname;
 
     public Member toEntity(PasswordEncoder passwordEncoder){
         return Member.createMember()
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .nickname(nickname)
+                .fullname(fullname)
                 .roleType(RoleType.USER)
                 .build();
     }
