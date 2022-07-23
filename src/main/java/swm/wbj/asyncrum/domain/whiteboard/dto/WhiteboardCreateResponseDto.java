@@ -8,5 +8,5 @@ import lombok.Data;
 public class WhiteboardCreateResponseDto {
 
     private Long id;
-
+    private String preSignedURL;
 }
