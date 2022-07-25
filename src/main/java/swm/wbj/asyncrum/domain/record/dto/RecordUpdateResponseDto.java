@@ -7,5 +7,4 @@ import lombok.Data;
 @AllArgsConstructor
 public class RecordUpdateResponseDto {
     private Long id;
-    private String preSignedURL;
 }

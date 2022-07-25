@@ -2,12 +2,10 @@ package swm.wbj.asyncrum.domain.record.service;
 
 import swm.wbj.asyncrum.domain.record.dto.*;
 
-import java.io.IOException;
-
 public interface RecordService {
-    RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto) throws IOException;
-    RecordReadResponseDto readRecord(Long id) throws Exception;
+    RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto);
+    RecordReadResponseDto readRecord(Long id);
     RecordReadAllResponseDto readAllRecord(Integer pageIndex, Long topId);
-    RecordUpdateResponseDto updateRecord(Long id, RecordUpdateRequestDto requestDto) throws IOException;
+    RecordUpdateResponseDto updateRecord(Long id, RecordUpdateRequestDto requestDto);
     void deleteRecord(Long id);
 }

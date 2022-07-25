@@ -13,7 +13,6 @@ import swm.wbj.asyncrum.domain.whiteboard.dto.*;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.domain.whiteboard.repository.WhiteboardRepository;
 import swm.wbj.asyncrum.global.media.AwsService;
-import swm.wbj.asyncrum.global.media.FileType;
 import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
         String whiteboardFileKey = createWhiteboardFileKey(memberService.getCurrentMember().getId(), whiteboardId);
 
-        String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME, FileType.TLDR);
+        String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME);
 
         // 화이트보드 엔티티에 화이트보드 문서 파일명 저장
         whiteboard.update(null, null, whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME), null);
@@ -118,7 +117,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
         whiteboard.update(requestDto.getTitle(), requestDto.getDescription(), null, null, requestDto.getScope());
 
-        String preSignedURL = awsService.generatePresignedURL(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME, FileType.TLDR);
+        String preSignedURL = awsService.generatePresignedURL(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME);
 
         return new WhiteboardUpdateResponseDto(whiteboardRepository.save(whiteboard).getId(), preSignedURL);
     }

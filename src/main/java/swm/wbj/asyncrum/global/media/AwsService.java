@@ -30,7 +30,7 @@ public class AwsService {
     /**
      * S3 Presigned URL 생성
      */
-    public String generatePresignedURL(String uploadFileKey, String dirName, FileType fileType) {
+    public String generatePresignedURL(String uploadFileKey, String dirName) {
         try {
             // Set the presigned URL to expire after 2 mins
             Date expiration = new Date();
@@ -41,7 +41,7 @@ public class AwsService {
             // Generate the presigned URL Request
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucket, buildFileName(uploadFileKey, dirName))
-                            .withContentType(fileType.getContentType())
+                            .withContentType("application/octet-stream")
                             .withMethod(HttpMethod.PUT)
                             .withExpiration(expiration);
 
