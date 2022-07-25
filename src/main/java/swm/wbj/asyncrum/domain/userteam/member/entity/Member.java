@@ -68,7 +68,7 @@ public class Member extends BaseEntity {
     private Team team;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Record> records = new ArrayList<>();
 
     @Column(name = "provider_type", length = 20)
