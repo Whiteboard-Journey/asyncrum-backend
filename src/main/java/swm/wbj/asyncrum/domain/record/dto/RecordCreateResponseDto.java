@@ -10,4 +10,5 @@ import swm.wbj.asyncrum.domain.record.entity.Record;
 @AllArgsConstructor
 public class RecordCreateResponseDto {
     private Long id;
+    private String preSignedURL;
 }

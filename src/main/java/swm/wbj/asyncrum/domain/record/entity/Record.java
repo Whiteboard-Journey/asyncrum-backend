@@ -1,7 +1,11 @@
 package swm.wbj.asyncrum.domain.record.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.global.entity.BaseEntity;
 
 import javax.persistence.*;
 
@@ -11,29 +15,47 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Builder
-@Table(name = "record")
-public class Record {
+public class Record extends BaseEntity{
 
     @Id
     @Column(name = "record_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String videoUrl;
+    @Column
+    @JsonIgnore
+    private String recordFileKey;
 
+    @Column
+    private String recordFileUrl;
+
+    @Column
     private String title;
 
+    @Column
     private String description;
 
+    @Column
     private String scope;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member author;
 
-    public void update( String title, String description, String scope){
+    @Builder(builderMethodName = "createRecord")
+    public Record(String title, String description, String scope, Member author) {
         this.title = title;
         this.description = description;
         this.scope = scope;
+        this.author = author;
+    }
+
+    public void update( String title, String description, String recordFileKey, String recordFileUrl, String scope){
+        if(title != null) this.title = title;
+        if(description != null) this.description = description;
+        if(recordFileKey != null) this.recordFileKey = recordFileKey;
+        if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
+        if (scope != null) this.scope = scope;
     }
 }

@@ -41,7 +41,7 @@ public class AwsService {
             // Generate the presigned URL Request
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucket, buildFileName(uploadFileKey, dirName))
-                            .withContentType("application/octet-stream")
+                            .withContentType("video/webm")
                             .withMethod(HttpMethod.PUT)
                             .withExpiration(expiration);
 
