@@ -14,6 +14,7 @@ import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.global.media.FileType;
 import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class RecordServiceImpl implements RecordService{
 
         String recordFileKey = createRecordFileKey(memberService.getCurrentMember().getId(), recordId);
 
-        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME);
+        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.WEBM);
 
 
         record.update(null, null, recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME), null);
@@ -107,7 +108,7 @@ public class RecordServiceImpl implements RecordService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 녹화가 존재하지 않습니다."));
 
         record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, requestDto.getScope());
-        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME);
+        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.WEBM);
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
 
