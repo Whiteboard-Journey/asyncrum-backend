@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class RecordReadAllResponseDto {
-    private List<Record> recordList;
+    private List<Record> records;
     private Pageable pageable;
     private Boolean isList;
 }
