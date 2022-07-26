@@ -118,4 +118,8 @@ public class Member extends BaseEntity {
     public void updateRole(RoleType roleType) {
         this.roleType = roleType;
     }
+
+    public void updateTeam(Team team) {
+        this.team = team;
+    }
 }
