@@ -2,7 +2,7 @@ package swm.wbj.asyncrum.domain.userteam.member.dto;
 
 import lombok.Data;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 
 @Data
 public class MemberReadResponseDto {

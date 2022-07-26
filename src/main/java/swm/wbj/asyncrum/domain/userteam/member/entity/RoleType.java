@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.oauth.entity;
+package swm.wbj.asyncrum.domain.userteam.member.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -2,19 +2,24 @@ package swm.wbj.asyncrum.domain.auth.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
 import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;
+import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
 import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
@@ -36,9 +41,14 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
+    private final MailService mailService;
 
     private final static long THREE_DAYS_IN_MILLISECONDS = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     @Override
     public TokenResponseDto loginService(HttpServletRequest request,
@@ -154,5 +164,33 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return new TokenResponseDto(newAccessToken.getToken());
+    }
+
+    /**
+     * 메일 인증 링크 전송
+     * TODO: 추후 링크 hashing 및 expire 설정 기능 추가
+     */
+    @Override
+    public void sendEmailVerificationLink() throws Exception {
+        Member member = memberService.getCurrentMember();
+
+        String emailVerificationLink = UriComponentsBuilder.fromUriString(serverUrl + "/api/v1/auth/email")
+                .queryParam("memberId", member.getId())
+                .build().toUriString();
+
+        mailService.sendMailVerificationLink(member.getEmail(), emailVerificationLink);
+    }
+
+    /**
+     * 메일 인증 링크 검증 및 처리 (Role Update)
+     * TODO: hashing된 링크 검증 및 처리하도록 변경
+     */
+    @Override
+    public void verifyEmailVerificationLink(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+
+        member.updateRole(RoleType.USER);
+        memberRepository.save(member);
     }
 }
