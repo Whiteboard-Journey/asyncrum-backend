@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 
 import java.util.Collection;
 import java.util.Collections;

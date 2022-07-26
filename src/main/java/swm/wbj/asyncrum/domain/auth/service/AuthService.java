@@ -13,4 +13,7 @@ public interface AuthService {
 
     TokenResponseDto refreshService(HttpServletRequest request, HttpServletResponse response);
 
+    void sendEmailVerificationLink() throws Exception;
+
+    void verifyEmailVerificationLink(Long memberId) throws Exception;
 }

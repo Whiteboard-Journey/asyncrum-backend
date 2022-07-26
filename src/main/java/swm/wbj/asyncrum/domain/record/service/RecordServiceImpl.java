@@ -10,13 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
-import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
-import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+
 import java.io.IOException;
 
 @Service
