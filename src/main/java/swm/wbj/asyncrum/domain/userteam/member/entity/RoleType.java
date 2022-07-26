@@ -12,8 +12,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum RoleType {
     // TODO: 이후에 스크럼 마스터, PO 등 스크럼 특화 Role 추가
-    USER("ROLE_USER", "일반 사용자 권한"),
     ADMIN("ROLE_ADMIN", "관리자 권한"),
+    USER("ROLE_USER", "일반 사용자 권한"),
     GUEST("GUEST", "게스트 권한");
 
     private final String code;

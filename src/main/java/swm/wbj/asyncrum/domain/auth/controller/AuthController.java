@@ -55,33 +55,4 @@ public class AuthController {
     public ResponseEntity<?> refreshToken() {
         return ResponseEntity.ok(null);
     }
-
-    /**
-     * 메일 인증 링크 전송
-     * 해당 엔드포인트는 JWT 토큰이 있어야 사용 가능
-     *
-     */
-    @PostMapping("/email")
-    public ResponseEntity<?> sendEmailVerificationLink() {
-        try {
-            authService.sendEmailVerificationLink();
-            return ResponseEntity.ok().build();
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
-    }
-
-    /**
-     * 메일 인증 링크 검증 및 처리
-     * TODO: 인증 성공 Thymeleaf HTML 만들기 OR 프론트엔드 특정 페이지로 REDIRECT
-     */
-    @GetMapping("/email")
-    public String verifyEmailVerificationLink(@RequestParam("memberId") Long memberId) {
-        try {
-            authService.verifyEmailVerificationLink(memberId);
-            return "인증 성공";
-        } catch (Exception e){
-            return "인증 성공";
-        }
-    }
 }

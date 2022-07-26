@@ -12,7 +12,9 @@ import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
+import swm.wbj.asyncrum.global.utils.UrlService;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,8 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
+    private final UrlService urlService;
 
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
@@ -43,6 +47,18 @@ public class MemberServiceImpl implements MemberService{
         Long memberId = TokenUtil.getCurrentMemberId();
 
         return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getUserByIdOrEmail(Long id, String email) {
+        if(id != null) {
+            return memberRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        }
+        else {
+            return memberRepository.findByEmail(email);
+        }
     }
 
     /**
@@ -117,5 +133,29 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow( () -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다. ")) ;
         memberRepository.delete(member);
+    }
+
+    /**
+     * 메일 인증 링크 전송
+     * TODO: 추후 링크 hashing 및 expire 설정 기능 추가
+     */
+    @Override
+    public void sendEmailVerificationLinkByEmail() throws Exception {
+        Member member = this.getCurrentMember();
+        String emailVerificationLink = urlService.buildURL("/api/v1/members/email/verification", "memberId", member.getId());
+        mailService.sendMailVerificationLink(member.getEmail(), emailVerificationLink);
+    }
+
+    /**
+     * 메일 인증 링크 검증 및 처리 (Role Update)
+     * TODO: hashing된 링크 검증 및 처리하도록 변경
+     */
+    @Override
+    public void verifyEmailVerificationLink(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+
+        member.updateRole(RoleType.USER);
+        memberRepository.save(member);
     }
 }
