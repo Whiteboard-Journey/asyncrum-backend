@@ -11,13 +11,11 @@ import org.springframework.stereotype.Service;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.exception.OAuthProviderMissMatchException;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfo;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfoFactory;
-
-import java.time.LocalDateTime;
 
 /**
  * Provider로부터 받은 OAuth2 유저(User) 정보를 기존 계정(Memeber)과 연계하여 처리(회원가입, 정보 갱신 등)하는 서비스

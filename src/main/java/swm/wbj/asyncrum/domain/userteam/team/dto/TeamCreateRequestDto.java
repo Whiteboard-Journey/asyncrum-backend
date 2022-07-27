@@ -1,6 +1,7 @@
 package swm.wbj.asyncrum.domain.userteam.team.dto;
 
 import lombok.Data;
+import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
 @Data

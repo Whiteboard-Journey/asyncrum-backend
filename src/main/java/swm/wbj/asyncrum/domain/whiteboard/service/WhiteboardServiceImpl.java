@@ -14,7 +14,7 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.domain.whiteboard.repository.WhiteboardRepository;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.media.FileType;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 
 import java.io.IOException;
 

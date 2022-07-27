@@ -10,7 +10,5 @@ public interface AuthService {
 
     TokenResponseDto loginService(HttpServletRequest request,
                                   HttpServletResponse response, LoginRequestDto requestDto);
-
     TokenResponseDto refreshService(HttpServletRequest request, HttpServletResponse response);
-
 }
