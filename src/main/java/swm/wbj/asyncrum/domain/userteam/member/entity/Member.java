@@ -7,7 +7,6 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -115,4 +114,12 @@ public class Member extends BaseEntity {
     }
 
     public void updateNickname(String nickname) { this.fullname = nickname; }
+
+    public void updateRole(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
+    public void updateTeam(Team team) {
+        this.team = team;
+    }
 }

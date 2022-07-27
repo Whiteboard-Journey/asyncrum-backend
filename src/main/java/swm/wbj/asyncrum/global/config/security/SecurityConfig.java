@@ -19,7 +19,7 @@ import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepo
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
 import swm.wbj.asyncrum.global.config.properties.CorsProperties;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 import swm.wbj.asyncrum.global.oauth.exception.RestAuthenticationEntryPoint;
 import swm.wbj.asyncrum.global.oauth.filter.TokenAuthenticationFilter;
 import swm.wbj.asyncrum.global.oauth.handler.OAuth2AuthenticationFailureHandler;
@@ -72,8 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/v1/members").permitAll()
                     .antMatchers("/api/v1/auth/*").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/v1/members").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/members/email/verification").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/teams/*/members/invitation").permitAll()
                     .antMatchers("/api/v1/**").hasAnyAuthority(RoleType.USER.getCode())
                     .antMatchers("/api/admin/v1/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().authenticated()
