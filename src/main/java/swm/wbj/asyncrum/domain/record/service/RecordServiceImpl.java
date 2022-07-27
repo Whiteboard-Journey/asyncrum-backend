@@ -14,15 +14,7 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
-<<<<<<< Updated upstream
 import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
-
-=======
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
-import swm.wbj.asyncrum.global.media.AwsService;
-
-import javax.management.relation.Role;
->>>>>>> Stashed changes
 import java.io.IOException;
 import java.util.List;
 
