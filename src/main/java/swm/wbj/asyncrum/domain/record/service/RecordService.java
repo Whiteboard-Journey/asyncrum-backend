@@ -10,4 +10,6 @@ public interface RecordService {
     RecordReadAllResponseDto readAllRecord(Integer pageIndex, Long topId);
     RecordUpdateResponseDto updateRecord(Long id, RecordUpdateRequestDto requestDto) throws IOException;
     void deleteRecord(Long id);
+    RecordReadDailyResponseDto readDailyRecord(Long topId);
+
 }

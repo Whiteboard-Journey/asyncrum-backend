@@ -14,9 +14,17 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
+<<<<<<< Updated upstream
 import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 
+=======
+import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.global.media.AwsService;
+
+import javax.management.relation.Role;
+>>>>>>> Stashed changes
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +74,35 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public RecordReadDailyResponseDto readDailyRecord(Long topId) {
+//        int SIZE_PER_PAGE = 10;
+        List<Record> recordPage;
+//        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.ASC, "record_id");
+
+        Member member = memberService.getCurrentMember();
+        RoleType memberRoleType = member.getRoleType();
+        switch (memberRoleType){
+
+            case ADMIN:
+            case USER:
+                if(topId == 0) {
+                    recordPage = recordRepository.findAll();
+                }
+                else {
+                    recordPage = recordRepository.findAllByMoreThanTopId(topId);
+                    recordPage.addAll(recordRepository.findAllByLessThanTopId(topId));
+                }
+                break;
+            case GUEST:
+            default:
+                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+
+        }
+        return new RecordReadDailyResponseDto(recordPage);
+    }
+
+    @Override
     public RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto) throws IOException {
         String title = requestDto.getTitle();
         if(recordRepository.existsByTitle(title)){
@@ -110,7 +147,6 @@ public class RecordServiceImpl implements RecordService{
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.WEBM);
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
-
 
     public String createRecordFileKey(Long memberId, Long recordId) {
         return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + ".webm";

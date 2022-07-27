@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import swm.wbj.asyncrum.domain.record.dto.RecordReadDailyResponseDto;
 import swm.wbj.asyncrum.domain.record.entity.Record;
+
+import java.util.List;
 
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
-    Page<Record> findAll(Pageable pageable);
+    List<Record> findAll();
 
     @Query(
             value = "SELECT * FROM record AS r WHERE r.record_id <= :topId",
@@ -22,6 +25,26 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
+
+    @Query(
+            value = "SELECT * FROM record AS r WHERE r.record_id > :topId",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.record_id > :topId",
+            nativeQuery = true
+    )
+    List<Record> findAllByMoreThanTopId(
+            @Param("topId") Long topId
+    );
+
+    @Query(
+            value = "SELECT * FROM record AS r WHERE r.record_id <= :topId",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.record_id <= :topId",
+            nativeQuery = true
+    )
+    List<Record> findAllByLessThanTopId(
+            @Param("topId") Long topId
+    );
+
+
 
     @Query(
             value = "SELECT * FROM record AS r WHERE r.member_id = :memberId",
@@ -43,6 +66,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
+
+
 
     Boolean existsByTitle(String title);
 }
