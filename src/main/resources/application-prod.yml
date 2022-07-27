@@ -128,3 +128,7 @@ cloud:
     credentials:
       access-key: AKIARUI6PQGKHKNJINGU
       secret-key: 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
+
+# Server URL
+server:
+  url: http://localhost:8080
