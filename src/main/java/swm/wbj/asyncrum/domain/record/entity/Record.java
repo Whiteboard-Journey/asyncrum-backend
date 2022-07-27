@@ -38,7 +38,9 @@ public class Record extends BaseEntity{
     @Column
     private String scope;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+
+//    @JsonIgnore
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id")
     private Member author;
