@@ -19,11 +19,12 @@ public class DailyController {
 
     @GetMapping("/api/v1/daily")
     public ResponseEntity<?> readLeftDailyRecord(
-            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId
+            @RequestParam(value = "topId") Long topId,
+            @RequestParam(value = "teamId") Long teamId
             )
     {
         try{
-            RecordReadDailyResponseDto responseDto = recordService.readDailyRecord(topId);
+            RecordReadDailyResponseDto responseDto = recordService.readDailyRecord(topId, teamId);
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
