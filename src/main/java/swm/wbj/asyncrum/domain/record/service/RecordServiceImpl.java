@@ -11,20 +11,13 @@ import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
-<<<<<<< Updated upstream
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
-
-=======
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
-import swm.wbj.asyncrum.global.media.AwsService;
-
-import javax.management.relation.Role;
->>>>>>> Stashed changes
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,10 +68,8 @@ public class RecordServiceImpl implements RecordService{
 
     @Override
     @Transactional(readOnly = true)
-    public RecordReadDailyResponseDto readDailyRecord(Long topId) {
-//        int SIZE_PER_PAGE = 10;
+    public RecordReadDailyResponseDto readDailyRecord(Long topId, Long teamId) {
         List<Record> recordPage;
-//        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.ASC, "record_id");
 
         Member member = memberService.getCurrentMember();
         RoleType memberRoleType = member.getRoleType();
@@ -90,8 +81,8 @@ public class RecordServiceImpl implements RecordService{
                     recordPage = recordRepository.findAll();
                 }
                 else {
-                    recordPage = recordRepository.findAllByMoreThanTopId(topId);
-                    recordPage.addAll(recordRepository.findAllByLessThanTopId(topId));
+                    recordPage = recordRepository.findAllByMoreThanTopId(topId, teamId);
+                    recordPage.addAll(recordRepository.findAllByLessThanTopId(topId, teamId));
                 }
                 break;
             case GUEST:
