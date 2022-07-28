@@ -1,12 +1,11 @@
 package swm.wbj.asyncrum.domain.userteam.member.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 
 @Data
 @Getter
@@ -22,7 +21,7 @@ public class MemberCreateRequestDto {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .fullname(fullname)
-                .roleType(RoleType.USER)
+                .roleType(RoleType.GUEST)
                 .build();
     }
 

@@ -84,6 +84,17 @@ spring:
           tokenUri: https://kauth.kakao.com/oauth/token
           userInfoUri: https://kapi.kakao.com/v2/user/me
           userNameAttribute: id
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: asyncrum@gmail.com
+    password: fvcuafgiusrnpdcv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # cors 설정
 cors:
@@ -117,3 +128,7 @@ cloud:
     credentials:
       access-key: AKIARUI6PQGKHKNJINGU
       secret-key: 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
+
+# Server URL
+server:
+  url: http://localhost:8080

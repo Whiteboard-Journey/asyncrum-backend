@@ -13,8 +13,9 @@ import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
-import swm.wbj.asyncrum.global.oauth.entity.RoleType;
+import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
 import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
@@ -36,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     private final static long THREE_DAYS_IN_MILLISECONDS = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
