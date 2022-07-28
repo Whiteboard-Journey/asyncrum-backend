@@ -15,7 +15,7 @@ import java.util.List;
 public class Team extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
     private Long id;
 
@@ -28,7 +28,7 @@ public class Team extends BaseEntity {
     @Column
     private String pictureUrl;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
 
     @Builder
@@ -44,7 +44,13 @@ public class Team extends BaseEntity {
     }
 
     public void addMember(Member member) {
+        member.updateTeam(this);
         this.members.add(member);
+    }
+
+    public void removeMember(Member member) {
+        this.members.remove(member);
+        member.updateTeam(null);
     }
 
 }

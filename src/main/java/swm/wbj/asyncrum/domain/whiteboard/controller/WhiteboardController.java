@@ -32,7 +32,7 @@ public class WhiteboardController {
 
     // 화이트보드 문서 개별 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> readTeam(@PathVariable Long id) {
+    public ResponseEntity<?> readWhiteboard(@PathVariable Long id) {
         try {
             WhiteboardReadResponseDto responseDto = whiteboardService.readWhiteboard(id);
 
@@ -45,7 +45,7 @@ public class WhiteboardController {
 
     // 화이트보드 문서 전체 조희
     @GetMapping
-    public ResponseEntity<?> readAllTeam(
+    public ResponseEntity<?> readAllWhiteboard(
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
     {

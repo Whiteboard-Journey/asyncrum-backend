@@ -51,6 +51,8 @@ public class RecordController {
         }
     }
 
+
+
     @PatchMapping("/api/v1/records/{id}")
     public ResponseEntity<?> updateRecord(@PathVariable Long id, @RequestBody RecordUpdateRequestDto requestDto){
         try {
