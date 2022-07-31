@@ -60,7 +60,7 @@ public class WhiteboardController {
     }
 
     // 화이트보드 문서 정보 업데이트
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> updateWhiteboard(@PathVariable Long id, @RequestBody WhiteboardUpdateRequestDto requestDto) {
         try {
             WhiteboardUpdateResponseDto responseDto = whiteboardService.updateWhiteboard(id, requestDto);
