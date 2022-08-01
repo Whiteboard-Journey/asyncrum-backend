@@ -49,7 +49,6 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(name = "fullname", length = 100)
-    @NotNull
     @Size(max = 100)
     private String fullname;
 
@@ -89,7 +88,7 @@ public class Member extends BaseEntity {
             @NotNull @Size(max = 512) String email,
             @Size(max = 64) String oauthId,
             @Size(max = 128) String password,
-            @NotNull @Size(max = 100) String fullname,
+            @Size(max = 100) String fullname,
             @Size(max = 100) String nickname,
             @Size(max = 512) String profileImageUrl,
             @NotNull RoleType roleType,
