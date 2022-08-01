@@ -1,7 +1,6 @@
 package swm.wbj.asyncrum.domain.userteam.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
@@ -54,6 +53,10 @@ public class Member extends BaseEntity {
     @Size(max = 100)
     private String fullname;
 
+    @Column(name = "nickname", length = 100)
+    @Size(max = 100)
+    private String nickname;
+
     @Column(name = "profile_image_url", length = 512)
     @Size(max = 512)
     private String profileImageUrl;
@@ -81,17 +84,13 @@ public class Member extends BaseEntity {
     @NotNull
     private ProviderType providerType;
 
-    @Column(name = "username", length = 100)
-    @Size(max = 100)
-    private String username;
-
     @Builder(builderMethodName = "createMember")
     public Member(
             @NotNull @Size(max = 512) String email,
             @Size(max = 64) String oauthId,
             @Size(max = 128) String password,
-            @Size(max = 100) String username,
-            @Size(max = 100) String fullname,
+            @NotNull @Size(max = 100) String fullname,
+            @Size(max = 100) String nickname,
             @Size(max = 512) String profileImageUrl,
             @NotNull RoleType roleType,
             @NotNull ProviderType providerType
@@ -99,22 +98,22 @@ public class Member extends BaseEntity {
         this.email = email;
         this.oauthId = oauthId;
         this.password = password;
-        this.username = username;
         this.fullname = fullname;
+        this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
-    public void updateUsername(String username) {
-        this.username = username;
+    public void updateFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void updateNickname(String nickname) { this.fullname = nickname; }
+    public void updateNickname(String nickname) { this.nickname = nickname; }
 
     public void updateRole(RoleType roleType) {
         this.roleType = roleType;
