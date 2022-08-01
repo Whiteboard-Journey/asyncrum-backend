@@ -110,7 +110,7 @@ jwt.secret: '8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds'
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpiry: 1800000
+    tokenExpiry: 2592000000 # 임시로 토큰 만료 기간 한달로 설정
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris:
