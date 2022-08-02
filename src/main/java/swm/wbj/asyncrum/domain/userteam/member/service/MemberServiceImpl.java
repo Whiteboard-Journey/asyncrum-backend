@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
             throw new IllegalArgumentException("허용되지 않은 작업입니다.");
         }
 
-        int SIZE_PER_PAGE = 10;
+        int SIZE_PER_PAGE = 12;
         Page<Member> memberPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
 
