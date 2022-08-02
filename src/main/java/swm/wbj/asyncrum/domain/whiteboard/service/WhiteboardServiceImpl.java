@@ -75,7 +75,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 10;
+        int SIZE_PER_PAGE = 12;
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "whiteboard_id");
 
