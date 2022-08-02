@@ -34,7 +34,7 @@ public class RecordServiceImpl implements RecordService{
     @Override
     @Transactional(readOnly = true)
     public RecordReadAllResponseDto readAllRecord(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 10;
+        int SIZE_PER_PAGE = 12;
         Page<Record> recordPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "record_id");
 

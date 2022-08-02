@@ -55,7 +55,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional(readOnly = true)
     public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 10;
+        int SIZE_PER_PAGE = 12;
 
         Page<Team> teamPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
