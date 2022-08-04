@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FileType {
 
-    WEBM("video/webm", "webm"),
+    MP4("video/mp4", "mp4"),
     TLDR("application/octet-stream", "tldr");
 
     private final String contentType;

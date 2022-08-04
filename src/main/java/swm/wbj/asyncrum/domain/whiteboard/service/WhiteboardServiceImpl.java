@@ -141,6 +141,6 @@ public class WhiteboardServiceImpl implements WhiteboardService {
      *     ex) whiteboard_2342_32
      */
     public String createWhiteboardFileKey(Long memberId, Long whiteboardId) {
-        return WHITEBOARD_FILE_PREFIX + "_" + memberId + "_" + whiteboardId + ".tldr";
+        return WHITEBOARD_FILE_PREFIX + "_" + memberId + "_" + whiteboardId + "." + FileType.TLDR.getName();
     }
 }
