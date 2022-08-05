@@ -87,7 +87,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 기존 Member 정보 갱신
     private Member updateMember(Member member, OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !member.getNickname().equals(userInfo.getName())) {
+        if (userInfo.getName() != null && !member.getFullname().equals(userInfo.getName())) {
             member.updateFullname(userInfo.getName());
         }
 
