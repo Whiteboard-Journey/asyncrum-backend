@@ -17,8 +17,6 @@ import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -106,7 +104,7 @@ public class RecordServiceImpl implements RecordService{
 
         String recordFileKey = createRecordFileKey(memberService.getCurrentMember().getId(), recordId);
 
-        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.WEBM);
+        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.MP4);
 
 
         record.update(null, null, recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME), null);
@@ -140,10 +138,12 @@ public class RecordServiceImpl implements RecordService{
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.WEBM);
         ListSeenMemberIdGroup.add(memberService.getCurrentMember().getId());
         Set<Long> seenMemberIdGroup = Set.copyOf(ListSeenMemberIdGroup);
+        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL, seenMemberIdGroup);
+
     }
 
     public String createRecordFileKey(Long memberId, Long recordId) {
-        return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + ".webm";
+        return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + "." + FileType.MP4.getName();
     }
 }
