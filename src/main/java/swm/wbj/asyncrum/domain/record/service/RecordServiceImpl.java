@@ -17,6 +17,8 @@ import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.media.FileType;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class RecordServiceImpl implements RecordService{
     private final RecordRepository recordRepository;
     private final MemberService memberService;
     private final AwsService awsService;
-
+    private final List<Long> ListSeenMemberIdGroup;
     private static final String RECORD_BUCKET_NAME = "records";
     private static final String RECORD_FILE_PREFIX ="record";
 
@@ -134,8 +136,11 @@ public class RecordServiceImpl implements RecordService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 녹화가 존재하지 않습니다."));
 
         record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, requestDto.getScope());
+
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
-        return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
+        ListSeenMemberIdGroup.add(memberService.getCurrentMember().getId());
+        Set<Long> seenMemberIdGroup = Set.copyOf(ListSeenMemberIdGroup);
+        return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL, seenMemberIdGroup);
     }
 
     public String createRecordFileKey(Long memberId, Long recordId) {
