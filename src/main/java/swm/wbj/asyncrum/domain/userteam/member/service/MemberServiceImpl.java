@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.utils.UrlService;
