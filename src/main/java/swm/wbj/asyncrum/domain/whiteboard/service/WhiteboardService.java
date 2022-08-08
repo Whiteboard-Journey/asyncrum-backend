@@ -1,6 +1,7 @@
 package swm.wbj.asyncrum.domain.whiteboard.service;
 
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public interface WhiteboardService {
     WhiteboardReadResponseDto readWhiteboard(Long id) throws IOException;
 
     // 화이트보드 문서 전체 조희
-    WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId);
+    WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex, Long topId);
 
     // 화이트보드 문서 정보 업데이트
     WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) throws IOException;
