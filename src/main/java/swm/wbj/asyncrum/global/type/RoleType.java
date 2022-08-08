@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.userteam.member.entity;
+package swm.wbj.asyncrum.global.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -11,13 +11,12 @@ import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
-import swm.wbj.asyncrum.global.media.FileType;
+import swm.wbj.asyncrum.global.type.FileType;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
