@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.exception.OAuthProviderMissMatchException;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfo;

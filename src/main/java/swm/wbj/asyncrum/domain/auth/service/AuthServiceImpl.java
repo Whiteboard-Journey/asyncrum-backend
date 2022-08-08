@@ -15,7 +15,7 @@ import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepo
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
 import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
