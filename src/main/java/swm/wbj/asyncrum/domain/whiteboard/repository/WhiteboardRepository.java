@@ -30,6 +30,27 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
      * USER QUERY
      */
     @Query(
+            value = "SELECT * FROM whiteboard AS w WHERE w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")",
+            nativeQuery = true
+    )
+    Page<Whiteboard> findAllByTeam(
+            @Param("teamId") Long teamId,
+            Pageable pageable
+    );
+
+    @Query(
+            value = "SELECT * FROM whiteboard AS w WHERE w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\" AND w.whiteboard_id <= :topId)",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\" AND w.whiteboard_id <= :topId)",
+            nativeQuery = true
+    )
+    Page<Whiteboard> findAllByTeamAndTopId(
+            @Param("teamId") Long teamId,
+            @Param("topId") Long topId,
+            Pageable pageable
+    );
+
+    @Query(
             value = "SELECT * FROM whiteboard AS w WHERE w.member_id = :memberId",
             countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id = :memberId",
             nativeQuery = true
