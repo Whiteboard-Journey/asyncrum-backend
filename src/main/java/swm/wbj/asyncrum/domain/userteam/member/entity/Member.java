@@ -7,6 +7,7 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
+import swm.wbj.asyncrum.global.type.RoleType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
