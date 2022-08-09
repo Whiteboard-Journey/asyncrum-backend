@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.service.RecordService;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 @RestController
 @Log4j2
@@ -39,11 +40,12 @@ public class RecordController {
 
     @GetMapping("/api/v1/records")
     public ResponseEntity<?> readAllRecord(
+            @RequestParam(value = "scope") ScopeType scope,
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
     {
         try{
-            RecordReadAllResponseDto responseDto = recordService.readAllRecord(pageIndex, topId);
+            RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId);
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
