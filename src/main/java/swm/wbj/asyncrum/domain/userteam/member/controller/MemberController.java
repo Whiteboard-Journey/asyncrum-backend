@@ -54,7 +54,7 @@ public class MemberController {
     }
 
 
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateMember(@PathVariable Long id, @RequestBody MemberUpdateRequestDto requestDto){
         try {
             MemberUpdateResponseDto responseDto = memberService.updateMember(id, requestDto);
@@ -65,7 +65,7 @@ public class MemberController {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable("id") Long id){
         try {
             memberService.deleteMember(id);
