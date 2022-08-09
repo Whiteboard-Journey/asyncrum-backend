@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
 import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,11 +47,12 @@ public class WhiteboardController {
     // 화이트보드 문서 전체 조희
     @GetMapping
     public ResponseEntity<?> readAllWhiteboard(
+            @RequestParam(value = "scope") ScopeType scope,
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
     {
         try {
-            WhiteboardReadAllResponseDto responseDto = whiteboardService.readAllWhiteboard(pageIndex, topId);
+            WhiteboardReadAllResponseDto responseDto = whiteboardService.readAllWhiteboard(scope, pageIndex, topId);
 
             return ResponseEntity.ok(responseDto);
         }
@@ -60,7 +62,7 @@ public class WhiteboardController {
     }
 
     // 화이트보드 문서 정보 업데이트
-    @PutMapping("{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateWhiteboard(@PathVariable Long id, @RequestBody WhiteboardUpdateRequestDto requestDto) {
         try {
             WhiteboardUpdateResponseDto responseDto = whiteboardService.updateWhiteboard(id, requestDto);
@@ -73,7 +75,7 @@ public class WhiteboardController {
     }
 
     // 화이트보드 문서 삭제
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteWhiteboard(@PathVariable Long id) {
         try {
             whiteboardService.deleteWhiteboard(id);

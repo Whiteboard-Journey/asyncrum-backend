@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.media;
+package swm.wbj.asyncrum.global.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
