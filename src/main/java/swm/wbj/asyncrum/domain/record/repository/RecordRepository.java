@@ -27,22 +27,24 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     );
 
     @Query(
-            value = "SELECT * FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")",
-            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")",
+            value = "SELECT * FROM record AS r WHERE (r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId)",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE (r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId)",
             nativeQuery = true
     )
     Page<Record> findAllByTeam(
             @Param("teamId") Long teamId,
+            @Param("memberId") Long memberId,
             Pageable pageable
     );
 
     @Query(
-            value = "SELECT * FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\" AND r.record_id <= :topId)",
-            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\" AND r.record_id <= :topId)",
+            value = "SELECT * FROM record AS r WHERE (r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId) AND (r.record_id <= :topId)",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE (r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId) AND (r.record_id <= :topId)",
             nativeQuery = true
     )
     Page<Record> findAllByTeamAndTopId(
             @Param("teamId") Long teamId,
+            @Param("memberId") Long memberId,
             @Param("topId") Long topId,
             Pageable pageable
     );

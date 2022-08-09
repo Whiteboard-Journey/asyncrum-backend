@@ -54,25 +54,24 @@ public class RecordServiceImpl implements RecordService{
                 }
                 break;
             case USER:
-                switch (scope) {
-                    case TEAM:
-                        if(topId == 0) {
-                            recordPage = recordRepository.findAllByTeam(currentMember.getTeam().getId(), pageable);
-                        }
-                        else {
-                            recordPage = recordRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), topId, pageable);
-                        }
-                        break;
-                    case PRIVATE:
-                        if(topId == 0) {
-                            recordPage = recordRepository.findAllByAuthor(currentMember.getId(), pageable);
-                        }
-                        else {
-                            recordPage = recordRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
-                        }
-                        break;
-                    default:
-                        throw new IllegalArgumentException("허용되지 않은 범위입니다.");
+                if (scope == ScopeType.TEAM && currentMember.getTeam() != null) {
+                    if(topId == 0) {
+                        recordPage = recordRepository.findAllByTeam(currentMember.getTeam().getId(), currentMember.getId(), pageable);
+                    }
+                    else {
+                        recordPage = recordRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
+                    }
+                }
+                else if (scope == ScopeType.PRIVATE || currentMember.getTeam() == null) {
+                    if(topId == 0) {
+                        recordPage = recordRepository.findAllByAuthor(currentMember.getId(), pageable);
+                    }
+                    else {
+                        recordPage = recordRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
+                    }
+                }
+                else {
+                    throw new IllegalArgumentException("허용되지 않은 범위입니다.");
                 }
                 break;
             case GUEST:
