@@ -10,5 +10,4 @@ import java.util.Set;
 public class RecordUpdateResponseDto {
     private Long id;
     private String preSignedURL;
-    private Set<Long> seenMemberIdGroup;
 }
