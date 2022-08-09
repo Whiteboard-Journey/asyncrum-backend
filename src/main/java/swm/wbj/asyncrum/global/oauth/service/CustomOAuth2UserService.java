@@ -76,7 +76,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = Member.createMember()
                 .email(userInfo.getEmail())
                 .oauthId(userInfo.getId())
-                .username(userInfo.getName())
+                .fullname(userInfo.getName())
                 .profileImageUrl(userInfo.getImageUrl())
                 .roleType(RoleType.USER)
                 .providerType(providerType)
@@ -87,12 +87,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 기존 Member 정보 갱신
     private Member updateMember(Member member, OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !member.getUsername().equals(userInfo.getName())) {
-            member.updateUsername(userInfo.getName());
-        }
-
-        if (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl())) {
-            member.updateProfileImageUrl(userInfo.getImageUrl());
+        if ((userInfo.getName() != null && !member.getFullname().equals(userInfo.getName())) &&
+                (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl()))) {
+            // fullname은 다시 업데이트 x
+            member.update(null, userInfo.getImageUrl());
         }
 
         return member;

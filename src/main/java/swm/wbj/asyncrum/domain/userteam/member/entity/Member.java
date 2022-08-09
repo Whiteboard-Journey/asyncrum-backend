@@ -8,6 +8,8 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
+import swm.wbj.asyncrum.global.type.ScopeType;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -50,9 +52,12 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(name = "fullname", length = 100)
-    @NotNull
     @Size(max = 100)
     private String fullname;
+
+    @Column(name = "nickname", length = 100)
+    @Size(max = 100)
+    private String nickname;
 
     @Column(name = "profile_image_url", length = 512)
     @Size(max = 512)
@@ -81,17 +86,13 @@ public class Member extends BaseEntity {
     @NotNull
     private ProviderType providerType;
 
-    @Column(name = "username", length = 100)
-    @Size(max = 100)
-    private String username;
-
     @Builder(builderMethodName = "createMember")
     public Member(
             @NotNull @Size(max = 512) String email,
             @Size(max = 64) String oauthId,
             @Size(max = 128) String password,
-            @Size(max = 100) String username,
             @Size(max = 100) String fullname,
+            @Size(max = 100) String nickname,
             @Size(max = 512) String profileImageUrl,
             @NotNull RoleType roleType,
             @NotNull ProviderType providerType
@@ -99,22 +100,17 @@ public class Member extends BaseEntity {
         this.email = email;
         this.oauthId = oauthId;
         this.password = password;
-        this.username = username;
         this.fullname = fullname;
+        this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
-    public void updateUsername(String username) {
-        this.username = username;
+    public void update(String fullname, String profileImageUrl) {
+        if(fullname != null ) this.fullname = fullname;
+        if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
     }
-
-    public void updateProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
-
-    public void updateNickname(String nickname) { this.fullname = nickname; }
 
     public void updateRole(RoleType roleType) {
         this.roleType = roleType;

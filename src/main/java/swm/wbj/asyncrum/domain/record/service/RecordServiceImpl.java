@@ -94,7 +94,7 @@ public class RecordServiceImpl implements RecordService{
 
         String recordFileKey = createRecordFileKey(memberService.getCurrentMember().getId(), recordId);
 
-        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.WEBM);
+        String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.MP4);
 
 
         record.update(null, null, recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME), null);
@@ -125,11 +125,12 @@ public class RecordServiceImpl implements RecordService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 녹화가 존재하지 않습니다."));
 
         record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, ScopeType.of(requestDto.getScope()));
-        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.WEBM);
+        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
+
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
 
     public String createRecordFileKey(Long memberId, Long recordId) {
-        return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + ".webm";
+        return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + "." + FileType.MP4.getName();
     }
 }
