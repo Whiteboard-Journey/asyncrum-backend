@@ -3,6 +3,7 @@ package swm.wbj.asyncrum.domain.whiteboard.dto;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 @Data
 public class WhiteboardCreateRequestDto {
@@ -15,7 +16,7 @@ public class WhiteboardCreateRequestDto {
         return Whiteboard.createWhiteboard()
                 .title(title)
                 .description(description)
-                .scope(scope)
+                .scope(ScopeType.of(scope))
                 .author(author)
                 .build();
     }

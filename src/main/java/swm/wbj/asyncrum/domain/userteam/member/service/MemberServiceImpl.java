@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.utils.UrlService;
@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
             throw new IllegalArgumentException("허용되지 않은 작업입니다.");
         }
 
-        int SIZE_PER_PAGE = 10;
+        int SIZE_PER_PAGE = 12;
         Page<Member> memberPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
 
@@ -124,7 +124,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.updateNickname(requestDto.getFullname());
+        member.update(requestDto.getFullname(), requestDto.getProfileImageUrl());
         return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 

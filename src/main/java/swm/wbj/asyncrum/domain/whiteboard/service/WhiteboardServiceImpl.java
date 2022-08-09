@@ -13,8 +13,9 @@ import swm.wbj.asyncrum.domain.whiteboard.dto.*;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.domain.whiteboard.repository.WhiteboardRepository;
 import swm.wbj.asyncrum.global.media.AwsService;
-import swm.wbj.asyncrum.global.media.FileType;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.FileType;
+import swm.wbj.asyncrum.global.type.RoleType;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 import java.io.IOException;
 
@@ -71,11 +72,16 @@ public class WhiteboardServiceImpl implements WhiteboardService {
      * 사용자의 role에 따라 fetch policy가 달라짐
      * Role.USER : 자신의 화이트보드 문서만 조회
      * Role.ADMIN : 전체 화이트보드 문서 조회
+     *
+     * 사용자가 설정한 scope에 따라 fetch poliy가 달라짐
+     * Scope.ALL : 전체 범위로 설정된 화이트보드 문서만 조회
+     * Scope.TEAM : 사용자가 속한 팀 범위로 설정된 화이트보드 문서만 조회
+     * Scope.PRIVATE : 사용자 본인만 볼 수 있는 화이트보드 문서만 조회
      */
     @Transactional(readOnly = true)
     @Override
-    public WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 10;
+    public WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex, Long topId) {
+        int SIZE_PER_PAGE = 12;
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "whiteboard_id");
 
@@ -93,11 +99,25 @@ public class WhiteboardServiceImpl implements WhiteboardService {
                 }
                 break;
             case USER:
-                if(topId == 0) {
-                    whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(),pageable);
-                }
-                else {
-                    whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(currentMember.getId(),topId, pageable);
+                switch (scope) {
+                    case TEAM:
+                        if(topId == 0) {
+                            whiteboardPage = whiteboardRepository.findAllByTeam(currentMember.getTeam().getId(), pageable);
+                        }
+                        else {
+                            whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), topId, pageable);
+                        }
+                        break;
+                    case PRIVATE:
+                        if(topId == 0) {
+                            whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(), pageable);
+                        }
+                        else {
+                            whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("허용되지 않은 범위입니다.");
                 }
                 break;
             case GUEST:
@@ -116,7 +136,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 화이트보드 문서가 존재하지 않습니다."));
 
-        whiteboard.update(requestDto.getTitle(), requestDto.getDescription(), null, null, requestDto.getScope());
+        whiteboard.update(requestDto.getTitle(), requestDto.getDescription(), null, null, ScopeType.of(requestDto.getScope()));
 
         String preSignedURL = awsService.generatePresignedURL(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME, FileType.TLDR);
 

@@ -19,7 +19,7 @@ import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepo
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.config.properties.AppProperties;
 import swm.wbj.asyncrum.global.config.properties.CorsProperties;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.exception.RestAuthenticationEntryPoint;
 import swm.wbj.asyncrum.global.oauth.filter.TokenAuthenticationFilter;
 import swm.wbj.asyncrum.global.oauth.handler.OAuth2AuthenticationFailureHandler;

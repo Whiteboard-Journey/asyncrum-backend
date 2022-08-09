@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.exception.OAuthProviderMissMatchException;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfo;
@@ -87,12 +87,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     // 기존 Member 정보 갱신
     private Member updateMember(Member member, OAuth2UserInfo userInfo) {
-        if (userInfo.getName() != null && !member.getFullname().equals(userInfo.getName())) {
-            member.updateFullname(userInfo.getName());
-        }
-
-        if (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl())) {
-            member.updateProfileImageUrl(userInfo.getImageUrl());
+        if ((userInfo.getName() != null && !member.getFullname().equals(userInfo.getName())) &&
+                (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl()))) {
+            // fullname은 다시 업데이트 x
+            member.update(null, userInfo.getImageUrl());
         }
 
         return member;

@@ -7,6 +7,9 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
+import swm.wbj.asyncrum.global.type.RoleType;
+import swm.wbj.asyncrum.global.type.ScopeType;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -104,15 +107,10 @@ public class Member extends BaseEntity {
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
-    public void updateFullname(String fullname) {
-        this.fullname = fullname;
+    public void update(String fullname, String profileImageUrl) {
+        if(fullname != null ) this.fullname = fullname;
+        if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
     }
-
-    public void updateProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
-
-    public void updateNickname(String nickname) { this.nickname = nickname; }
 
     public void updateRole(RoleType roleType) {
         this.roleType = roleType;

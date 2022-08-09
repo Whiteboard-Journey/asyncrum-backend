@@ -11,12 +11,16 @@ import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.entity.RoleType;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
-import swm.wbj.asyncrum.global.media.FileType;
+import swm.wbj.asyncrum.global.type.FileType;
+import swm.wbj.asyncrum.global.type.ScopeType;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,19 +30,19 @@ public class RecordServiceImpl implements RecordService{
     private final RecordRepository recordRepository;
     private final MemberService memberService;
     private final AwsService awsService;
-
+    private final List<Long> ListSeenMemberIdGroup;
     private static final String RECORD_BUCKET_NAME = "records";
     private static final String RECORD_FILE_PREFIX ="record";
 
     @Override
     @Transactional(readOnly = true)
-    public RecordReadAllResponseDto readAllRecord(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 10;
+    public RecordReadAllResponseDto readAllRecord(ScopeType scope, Integer pageIndex, Long topId) {
+        int SIZE_PER_PAGE = 12;
         Page<Record> recordPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "record_id");
 
-        Member member = memberService.getCurrentMember();
-        RoleType memberRoleType = member.getRoleType();
+        Member currentMember = memberService.getCurrentMember();
+        RoleType memberRoleType = currentMember.getRoleType();
 
         switch (memberRoleType) {
             case ADMIN:
@@ -50,11 +54,25 @@ public class RecordServiceImpl implements RecordService{
                 }
                 break;
             case USER:
-                if(topId == 0) {
-                    recordPage = recordRepository.findAllByAuthor(member.getId(),pageable);
-                }
-                else {
-                    recordPage = recordRepository.findAllByAuthorAndTopId(member.getId(),topId, pageable);
+                switch (scope) {
+                    case TEAM:
+                        if(topId == 0) {
+                            recordPage = recordRepository.findAllByTeam(currentMember.getTeam().getId(), pageable);
+                        }
+                        else {
+                            recordPage = recordRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), topId, pageable);
+                        }
+                        break;
+                    case PRIVATE:
+                        if(topId == 0) {
+                            recordPage = recordRepository.findAllByAuthor(currentMember.getId(), pageable);
+                        }
+                        else {
+                            recordPage = recordRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("허용되지 않은 범위입니다.");
                 }
                 break;
             case GUEST:
@@ -63,33 +81,6 @@ public class RecordServiceImpl implements RecordService{
         }
 
         return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public RecordReadDailyResponseDto readDailyRecord(Long topId, Long teamId) {
-        List<Record> recordPage;
-
-        Member member = memberService.getCurrentMember();
-        RoleType memberRoleType = member.getRoleType();
-        switch (memberRoleType){
-
-            case ADMIN:
-            case USER:
-                if(topId == 0) {
-                    recordPage = recordRepository.findAll();
-                }
-                else {
-                    recordPage = recordRepository.findAllByMoreThanTopId(topId, teamId);
-                    recordPage.addAll(recordRepository.findAllByLessThanTopId(topId, teamId));
-                }
-                break;
-            case GUEST:
-            default:
-                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
-
-        }
-        return new RecordReadDailyResponseDto(recordPage);
     }
 
     @Override
@@ -133,8 +124,9 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 녹화가 존재하지 않습니다."));
 
-        record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, requestDto.getScope());
+        record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, ScopeType.of(requestDto.getScope()));
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
+
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
 
