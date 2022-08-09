@@ -124,7 +124,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.updateNickname(requestDto.getFullname());
+        member.update(requestDto.getFullname(), requestDto.getProfileImageUrl());
         return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 
