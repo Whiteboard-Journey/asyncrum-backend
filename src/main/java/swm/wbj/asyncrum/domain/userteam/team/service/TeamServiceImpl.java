@@ -13,6 +13,7 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
 import swm.wbj.asyncrum.global.mail.MailService;
+import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
 
 @RequiredArgsConstructor
@@ -45,8 +46,27 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional(readOnly = true)
     public TeamReadResponseDto readTeam(Long id) {
-        Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
+        Team team;
+        Member currentMember = memberService.getCurrentMember();
+        RoleType memberRoleType = currentMember.getRoleType();
+
+        switch (memberRoleType) {
+            case ADMIN:
+                team = teamRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
+                break;
+            case USER:
+                Team currentTeam = currentMember.getTeam();
+                if (currentTeam == null) {
+                    throw new IllegalArgumentException("팀에 속해있지 않습니다.");
+                }
+                team = teamRepository.findById(currentTeam.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
+                break;
+            case GUEST:
+            default:
+                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+        }
 
         return new TeamReadResponseDto(team);
     }
