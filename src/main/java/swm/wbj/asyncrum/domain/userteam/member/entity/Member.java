@@ -119,4 +119,8 @@ public class Member extends BaseEntity {
     public void updateTeam(Team team) {
         this.team = team;
     }
+
+    public void deleteTeam() {
+        this.team = null;
+    }
 }
