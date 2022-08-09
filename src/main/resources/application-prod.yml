@@ -131,4 +131,4 @@ cloud:
 
 # Server URL
 server:
-  url: http://wbj-vpc-alb-private-152462774.ap-northeast-2.elb.amazonaws.com:8080
+  url: http://api.asyncrum.com:8080
