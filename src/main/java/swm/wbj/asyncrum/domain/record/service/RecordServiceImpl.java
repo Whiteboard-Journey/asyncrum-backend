@@ -126,6 +126,7 @@ public class RecordServiceImpl implements RecordService{
 
         record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, ScopeType.of(requestDto.getScope()));
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
+
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
 

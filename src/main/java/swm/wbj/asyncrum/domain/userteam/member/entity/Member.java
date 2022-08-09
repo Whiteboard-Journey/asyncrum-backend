@@ -10,6 +10,7 @@ import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
