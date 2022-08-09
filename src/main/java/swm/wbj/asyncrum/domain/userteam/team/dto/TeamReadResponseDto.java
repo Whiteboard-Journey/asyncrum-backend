@@ -9,12 +9,14 @@ import java.util.List;
 @Data
 public class TeamReadResponseDto {
 
+    private Long id;
     private String name;
     private String code;
     private String pictureUrl;
     private List<Member> members;
 
     public TeamReadResponseDto(Team team) {
+        this.id = team.getId();
         this.name = team.getName();
         this.code = team.getCode();
         this.pictureUrl = team.getPictureUrl();
