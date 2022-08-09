@@ -28,7 +28,7 @@ public class Team extends BaseEntity {
     @Column
     private String pictureUrl;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
     private List<Member> members = new ArrayList<>();
 
     @Builder
