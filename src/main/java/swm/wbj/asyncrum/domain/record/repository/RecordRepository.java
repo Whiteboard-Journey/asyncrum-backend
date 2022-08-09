@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import swm.wbj.asyncrum.domain.record.dto.RecordReadDailyResponseDto;
 import swm.wbj.asyncrum.domain.record.entity.Record;
+import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
@@ -27,26 +26,27 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             Pageable pageable
     );
 
-    // 팀에 속한 멤버들의 레코드 리스트 반환 (특정 아이디보다 큰 값들만 반환)
     @Query(
-            value = "select * from record as r where r.member_id in (select member_id from member as m where m.team_id = :teamId) and (r.record_id > :topId)",
+            value = "SELECT * FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\")",
             nativeQuery = true
     )
-    List<Record> findAllByMoreThanTopId(
-            @Param("topId") Long topId,
-            @Param("teamId") Long teamId
-
+    Page<Record> findAllByTeam(
+            @Param("teamId") Long teamId,
+            Pageable pageable
     );
-
 
     @Query(
-            value = "select * from record as r where r.member_id in (select member_id from member as m where m.team_id = :teamId) and (r.record_id <= :topId)",
+            value = "SELECT * FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\" AND r.record_id <= :topId)",
+            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.member_id in (select member_id from member as m where m.team_id = :teamId) AND (r.scope = \"TEAM\" AND r.record_id <= :topId)",
             nativeQuery = true
     )
-    List<Record> findAllByLessThanTopId(
+    Page<Record> findAllByTeamAndTopId(
+            @Param("teamId") Long teamId,
             @Param("topId") Long topId,
-            @Param("teamId") Long teamId
+            Pageable pageable
     );
+
 
 
 

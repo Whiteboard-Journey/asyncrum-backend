@@ -6,6 +6,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
+import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+//@ToString
 @Builder
 public class Record extends BaseEntity{
 
@@ -36,7 +37,8 @@ public class Record extends BaseEntity{
     private String description;
 
     @Column
-    private String scope;
+    @Enumerated(EnumType.STRING)
+    private ScopeType scope;
 
 
 //    @JsonIgnore
@@ -46,14 +48,14 @@ public class Record extends BaseEntity{
     private Member author;
 
     @Builder(builderMethodName = "createRecord")
-    public Record(String title, String description, String scope, Member author) {
+    public Record(String title, String description, ScopeType scope, Member author) {
         this.title = title;
         this.description = description;
         this.scope = scope;
         this.author = author;
     }
 
-    public void update( String title, String description, String recordFileKey, String recordFileUrl, String scope){
+    public void update( String title, String description, String recordFileKey, String recordFileUrl, ScopeType scope){
         if(title != null) this.title = title;
         if(description != null) this.description = description;
         if(recordFileKey != null) this.recordFileKey = recordFileKey;
