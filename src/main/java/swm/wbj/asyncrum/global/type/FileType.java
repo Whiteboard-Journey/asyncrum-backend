@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum FileType {
 
     MP4("video/mp4", "mp4"),
-    TLDR("application/octet-stream", "tldr");
+    TLDR("application/octet-stream", "tldr"),
+    JPEG("image/jpeg", "jpeg");
 
     private final String contentType;
     private final String name;
