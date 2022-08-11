@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.userteam.team.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
@@ -26,7 +27,11 @@ public class Team extends BaseEntity {
     private String code;
 
     @Column
-    private String pictureUrl;
+    @JsonIgnore
+    private String profileImageFileKey;
+
+    @Column
+    private String profileImageUrl;
 
     @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
     private List<Member> members = new ArrayList<>();
@@ -35,12 +40,13 @@ public class Team extends BaseEntity {
     public Team(String name, String code, String pictureUrl) {
         this.name = name;
         this.code = code;
-        this.pictureUrl = pictureUrl;
+        this.profileImageUrl = pictureUrl;
     }
 
-    public void update(String name, String pictureUrl) {
+    public void update(String name, String profileImageFileKey, String profileImageUrl) {
         this.name = name;
-        this.pictureUrl = pictureUrl;
+        if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public void addMember(Member member) {
