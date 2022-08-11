@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService{
     private final AwsService awsService;
 
     private static final String IMAGE_BUCKET_NAME = "images";
-    private static final String IMAGE_FILE_PREFIX ="image";
+    private static final String IMAGE_FILE_PREFIX ="member_image";
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
         String email = requestDto.getEmail();

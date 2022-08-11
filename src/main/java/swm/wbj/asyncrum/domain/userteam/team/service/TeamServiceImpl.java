@@ -13,8 +13,12 @@ import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
 import swm.wbj.asyncrum.global.mail.MailService;
+import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Transactional
@@ -25,6 +29,11 @@ public class TeamServiceImpl implements TeamService {
     private final MemberService memberService;
     private final MailService mailService;
     private final UrlService urlService;
+
+    private final AwsService awsService;
+
+    private static final String IMAGE_BUCKET_NAME = "images";
+    private static final String IMAGE_FILE_PREFIX ="team_image";
 
     // 팀 생성
     @Override
@@ -165,7 +174,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        team.update(requestDto.getName(), requestDto.getPictureUrl());
+        team.update(null, null, requestDto.getPictureUrl());
 
         return new TeamUpdateResponseDto(teamRepository.save(team).getId());
     }
@@ -178,6 +187,22 @@ public class TeamServiceImpl implements TeamService {
 
         team.getMembers().forEach(Member::deleteTeam);
         teamRepository.delete(team);
+    }
+
+    @Override
+    public TeamImageCreateResponseDto createImage(Long id) throws IOException {
+
+
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
+        String imageFileKey = createImageFileKey(team.getId());
+        String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
+        team.update(null, imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
+        return new TeamImageCreateResponseDto(id, preSignedURL);
+    }
+
+    public String createImageFileKey(Long memberId) {
+        return IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
 
 }
