@@ -13,15 +13,15 @@ import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
 import swm.wbj.asyncrum.global.error.ErrorResponseDto;
 
 @RestController
-@RequestMapping("/api/v1/images")
+@RequestMapping("/api/v1/member/images")
 @Log4j2
 @RequiredArgsConstructor
-public class ImageController {
+public class MemberImageController {
 
     private final MemberService memberService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> createImage(@PathVariable("id") Long id) {
+    public ResponseEntity<?> createMemberImage(@PathVariable("id") Long id) {
         try {
             ImageCreateResponseDto responseDto = memberService.createImage(id);
 
