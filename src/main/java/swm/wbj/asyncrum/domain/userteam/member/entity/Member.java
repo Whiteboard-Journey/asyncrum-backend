@@ -63,6 +63,12 @@ public class Member extends BaseEntity {
     @Size(max = 512)
     private String profileImageUrl;
 
+    @JsonIgnore
+    private String imageFileKey;
+
+    @Column
+    private String imageFileUrl;
+
     @Column(name = "role_type", length = 20)
     @Enumerated(EnumType.STRING)
     @NotNull

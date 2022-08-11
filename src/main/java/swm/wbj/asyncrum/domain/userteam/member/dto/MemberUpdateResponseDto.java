@@ -8,5 +8,6 @@ import lombok.Data;
 public class MemberUpdateResponseDto {
 
     private Long id;
+    private String preSignedURL;
 
 }

@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.whiteboard.dto.WhiteboardUpdateResponseDto;
+import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
@@ -25,6 +28,12 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final UrlService urlService;
+    private final AwsService awsService;
+
+    private static final String IMAGE_BUCKET_NAME = "images";
+    private static final String IMAGE_FILE_PREFIX ="image";
+
+
 
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
@@ -124,8 +133,9 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.update(requestDto.getFullname(), requestDto.getProfileImageUrl());
-        return new MemberUpdateResponseDto(memberRepository.save(member).getId());
+        String preSignedURL = awsService.generatePresignedURL(member.getImageFileKey(), IMAGE_BUCKET_NAME, FileType.JPEG);
+        member.update(requestDto.getFullname(), preSignedURL);
+        return new MemberUpdateResponseDto(memberRepository.save(member).getId(), preSignedURL);
     }
 
     @Override
@@ -158,4 +168,10 @@ public class MemberServiceImpl implements MemberService{
         member.updateRole(RoleType.USER);
         memberRepository.save(member);
     }
+
+    public String createImageFileKey(Long memberId, Long imageId) {
+        return IMAGE_FILE_PREFIX + "_" + memberId + "_" + imageId + "." + FileType.JPEG.getName();
+    }
+
+
 }

@@ -84,4 +84,5 @@ public class AwsService {
     public String buildFileName(String uploadFileKey, String dirName) {
         return dirName + "/" + uploadFileKey;
     }
+
 }

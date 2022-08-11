@@ -7,5 +7,4 @@ public class MemberUpdateRequestDto {
 
     private String fullname;
     private String profileImageUrl;
-
 }
