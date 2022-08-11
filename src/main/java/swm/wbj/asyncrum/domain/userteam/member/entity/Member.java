@@ -106,7 +106,6 @@ public class Member extends BaseEntity {
         this.password = password;
         this.fullname = fullname;
         this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
