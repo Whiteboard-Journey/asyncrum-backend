@@ -19,7 +19,7 @@ public class TeamReadResponseDto {
         this.id = team.getId();
         this.name = team.getName();
         this.code = team.getCode();
-        this.pictureUrl = team.getPictureUrl();
+        this.pictureUrl = team.getProfileImageUrl();
         this.members = team.getMembers();
     }
 

@@ -9,13 +9,11 @@ public class TeamCreateRequestDto {
 
     private String name;
     private String code;
-    private String pictureUrl;
 
     public Team toEntity() {
         return Team.builder()
                 .name(name)
                 .code(code)
-                .pictureUrl(pictureUrl)
                 .build();
     }
 

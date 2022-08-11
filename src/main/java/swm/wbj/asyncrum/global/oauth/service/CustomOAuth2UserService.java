@@ -90,7 +90,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if ((userInfo.getName() != null && !member.getFullname().equals(userInfo.getName())) &&
                 (userInfo.getImageUrl() != null && !member.getProfileImageUrl().equals(userInfo.getImageUrl()))) {
             // fullname은 다시 업데이트 x
-            member.update(null, userInfo.getImageUrl());
+            member.update(null, null, userInfo.getImageUrl());
         }
 
         return member;
