@@ -59,6 +59,10 @@ public class Member extends BaseEntity {
     @Size(max = 100)
     private String nickname;
 
+    @Column
+    @JsonIgnore
+    private String profileImageFileKey;
+
     @Column(name = "profile_image_url", length = 512)
     @Size(max = 512)
     private String profileImageUrl;
@@ -107,8 +111,9 @@ public class Member extends BaseEntity {
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
     }
 
-    public void update(String fullname, String profileImageUrl) {
+    public void update(String fullname, String profileImageFileKey, String profileImageUrl ) {
         if(fullname != null ) this.fullname = fullname;
+        if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
         if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
     }
 
