@@ -97,7 +97,6 @@ public class Member extends BaseEntity {
             @Size(max = 128) String password,
             @Size(max = 100) String fullname,
             @Size(max = 100) String nickname,
-            @Size(max = 512) String profileImageUrl,
             @NotNull RoleType roleType,
             @NotNull ProviderType providerType
     ) {

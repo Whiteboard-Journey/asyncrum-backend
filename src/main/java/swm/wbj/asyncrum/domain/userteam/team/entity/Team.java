@@ -40,11 +40,12 @@ public class Team extends BaseEntity {
     public Team(String name, String code, String pictureUrl) {
         this.name = name;
         this.code = code;
-        this.profileImageUrl = pictureUrl;
     }
 
     public void update(String name, String profileImageFileKey, String profileImageUrl) {
         this.name = name;
+        if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
+        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl;
     }
 
     public void addMember(Member member) {
