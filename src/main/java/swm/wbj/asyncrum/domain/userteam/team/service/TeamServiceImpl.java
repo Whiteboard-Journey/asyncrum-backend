@@ -174,7 +174,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        team.update(null, null, requestDto.getPictureUrl());
+        team.update(requestDto.getName(), null, null);
 
         return new TeamUpdateResponseDto(teamRepository.save(team).getId());
     }

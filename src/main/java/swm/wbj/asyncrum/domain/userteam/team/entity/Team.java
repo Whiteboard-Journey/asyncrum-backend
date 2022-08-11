@@ -45,8 +45,6 @@ public class Team extends BaseEntity {
 
     public void update(String name, String profileImageFileKey, String profileImageUrl) {
         this.name = name;
-        if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
-        this.profileImageUrl = profileImageUrl;
     }
 
     public void addMember(Member member) {
