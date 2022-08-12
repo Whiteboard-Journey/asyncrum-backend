@@ -6,6 +6,5 @@ import lombok.Data;
 public class TeamUpdateRequestDto {
 
     private String name;
-    private String pictureUrl;
 
 }

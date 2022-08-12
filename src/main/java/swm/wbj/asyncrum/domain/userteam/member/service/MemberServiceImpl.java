@@ -11,10 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.whiteboard.dto.WhiteboardCreateResponseDto;
+import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
+import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.utils.UrlService;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +31,10 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final UrlService urlService;
+    private final AwsService awsService;
 
+    private static final String IMAGE_BUCKET_NAME = "images";
+    private static final String IMAGE_FILE_PREFIX ="member_image";
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
         String email = requestDto.getEmail();
@@ -124,7 +133,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
 
-        member.update(requestDto.getFullname(), requestDto.getProfileImageUrl());
+        member.update(requestDto.getFullname(), null, null);
         return new MemberUpdateResponseDto(memberRepository.save(member).getId());
     }
 
@@ -157,5 +166,21 @@ public class MemberServiceImpl implements MemberService{
 
         member.updateRole(RoleType.USER);
         memberRepository.save(member);
+    }
+
+    @Override
+    public ImageCreateResponseDto createImage(Long id) throws IOException {
+
+
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        String imageFileKey = createImageFileKey(member.getId());
+        String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
+        member.update(null, imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
+        return new ImageCreateResponseDto(id, preSignedURL);
+    }
+
+    public String createImageFileKey(Long memberId) {
+        return IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
 }

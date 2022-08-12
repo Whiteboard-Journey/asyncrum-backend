@@ -5,6 +5,8 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamUpdateRequestDto;
 
+import java.io.IOException;
+
 
 public interface MemberService {
 
@@ -17,4 +19,7 @@ public interface MemberService {
     void deleteMember(Long id);
     void sendEmailVerificationLinkByEmail() throws Exception;
     void verifyEmailVerificationLink(Long memberId) throws Exception;
+
+    ImageCreateResponseDto createImage(Long id) throws IOException;
+
 }
