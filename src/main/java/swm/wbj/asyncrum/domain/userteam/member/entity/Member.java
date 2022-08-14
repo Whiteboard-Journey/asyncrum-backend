@@ -98,7 +98,9 @@ public class Member extends BaseEntity {
             @Size(max = 100) String fullname,
             @Size(max = 100) String nickname,
             @NotNull RoleType roleType,
-            @NotNull ProviderType providerType
+            @NotNull ProviderType providerType,
+            @NotNull @Size(max = 512) String profileImageUrl
+
     ) {
         this.email = email;
         this.oauthId = oauthId;
@@ -107,6 +109,7 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public void update(String fullname, String profileImageFileKey, String profileImageUrl ) {
