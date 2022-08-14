@@ -177,6 +177,7 @@ public class MemberServiceImpl implements MemberService{
         String imageFileKey = createImageFileKey(member.getId());
         String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
         member.update(null, imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
+        memberRepository.save(member);
         return new ImageCreateResponseDto(id, preSignedURL);
     }
 
