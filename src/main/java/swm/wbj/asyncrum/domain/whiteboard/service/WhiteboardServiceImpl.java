@@ -84,7 +84,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         int SIZE_PER_PAGE = 12;
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "whiteboard_id");
-
+        int SIZE_ALL_PAGE = whiteboardRepository.findAll().size();
         Member currentMember = memberService.getCurrentMember();
         RoleType memberRoleType = currentMember.getRoleType();
 
@@ -124,7 +124,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
                 throw new IllegalArgumentException("허용되지 않은 작업입니다.");
         }
 
-        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
+        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast(), SIZE_ALL_PAGE);
     }
 
     /**
