@@ -9,6 +9,7 @@ import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
