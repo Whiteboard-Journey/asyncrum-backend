@@ -82,7 +82,7 @@ public class RecordServiceImpl implements RecordService{
                 throw new IllegalArgumentException("허용되지 않은 작업입니다.");
         }
 
-        return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast(),seenMemberIdGroup);
+        return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class RecordServiceImpl implements RecordService{
         String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.MP4);
 
 
-        record.update(null, null, recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME), null);
+        record.update(null, null, recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME), null, seenMemberIdGroup);
 
         return new RecordCreateResponseDto(record.getId(), preSignedURL);
     }
@@ -126,10 +126,10 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 녹화가 존재하지 않습니다."));
         //본 사람 추가 후 리스트 업데이트
-        ListSeenMemberIdGroup.add(memberService.getCurrentMember().getId());
-//        Set<Long> seenMemberIdGroup = Set.copyOf(ListSeenMemberIdGroup);
+        record.getSeenMemberIdGroup().add(memberService.getCurrentMember().getId());
 
-        record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, ScopeType.of(requestDto.getScope()));
+
+        record.update(requestDto.getTitle(), requestDto.getDescription(),null,null, ScopeType.of(requestDto.getScope()),null);
         String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
 
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);

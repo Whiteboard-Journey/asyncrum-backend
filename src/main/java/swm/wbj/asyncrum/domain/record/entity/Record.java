@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.thymeleaf.expression.Sets;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -42,6 +43,12 @@ public class Record extends BaseEntity{
     private ScopeType scope;
 
 
+    @ElementCollection
+    @CollectionTable(name="listOfSeenUsers")
+    @Column(name="SEEN_NAME")
+    private Set<Long> seenMemberIdGroup = new HashSet<>();
+
+
 //    @JsonIgnore
     @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -49,18 +56,21 @@ public class Record extends BaseEntity{
     private Member author;
 
     @Builder(builderMethodName = "createRecord")
-    public Record(String title, String description, ScopeType scope, Member author) {
+    public Record(String title, String description, ScopeType scope, Member author, Set<Long> seenMemberIdGroup ) {
         this.title = title;
         this.description = description;
         this.scope = scope;
         this.author = author;
+        this.seenMemberIdGroup = seenMemberIdGroup;
+
     }
 
-    public void update( String title, String description, String recordFileKey, String recordFileUrl, ScopeType scope){
+    public void update( String title, String description, String recordFileKey, String recordFileUrl, ScopeType scope, Set<Long> seenMemberIdGroup){
         if(title != null) this.title = title;
         if(description != null) this.description = description;
         if(recordFileKey != null) this.recordFileKey = recordFileKey;
         if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
         if (scope != null) this.scope = scope;
+        if (seenMemberIdGroup != null) this.seenMemberIdGroup = seenMemberIdGroup;
     }
 }

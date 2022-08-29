@@ -14,6 +14,5 @@ public class RecordReadAllResponseDto {
     private List<Record> records;
     private Pageable pageable;
     private Boolean isList;
-    private Set<Long> seenMemberIdGroup;
 
 }
