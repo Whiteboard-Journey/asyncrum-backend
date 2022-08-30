@@ -41,7 +41,7 @@ public class AwsService {
             // Generate the presigned URL Request
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucket, buildFileName(uploadFileKey, dirName))
-                            .withContentType(fileType.getContentType())
+                            .withContentType(fileType.getMimeType())
                             .withMethod(HttpMethod.PUT)
                             .withExpiration(expiration);
 
