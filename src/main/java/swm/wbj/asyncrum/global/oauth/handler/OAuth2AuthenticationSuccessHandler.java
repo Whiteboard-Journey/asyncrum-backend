@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.global.config.properties.AppProperties;
+import swm.wbj.asyncrum.global.properties.AppProperties;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.info.OAuth2UserInfo;

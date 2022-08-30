@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.config.properties;
+package swm.wbj.asyncrum.global.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +16,4 @@ public class CorsProperties {
     private String allowedMethods;
     private String allowedHeaders;
     private Long maxAge;
-
 }

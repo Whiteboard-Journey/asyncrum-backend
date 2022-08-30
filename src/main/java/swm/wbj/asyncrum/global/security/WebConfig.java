@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.config.security;
+package swm.wbj.asyncrum.global.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

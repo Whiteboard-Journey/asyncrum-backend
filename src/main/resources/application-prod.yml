@@ -131,4 +131,4 @@ cloud:
 
 # Server URL
 server:
-  url: http://api.asyncrum.com:8080
+  url: https://api.asyncrum.com:8080
