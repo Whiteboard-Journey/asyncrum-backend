@@ -13,7 +13,7 @@ public interface TeamService {
     TeamReadResponseDto readTeam(Long id);
 
     // 팀 전체 조회
-    TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId);
+    TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId, Integer SIZE_PER_PAGE);
 
     // 팀원 추가: 초대 링크 방식
     void sendTeamInvitationLinkByEmail(Long id,TeamMemberAddRequestDto requestDto) throws Exception;

@@ -37,25 +37,33 @@ public class Team extends BaseEntity {
     private List<Member> members = new ArrayList<>();
 
     @Builder
-    public Team(String name, String code, String pictureUrl) {
+    public Team(String name, String code) {
+
         this.name = name;
         this.code = code;
+
     }
 
     public void update(String name, String profileImageFileKey, String profileImageUrl) {
+
         this.name = name;
         if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
         if(profileImageUrl != null) this.profileImageUrl = profileImageUrl;
+
     }
 
     public void addMember(Member member) {
+
         member.updateTeam(this);
         this.members.add(member);
+
     }
 
     public void removeMember(Member member) {
+
         this.members.remove(member);
         member.updateTeam(null);
+
     }
 
 }
