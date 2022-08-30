@@ -1,18 +1,20 @@
 package swm.wbj.asyncrum.global.async;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 
 import java.lang.reflect.Method;
 
+@Slf4j
 public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
 
     @Override
     public void handleUncaughtException(Throwable ex, Method method, Object... params) {
-        System.out.println("--- THREAD ERROR ---");
-        System.out.println("Exception Message: " + ex.getMessage());
-        System.out.println("Exception Method: " + method.getName());
+        log.error("--- THREAD ERROR ---");
+        log.error("Exception Message: " + ex.getMessage());
+        log.error("Exception Method: " + method.getName());
         for(Object param : params) {
-            System.out.println("Exception Parameter Values: " + param);
+            log.error("Exception Parameter Values: " + param);
         }
     }
 }

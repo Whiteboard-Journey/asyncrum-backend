@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.config.security;
+package swm.wbj.asyncrum.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +17,8 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.global.config.properties.AppProperties;
-import swm.wbj.asyncrum.global.config.properties.CorsProperties;
+import swm.wbj.asyncrum.global.properties.AppProperties;
+import swm.wbj.asyncrum.global.properties.CorsProperties;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.exception.RestAuthenticationEntryPoint;
 import swm.wbj.asyncrum.global.oauth.filter.TokenAuthenticationFilter;
@@ -95,7 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .baseUri("/*/oauth2/code/*")
 
                 // 3. Access Token으로 Resource Server에서 사용자 정보를 가져온 후 진행할 추가 로직 설정
-                //    customOAuth2UserService에서 사용자 정보를 기존 계정(Memeber)과 연계하여 처리(회원가입, 갱신 등)
+                //    customOAuth2UserService에서 사용자 정보를 기존 계정(Member)과 연계하여 처리(회원가입, 갱신 등)
                 .and()
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)

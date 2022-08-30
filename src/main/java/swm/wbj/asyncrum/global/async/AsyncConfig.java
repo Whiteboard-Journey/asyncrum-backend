@@ -18,7 +18,7 @@ public class AsyncConfig extends AsyncConfigurerSupport {
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(1000);
-        executor.setThreadNamePrefix("ASYNCRUM-ASYNC");
+        executor.setThreadNamePrefix("Asyncrum-Async-");
         executor.initialize();
 
         return executor;
@@ -26,6 +26,6 @@ public class AsyncConfig extends AsyncConfigurerSupport {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return super.getAsyncUncaughtExceptionHandler();
+        return new AsyncExceptionHandler();
     }
 }

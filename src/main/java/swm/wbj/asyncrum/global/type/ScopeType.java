@@ -5,14 +5,13 @@ import lombok.Getter;
 
 import java.util.Arrays;
 
-
 /**
- * 유저 Role Enum
+ * 공개 범위 Enum
  */
 @Getter
 @AllArgsConstructor
 public enum ScopeType {
-    //ALL("all", "전체 범위"),
+
     TEAM("team", "팀 범위"),
     PRIVATE("private", "개인 범위");
 

@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import swm.wbj.asyncrum.domain.userteam.member.dto.ImageCreateResponseDto;
-import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.domain.userteam.team.dto.TeamImageCreateResponseDto;
 import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
-import swm.wbj.asyncrum.global.error.ErrorResponseDto;
+import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 @RestController
 @RequestMapping("/api/v1/team/images")
