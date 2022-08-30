@@ -17,26 +17,27 @@ public class MailService {
     private final JavaMailSender mailSender;
 
     /**
-     * 회원가입 이후 메일 인증 링크 전송
+     * 회원가입 이후 메일 인증 링크 생성 후 전송
      */
     @Async
     public void sendMailVerificationLink(String email, String verificationLink) throws Exception {
         MimeMessage message = createMimeMessage(email, verificationLink, "메일 인증");
-
-        try {
-            mailSender.send(message);
-        } catch (MailException e) {
-            throw new IllegalArgumentException("메일 전송 실패.");
-        }
+        sendEmail(message);
     }
 
     /**
-     * 팀원 초대 메일 링크 전송
+     * 팀원 초대 메일 링크 생성 후 전송
      */
     @Async
     public void sendTeamMemberInvitationLink(String email, String invitationLink, String teamName) throws Exception {
         MimeMessage message = createMimeMessage(email, invitationLink, teamName + " 팀 초대");
+        sendEmail(message);
+    }
 
+    /**
+     * 메일 전송
+     */
+    public void sendEmail(MimeMessage message) {
         try {
             mailSender.send(message);
         } catch (MailException e) {

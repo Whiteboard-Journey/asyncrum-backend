@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.global.config.properties;
+package swm.wbj.asyncrum.global.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +28,6 @@ public class AppProperties {
         private String tokenSecret;
         private long tokenExpiry;
         private long refreshTokenExpiry;
-
     }
 
     public static final class OAuth2 {
@@ -43,7 +42,5 @@ public class AppProperties {
             this.authorizedRedirectUris = authorizedRedirectUris;
             return this;
         }
-
     }
-
 }
