@@ -42,10 +42,11 @@ public class TeamController {
     @GetMapping
     public ResponseEntity<?> readAllTeam(
             @RequestParam(value = "pageIndex") Integer pageIndex,
-            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
+            @RequestParam(value = "sizePerPage") Integer SIZE_PER_PAGE)
     {
         try {
-            TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId);
+            TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId, SIZE_PER_PAGE);
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
@@ -128,6 +129,19 @@ public class TeamController {
         }
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/images/{id}")
+    public ResponseEntity<?> createTeamImage(@PathVariable("id") Long id) {
+        try {
+
+            TeamImageCreateResponseDto responseDto = teamService.createImage(id);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto((e.getMessage())));
         }
     }
 
