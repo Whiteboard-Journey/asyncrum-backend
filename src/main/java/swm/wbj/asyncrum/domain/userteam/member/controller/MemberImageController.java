@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.member.dto.ImageCreateResponseDto;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
-import swm.wbj.asyncrum.domain.whiteboard.dto.WhiteboardCreateRequestDto;
-import swm.wbj.asyncrum.domain.whiteboard.dto.WhiteboardCreateResponseDto;
-import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
-import swm.wbj.asyncrum.global.error.ErrorResponseDto;
+import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 @RestController
 @RequestMapping("/api/v1/member/images")

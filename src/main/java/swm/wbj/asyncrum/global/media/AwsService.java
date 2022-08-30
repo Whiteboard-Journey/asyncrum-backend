@@ -32,35 +32,45 @@ public class AwsService {
      */
     public String generatePresignedURL(String uploadFileKey, String dirName, FileType fileType) {
         try {
-            // Set the presigned URL to expire after 2 mins
-            Date expiration = new Date();
-            long expTimeMillis = Instant.now().toEpochMilli();
-            expTimeMillis += 1000 * 60 * 2;
-            expiration.setTime(expTimeMillis);
-
-            // Generate the presigned URL Request
-            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucket, buildFileName(uploadFileKey, dirName))
-                            .withContentType(fileType.getContentType())
-                            .withMethod(HttpMethod.PUT)
-                            .withExpiration(expiration);
-
-            // Add ACL
-            generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
-
-            // Generate the presigned URL
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrlRequest(uploadFileKey, dirName, fileType);
             URL preSignedURL = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-            log.info("Pre-Signed URL: " + preSignedURL.toString());
 
             return preSignedURL.toString();
         } catch (AmazonServiceException e) {
-            // The call was transmitted successfully, but Amazon S3 couldn't process
-            // it, so it returned an error response.
             e.printStackTrace();
+            return null;
         }
+    }
 
-        return null;
+    /**
+     * Presigned URL Request 생성
+     */
+    private GeneratePresignedUrlRequest generatePresignedUrlRequest(String uploadFileKey, String dirName, FileType fileType) {
+        // 유효 기간 설정
+        Date expiration = getExpiration();
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucket, buildFileName(uploadFileKey, dirName))
+                        .withContentType(fileType.getMimeType())
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(expiration);
+
+        // 별도로 ACL 파라미터도 추가
+        generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
+
+        return generatePresignedUrlRequest;
+    }
+
+    /**
+     * Presigned URL의 유효 기간 설정: 2분
+     */
+    private Date getExpiration() {
+        Date expiration = new Date();
+        long expTimeMillis = Instant.now().toEpochMilli();
+        expTimeMillis += 1000 * 60 * 2;
+        expiration.setTime(expTimeMillis);
+
+        return expiration;
     }
 
     /**
