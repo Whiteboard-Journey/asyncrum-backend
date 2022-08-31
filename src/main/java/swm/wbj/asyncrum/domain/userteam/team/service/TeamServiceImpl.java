@@ -29,9 +29,7 @@ public class TeamServiceImpl implements TeamService {
     private final MemberService memberService;
     private final MailService mailService;
     private final UrlService urlService;
-
     private final AwsService awsService;
-
     private static final String IMAGE_BUCKET_NAME = "images";
     private static final String IMAGE_FILE_PREFIX ="team_image";
 
@@ -83,8 +81,7 @@ public class TeamServiceImpl implements TeamService {
     // 팀 전체 조회
     @Override
     @Transactional(readOnly = true)
-    public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId) {
-        int SIZE_PER_PAGE = 12;
+    public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId, Integer SIZE_PER_PAGE) {
 
         Page<Team> teamPage;
         Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
