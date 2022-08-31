@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.global.media;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class AwsServiceTest {
     @Autowired AwsService awsService;
 
     @Test
-    public void S3_Presigned_URL_생성() {
+    @DisplayName("S3 Presigend URL 생성")
+    public void generateS3PresignedUrl() {
         // given
         String uploadFileKey = "testFile";
         String dirName = "testDir";
