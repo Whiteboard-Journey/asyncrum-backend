@@ -43,7 +43,7 @@ public class TeamController {
     public ResponseEntity<?> readAllTeam(
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
-            @RequestParam(value = "sizePerPage") Integer SIZE_PER_PAGE)
+            @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer SIZE_PER_PAGE)
     {
         try {
             TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId, SIZE_PER_PAGE);
