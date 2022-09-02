@@ -194,7 +194,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.updateProfileImage(imageFileKey, awsService.getObjectURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME));
 
-        return new ImageCreateResponseDto(id, preSignedURL);
+        return new ImageCreateResponseDto(member.getId(), preSignedURL);
     }
 
     public String createImageFileKey(Long memberId) {
