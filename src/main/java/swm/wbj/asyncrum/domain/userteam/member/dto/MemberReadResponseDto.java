@@ -20,5 +20,4 @@ public class MemberReadResponseDto {
         this.profileImageUrl = member.getProfileImageUrl();
         this.roleType = member.getRoleType();
     }
-
 }

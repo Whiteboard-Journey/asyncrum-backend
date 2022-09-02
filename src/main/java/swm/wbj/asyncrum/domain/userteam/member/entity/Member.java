@@ -8,7 +8,6 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
-import swm.wbj.asyncrum.global.type.ScopeType;
 
 
 import javax.persistence.*;
@@ -17,28 +16,27 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@ToString
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Table(name = "member")
+@Entity
 public class Member extends BaseEntity {
 
     /**
      * Member Primary Key
      */
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * Member Primary Key for Local login
      */
-    @Column(name = "email", length = 512, unique = true)
     @NotNull
     @Size(max = 512)
+    @Column(name = "email", length = 512, unique = true)
     private String email;
 
     /**
@@ -51,25 +49,21 @@ public class Member extends BaseEntity {
     @Column(name = "password", length = 128)
     private String password;
 
-    @Column(name = "fullname", length = 100)
     @Size(max = 100)
+    @Column(name = "fullname", length = 100)
     private String fullname;
 
-    @Column(name = "nickname", length = 100)
-    @Size(max = 100)
-    private String nickname;
-
-    @Column
     @JsonIgnore
+    @Column
     private String profileImageFileKey;
 
-    @Column(name = "profile_image_url", length = 512)
     @Size(max = 512)
+    @Column(name = "profile_image_url", length = 512)
     private String profileImageUrl;
 
-    @Column(name = "role_type", length = 20)
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_type", length = 20)
     private RoleType roleType;
 
     @JsonIgnore
@@ -85,9 +79,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Whiteboard> whiteboards = new ArrayList<>();
 
-    @Column(name = "provider_type", length = 20)
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type", length = 20)
     private ProviderType providerType;
 
     @Builder(builderMethodName = "createMember")
@@ -96,24 +90,24 @@ public class Member extends BaseEntity {
             @Size(max = 64) String oauthId,
             @Size(max = 128) String password,
             @Size(max = 100) String fullname,
-            @Size(max = 100) String nickname,
             @NotNull RoleType roleType,
             @NotNull ProviderType providerType,
             @NotNull @Size(max = 512) String profileImageUrl
-
     ) {
         this.email = email;
         this.oauthId = oauthId;
         this.password = password;
         this.fullname = fullname;
-        this.nickname = nickname;
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void update(String fullname, String profileImageFileKey, String profileImageUrl ) {
-        if(fullname != null ) this.fullname = fullname;
+    public void updateFullname(String fullname) {
+        if(fullname != null) this.fullname = fullname;
+    }
+
+    public void updateProfileImage(String profileImageFileKey, String profileImageUrl) {
         if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
         if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
     }
@@ -122,11 +116,12 @@ public class Member extends BaseEntity {
         this.roleType = roleType;
     }
 
-    public void updateTeam(Team team) {
+    public void changeTeam(Team team) {
         this.team = team;
+        team.addMember(this);
     }
 
-    public void deleteTeam() {
+    public void leaveTeam() {
         this.team = null;
     }
 }

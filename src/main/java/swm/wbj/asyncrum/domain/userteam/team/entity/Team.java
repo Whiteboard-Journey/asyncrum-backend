@@ -49,13 +49,13 @@ public class Team extends BaseEntity {
     }
 
     public void addMember(Member member) {
-        member.updateTeam(this);
+        member.changeTeam(this);
         this.members.add(member);
     }
 
     public void removeMember(Member member) {
         this.members.remove(member);
-        member.updateTeam(null);
+        member.changeTeam(null);
     }
 
 }

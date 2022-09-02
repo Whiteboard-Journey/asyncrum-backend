@@ -4,13 +4,17 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.type.RoleType;
+
+import javax.persistence.EntityManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,18 +29,22 @@ public class MemberServiceTest {
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    EntityManager entityManager;
 
     static String email;
     static String password;
     static String fullname;
     static String profileImageUrl;
+    final static String CURRENT_MEMBER_ID = "1";
+    final static String CURRENT_MEMBER_ROLE_TYPE = "USER";
 
     @BeforeAll
     public static void setUpParam() {
-        email = "testEmail";
-        password = "testPassword";
-        fullname = "testFullname";
-        profileImageUrl = "testProfileImageUrl";
+        email = "email";
+        password = "password";
+        fullname = "fullname";
+        profileImageUrl = "profileImageUrl";
     }
 
     @BeforeEach
@@ -46,16 +54,25 @@ public class MemberServiceTest {
                 .password(password)
                 .fullname(fullname)
                 .profileImageUrl(profileImageUrl)
+                .roleType(RoleType.USER)
                 .build();
 
         memberRepository.save(member);
     }
 
-    @Test
+    @AfterEach
+    public void tearDown() {
+        memberRepository.deleteAll();
+        this.entityManager
+                .createNativeQuery("ALTER TABLE member ALTER COLUMN `member_id` RESTART WITH 1")
+                .executeUpdate();
+    }
+
     @DisplayName("멤버 생성")
+    @Test
     public void createMember() {
         // given
-        String createEmail = "testCreateEmail";
+        String createEmail = "email2";
 
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto();
         requestDto.setEmail(createEmail);
@@ -73,43 +90,49 @@ public class MemberServiceTest {
         assertEquals(createdMember.getFullname(), fullname);
     }
 
-    @Disabled("현재 멤버 정보가 담긴 JWT 필요")
-    @Test
     @DisplayName("JWT로 현재 멤버 정보 가져오기")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
+    @Test
     public void getCurrentMember() {
         // given
+        Long memberId = Long.parseLong(CURRENT_MEMBER_ID);
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
         // when
+        Member currentMember = memberService.getCurrentMember();
 
         // then
+        assertNotNull(currentMember);
+        assertEquals(currentMember.getEmail(), member.getEmail());
+        assertEquals(currentMember.getFullname(), member.getFullname());
     }
 
     @Test
     @DisplayName("멤버 id나 이메일로 정보 가져오기")
     public void getUserByIdOrEmail() {
         // given
+        Long memberId = Long.parseLong(CURRENT_MEMBER_ID);
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
         // when
+        Member findMember = memberService.getUserByIdOrEmail(memberId, email);
 
         // then
+        assertNotNull(findMember);
+        assertEquals(findMember.getEmail(), member.getEmail());
+        assertEquals(findMember.getFullname(), member.getFullname());
     }
 
-    @Disabled("현재 멤버 정보가 담긴 JWT 필요")
-    @Test
     @DisplayName("멤버 정보 가져오기")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
+    @Test
     public void readMember() {
         // given
-        Member member = Member.createMember()
-                .email(email)
-                .password(password)
-                .fullname(fullname)
-                .profileImageUrl(profileImageUrl)
-                .build();
-
-        memberRepository.save(member);
+        Long memberId = Long.parseLong(CURRENT_MEMBER_ID);
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
         // when
-        MemberReadResponseDto responseDto = memberService.readMember(member.getId());
+        MemberReadResponseDto responseDto = memberService.readMember(memberId);
 
         // then
         assertEquals(responseDto.getId(), member.getId());
@@ -119,23 +142,28 @@ public class MemberServiceTest {
         assertEquals(responseDto.getRoleType(), member.getRoleType());
     }
 
-    @Disabled("현재 멤버 정보가 담긴 JWT 필요")
+    @DisplayName("모든 멤버 정보 가져오기 (ADMIN ONLY)")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
     @Test
-    @DisplayName("모든 멤버 정보 가져오기")
     public void readAllMember() {
         // given
+        // @WithMockUser
 
         // when
+        OperationNotAllowedException exception = assertThrows(OperationNotAllowedException.class,
+                () -> memberService.readAllMember(0, 0L, 0));
 
         // then
+        assertEquals(exception.getMessage(), "허용되지 않은 작업입니다.");
     }
 
-    @Test
     @DisplayName("멤버 업데이트")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
+    @Test
     public void updateMember() {
         // given
-        Long updateId = memberRepository.findByEmail(email).getId();
-        String updateFullname = "updated testFullname";
+        Long updateId = Long.parseLong(CURRENT_MEMBER_ID);
+        String updateFullname = "updated fullname";
 
         MemberUpdateRequestDto requestDto = new MemberUpdateRequestDto();
         requestDto.setFullname(updateFullname);
@@ -149,11 +177,12 @@ public class MemberServiceTest {
         assertEquals(updatedMember.getFullname(), updateFullname);
     }
 
-    @Test
     @DisplayName("멤버 삭제")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
+    @Test
     public void deleteMember() {
         // given
-        Long deleteId = memberRepository.findByEmail(email).getId();
+        Long deleteId = Long.parseLong(CURRENT_MEMBER_ID);
 
         // when
         memberService.deleteMember(deleteId);
@@ -162,43 +191,45 @@ public class MemberServiceTest {
         assertNull(memberRepository.findById(deleteId).orElse(null));
     }
 
-    @Disabled("현재 멤버 정보가 담긴 JWT 필요")
+    @Disabled("EmailService와의 연계 필요")
     @Test
     @DisplayName("이메일 인증 보내기")
-    public void sendEmailVerificationLinkByEmail() throws Exception {
-        // given
+    public void sendEmailVerificationLinkByEmail() throws Exception { }
 
-        // when
-
-        // then
-    }
-
-    @Test
     @DisplayName("이메일 인증 검증")
+    @Test
     void verifyEmailVerificationLink() throws Exception {
         // given
-        Long updateId = memberRepository.findByEmail(email).getId();
+        Member member2 = Member.createMember()
+                .email("email2")
+                .password(password)
+                .fullname(fullname)
+                .profileImageUrl(profileImageUrl)
+                .build();
+
+        memberRepository.save(member2);
 
         // when
-        memberService.verifyEmailVerificationLink(updateId);
+        memberService.verifyEmailVerificationLink(member2.getId());
 
         // then
-        Member member = memberRepository.findById(updateId).orElseThrow();
-        assertEquals(member.getRoleType(), RoleType.USER);
+        assertEquals(member2.getRoleType(), RoleType.USER);
     }
 
-    @Test
     @DisplayName("멤버 프로필 이미지 생성")
+    @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
+    @Test
     public void createImage() throws IOException {
         // given
-        Long id = memberRepository.findByEmail(email).getId();
+        Long memberId = Long.parseLong(CURRENT_MEMBER_ID);
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
         // when
-        ImageCreateResponseDto responseDto = memberService.createImage(id);
+        ImageCreateResponseDto responseDto = memberService.createImage(member.getId());
 
         // then
-        assertEquals(responseDto.getId(), id);
+        assertEquals(responseDto.getId(), memberId);
         assertTrue(responseDto.getPreSignedURL().contains("https"));
-        assertTrue(responseDto.getPreSignedURL().contains(id.toString()));
+        assertTrue(responseDto.getPreSignedURL().contains(memberId.toString()));
     }
 }

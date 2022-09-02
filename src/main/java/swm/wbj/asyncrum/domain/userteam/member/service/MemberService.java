@@ -2,11 +2,8 @@ package swm.wbj.asyncrum.domain.userteam.member.service;
 
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.team.dto.TeamReadAllResponseDto;
-import swm.wbj.asyncrum.domain.userteam.team.dto.TeamUpdateRequestDto;
 
 import java.io.IOException;
-
 
 public interface MemberService {
 
@@ -14,12 +11,10 @@ public interface MemberService {
     Member getCurrentMember();
     Member getUserByIdOrEmail(Long id, String email);
     MemberReadResponseDto readMember(Long id);
-    MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId);
+    MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId, Integer sizePerPage);
     MemberUpdateResponseDto updateMember(Long id, MemberUpdateRequestDto requestDto);
     void deleteMember(Long id);
     void sendEmailVerificationLinkByEmail() throws Exception;
     void verifyEmailVerificationLink(Long memberId) throws Exception;
-
     ImageCreateResponseDto createImage(Long id) throws IOException;
-
 }
