@@ -7,12 +7,11 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 
 import java.util.List;
 
-@Data
 @AllArgsConstructor
+@Data
 public class MemberReadAllResponseDto {
 
     private List<Member> memberList;
     private Pageable pageable;
     private Boolean isList;
-
 }
