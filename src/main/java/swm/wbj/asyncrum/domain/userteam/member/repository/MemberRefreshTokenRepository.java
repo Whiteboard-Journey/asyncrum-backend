@@ -7,5 +7,4 @@ public interface MemberRefreshTokenRepository extends JpaRepository<MemberRefres
 
     MemberRefreshToken findByMemberId(String memberId);
     MemberRefreshToken findByMemberIdAndRefreshToken(String memberId, String refreshToken);
-
 }

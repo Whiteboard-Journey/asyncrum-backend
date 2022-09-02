@@ -24,6 +24,9 @@ public class AwsService {
 
     private final AmazonS3Client amazonS3Client;
 
+    public static final String IMAGE_BUCKET_NAME = "images";
+    public static final String IMAGE_FILE_PREFIX = "member_image";
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 

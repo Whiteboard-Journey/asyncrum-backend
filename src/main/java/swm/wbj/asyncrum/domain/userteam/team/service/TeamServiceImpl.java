@@ -185,7 +185,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        team.getMembers().forEach(Member::deleteTeam);
+        team.getMembers().forEach(Member::leaveTeam);
         teamRepository.delete(team);
     }
 

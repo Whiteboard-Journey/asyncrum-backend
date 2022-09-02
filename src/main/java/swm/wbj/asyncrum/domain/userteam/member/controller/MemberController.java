@@ -1,7 +1,7 @@
 package swm.wbj.asyncrum.domain.userteam.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,10 +9,10 @@ import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
-@RestController
-@RequestMapping("/api/v1/members")
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/members")
+@RestController
 public class MemberController {
 
     private final MemberService memberService;
@@ -42,10 +42,11 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<?> readAllMember(
             @RequestParam(value = "pageIndex") Integer pageIndex,
-            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
+            @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
     {
         try{
-            MemberReadAllResponseDto responseDto = memberService.readAllMember(pageIndex, topId);
+            MemberReadAllResponseDto responseDto = memberService.readAllMember(pageIndex, topId, sizePerPage);
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
@@ -103,6 +104,21 @@ public class MemberController {
             return "인증 성공";
         } catch (Exception e){
             return "인증 성공";
+        }
+    }
+
+    /**
+     * 사용자 프로필 이미지 처리
+     */
+    @PostMapping("/images/{id}")
+    public ResponseEntity<?> createMemberImage(@PathVariable("id") Long id) {
+        try {
+            ImageCreateResponseDto responseDto = memberService.createImage(id);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto((e.getMessage())));
         }
     }
 }
