@@ -8,11 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.wbj.asyncrum.domain.userteam.member.exeception.EmailAlreadyInUseException;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.whiteboard.dto.WhiteboardCreateResponseDto;
-import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
+import swm.wbj.asyncrum.domain.userteam.member.exeception.MemberNotExistsException;
+import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.RoleType;
@@ -20,12 +21,17 @@ import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.utils.UrlService;
 
-import java.io.IOException;
-
-@Service
+/**
+ * 사용자의 role에 따라 API policy가 달라짐
+ * Role.USER : 자신의 정보만 조작 가능
+ * Role.ADMIN: id로 모든 사용자 조작 가능
+ *
+ * TODO: API V2에서 ROLE에 따라 비즈니스 로직 분리 - 다른 API 엔드포인트로 접근하도록 재설계
+ */
 @RequiredArgsConstructor
 @Transactional
-public class MemberServiceImpl implements MemberService{
+@Service
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,29 +39,26 @@ public class MemberServiceImpl implements MemberService{
     private final UrlService urlService;
     private final AwsService awsService;
 
-    private static final String IMAGE_BUCKET_NAME = "images";
-    private static final String IMAGE_FILE_PREFIX ="member_image";
+    private static final String EMAIL_VERIFICATION_URL = "/api/v1/members/email/verification";
+
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {
         String email = requestDto.getEmail();
         if(memberRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("해당 이메일은 이미 사용중입니다.");
+            throw new EmailAlreadyInUseException();
         }
 
         Member member = requestDto.toEntity(passwordEncoder);
         return new MemberCreateResponseDto(memberRepository.save(member).getId());
     }
 
-    /**
-     * 요청을 보낸 사용자의 정보 가져오기
-     */
     @Override
     @Transactional(readOnly = true)
     public Member getCurrentMember() {
         // JWT 토큰 -> Security Context의 Authenication -> Member id -> Member 엔티티 가져오기
         Long memberId = TokenUtil.getCurrentMemberId();
 
-        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        return memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
     }
 
     @Override
@@ -63,60 +66,46 @@ public class MemberServiceImpl implements MemberService{
     public Member getUserByIdOrEmail(Long id, String email) {
         if(id != null) {
             return memberRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+                    .orElseThrow(MemberNotExistsException::new);
         }
         else {
             return memberRepository.findByEmail(email);
         }
     }
 
-    /**
-     * 사용자 조희
-     * 사용자의 role에 따라 fetch policy가 달라짐
-     * Role.USER : 자신의 정보만 조회
-     * Role.ADMIN: id로 특정 사용자 조회
-     */
     @Override
     @Transactional(readOnly = true)
     public MemberReadResponseDto readMember(Long id){
         Member member;
         Member currentMember = this.getCurrentMember();
-        RoleType memberRoleType = currentMember.getRoleType();
+        RoleType currentMemberRoleType = currentMember.getRoleType();
 
-        switch (memberRoleType) {
+        switch (currentMemberRoleType) {
             case ADMIN:
                 member = memberRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+                        .orElseThrow(MemberNotExistsException::new);
                 break;
             case USER:
                 member = currentMember;
                 break;
             case GUEST:
             default:
-                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+                throw new OperationNotAllowedException();
         }
 
         return new MemberReadResponseDto(member);
     }
 
-    // TODO: Role에 따른 Member Fetch Policy 추후 개선하기
-    /**
-     * 사용자 전체 조희
-     * 사용자의 role에 따라 fetch policy가 달라짐
-     * Role.USER : 허용되지 않은 작업으로 처리
-     * Role.ADMIN : 사용자 리스트 전체 조회
-     */
     @Override
     @Transactional(readOnly = true)
-    public MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId) {
+    public MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId, Integer sizePerPage) {
         Member currentMember = this.getCurrentMember();
         if(!currentMember.getRoleType().equals(RoleType.ADMIN)) {
-            throw new IllegalArgumentException("허용되지 않은 작업입니다.");
+            throw new OperationNotAllowedException();
         }
 
-        int SIZE_PER_PAGE = 12;
         Page<Member> memberPage;
-        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
 
         if(topId == 0) {
             memberPage = memberRepository.findAll(pageable);
@@ -130,17 +119,36 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberUpdateResponseDto updateMember(Long id, MemberUpdateRequestDto requestDto) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+        Member currentMember = this.getCurrentMember();
+        Member member;
 
-        member.update(requestDto.getFullname(), null, null);
-        return new MemberUpdateResponseDto(memberRepository.save(member).getId());
+        if(currentMember.getRoleType().equals(RoleType.ADMIN)) {
+            member = memberRepository.findById(id)
+                    .orElseThrow(MemberNotExistsException::new);
+        }
+        else {
+            member = memberRepository.findById(currentMember.getId())
+                    .orElseThrow(MemberNotExistsException::new);
+        }
+
+        member.updateFullname(requestDto.getFullname());
+        return new MemberUpdateResponseDto(member.getId());
     }
 
     @Override
     public void deleteMember(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다. ")) ;
+        Member currentMember = this.getCurrentMember();
+        Member member;
+
+        if(currentMember.getRoleType().equals(RoleType.ADMIN)) {
+            member = memberRepository.findById(id)
+                    .orElseThrow(MemberNotExistsException::new) ;
+        }
+        else {
+            member = memberRepository.findById(currentMember.getId())
+                    .orElseThrow(MemberNotExistsException::new);
+        }
+
         memberRepository.delete(member);
     }
 
@@ -150,9 +158,10 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public void sendEmailVerificationLinkByEmail() throws Exception {
-        Member member = this.getCurrentMember();
-        String emailVerificationLink = urlService.buildURL("/api/v1/members/email/verification", "memberId", member.getId());
-        mailService.sendMailVerificationLink(member.getEmail(), emailVerificationLink);
+        Member currentMember = this.getCurrentMember();
+        String emailVerificationLink = urlService.buildURL(EMAIL_VERIFICATION_URL, "memberId", currentMember.getId());
+
+        mailService.sendMailVerificationLink(currentMember.getEmail(), emailVerificationLink);
     }
 
     /**
@@ -162,26 +171,33 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void verifyEmailVerificationLink(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
+                .orElseThrow(MemberNotExistsException::new);
 
         member.updateRole(RoleType.USER);
-        memberRepository.save(member);
     }
 
     @Override
-    public ImageCreateResponseDto createImage(Long id) throws IOException {
+    public ImageCreateResponseDto createImage(Long id) {
+        Member currentMember = this.getCurrentMember();
+        Member member;
 
+        if(currentMember.getRoleType().equals(RoleType.ADMIN)) {
+            member = memberRepository.findById(id)
+                    .orElseThrow(MemberNotExistsException::new);
+        }
+        else {
+            member = currentMember;
+        }
 
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 존재하지 않습니다."));
         String imageFileKey = createImageFileKey(member.getId());
-        String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
-        member.update(null, imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
-        memberRepository.save(member);
-        return new ImageCreateResponseDto(id, preSignedURL);
+        String preSignedURL = awsService.generatePresignedURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME, FileType.PNG);
+
+        member.updateProfileImage(imageFileKey, awsService.getObjectURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME));
+
+        return new ImageCreateResponseDto(member.getId(), preSignedURL);
     }
 
     public String createImageFileKey(Long memberId) {
-        return IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
+        return AwsService.IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
 }

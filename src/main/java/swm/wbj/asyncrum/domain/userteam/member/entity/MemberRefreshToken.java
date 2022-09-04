@@ -11,23 +11,23 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "member_refresh_token")
+@Entity
 public class MemberRefreshToken {
+
     @JsonIgnore
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "refresh_token_seq")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long refreshTokenSeq;
 
-    @Column(name = "member_id", length = 64, unique = true)
     @NotNull
     @Size(max = 64)
+    @Column(name = "member_id", length = 64, unique = true)
     private String memberId;
 
-    @Column(name = "refresh_token", length = 256)
     @NotNull
     @Size(max = 256)
+    @Column(name = "refresh_token", length = 256)
     private String refreshToken;
 
     public MemberRefreshToken(

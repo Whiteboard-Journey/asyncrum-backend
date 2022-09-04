@@ -10,9 +10,9 @@ public class UrlService {
     @Value("${server.url}")
     private String serverUrl;
 
-    public String buildURL(String apiUrl, String name, Object object) {
+    public String buildURL(String apiUrl, String param, Object object) {
         return UriComponentsBuilder.fromUriString(serverUrl + apiUrl)
-                .queryParam(name, object)
+                .queryParam(param, object)
                 .build().toUriString();
     }
 }

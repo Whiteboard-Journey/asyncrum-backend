@@ -7,5 +7,4 @@ public class MemberReadAllRequestDto {
 
     private Integer pageIndex;
     private Long topId;
-
 }
