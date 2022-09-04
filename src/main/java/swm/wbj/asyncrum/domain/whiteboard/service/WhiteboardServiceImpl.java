@@ -31,9 +31,6 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     private static final String WHITEBOARD_BUCKET_NAME = "whiteboards";
     private static final String WHITEBOARD_FILE_PREFIX ="whiteboard";
 
-    /**
-     * 화이트보드 문서 생성
-     */
     @Override
     public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) throws IOException {
         String title = requestDto.getTitle();
@@ -55,9 +52,6 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         return new WhiteboardCreateResponseDto(whiteboard.getId(), preSignedURL);
     }
 
-    /**
-     * 화이트보드 문서 개별 조회
-     */
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadResponseDto readWhiteboard(Long id) {
@@ -88,36 +82,12 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Member currentMember = memberService.getCurrentMember();
         RoleType memberRoleType = currentMember.getRoleType();
 
-        // TODO: JPA 학습 후 JPA Specification 사용
         switch (memberRoleType) {
             case ADMIN:
-                if(topId == 0) {
-                    whiteboardPage = whiteboardRepository.findAll(pageable);
-                }
-                else {
-                    whiteboardPage = whiteboardRepository.findAllByTopId(topId, pageable);
-                }
+                whiteboardPage = getWhiteboardPage(topId, pageable);
                 break;
             case USER:
-                if (scope == ScopeType.TEAM && currentMember.getTeam() != null) {
-                    if(topId == 0) {
-                        whiteboardPage = whiteboardRepository.findAllByTeam(currentMember.getTeam().getId(), currentMember.getId(), pageable);
-                    }
-                    else {
-                        whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
-                    }
-                }
-                else if (scope == ScopeType.PRIVATE || currentMember.getTeam() == null) {
-                    if(topId == 0) {
-                        whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(), pageable);
-                    }
-                    else {
-                        whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
-                    }
-                }
-                else {
-                    throw new IllegalArgumentException("허용되지 않은 범위입니다.");
-                }
+                whiteboardPage = getWhiteboards(scope, topId, pageable, currentMember);
                 break;
             case GUEST:
             default:
@@ -127,9 +97,41 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
-    /**
-     * 화이트보드 문서 정보 업데이트
-     */
+    private Page<Whiteboard> getWhiteboards(ScopeType scope, Long topId, Pageable pageable, Member currentMember) {
+        Page<Whiteboard> whiteboardPage;
+        if (scope == ScopeType.TEAM && currentMember.getTeam() != null) {
+            if(topId == 0) {
+                whiteboardPage = whiteboardRepository.findAllByTeam(currentMember.getTeam().getId(), currentMember.getId(), pageable);
+            }
+            else {
+                whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
+            }
+        }
+        else if (scope == ScopeType.PRIVATE || currentMember.getTeam() == null) {
+            if(topId == 0) {
+                whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(), pageable);
+            }
+            else {
+                whiteboardPage = whiteboardRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("허용되지 않은 범위입니다.");
+        }
+        return whiteboardPage;
+    }
+
+    private Page<Whiteboard> getWhiteboardPage(Long topId, Pageable pageable) {
+        Page<Whiteboard> whiteboardPage;
+        if(topId == 0) {
+            whiteboardPage = whiteboardRepository.findAll(pageable);
+        }
+        else {
+            whiteboardPage = whiteboardRepository.findAllByTopId(topId, pageable);
+        }
+        return whiteboardPage;
+    }
+
     @Override
     public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) throws IOException {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
@@ -142,9 +144,6 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         return new WhiteboardUpdateResponseDto(whiteboardRepository.save(whiteboard).getId(), preSignedURL);
     }
 
-    /**
-     * 화이트보드 문서 삭제
-     */
     @Override
     public void deleteWhiteboard(Long id) {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
