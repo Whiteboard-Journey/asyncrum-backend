@@ -21,6 +21,7 @@ public class MemberController {
     public ResponseEntity<?> createMember(@RequestBody MemberCreateRequestDto requestDto){
         try{
             MemberCreateResponseDto responseDto= memberService.createMember(requestDto);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         }
         catch (Exception e){
@@ -32,6 +33,7 @@ public class MemberController {
     public ResponseEntity<?> readMember(@PathVariable("id") Long id){
         try{
             MemberReadResponseDto responseDto = memberService.readMember(id);
+
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
@@ -47,6 +49,7 @@ public class MemberController {
     {
         try{
             MemberReadAllResponseDto responseDto = memberService.readAllMember(pageIndex, topId, sizePerPage);
+
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e){
@@ -59,6 +62,7 @@ public class MemberController {
     public ResponseEntity<?> updateMember(@PathVariable Long id, @RequestBody MemberUpdateRequestDto requestDto){
         try {
             MemberUpdateResponseDto responseDto = memberService.updateMember(id, requestDto);
+
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
@@ -87,6 +91,7 @@ public class MemberController {
     public ResponseEntity<?> sendEmailVerificationLinkByEmail() {
         try {
             memberService.sendEmailVerificationLinkByEmail();
+
             return ResponseEntity.ok().build();
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
@@ -101,6 +106,7 @@ public class MemberController {
     public String verifyEmailVerificationLink(@RequestParam("memberId") Long memberId) {
         try {
             memberService.verifyEmailVerificationLink(memberId);
+
             return "인증 성공";
         } catch (Exception e){
             return "인증 성공";

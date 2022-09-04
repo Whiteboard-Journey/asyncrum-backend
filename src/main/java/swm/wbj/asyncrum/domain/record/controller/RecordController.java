@@ -1,7 +1,7 @@
 package swm.wbj.asyncrum.domain.record.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,55 +10,31 @@ import swm.wbj.asyncrum.domain.record.service.RecordService;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
-@RestController
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/records")
+@RestController
 public class RecordController {
+
     private final RecordService recordService;
 
-    @PostMapping("/api/v1/records")
+    @PostMapping
     public ResponseEntity<?> createRecord(@RequestBody RecordCreateRequestDto requestDto){
-        try{
+        try {
             RecordCreateResponseDto responseDto= recordService.createRecord(requestDto);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         }
-        catch (Exception e){
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
 
-    @GetMapping("/api/v1/records/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?>  readRecord(@PathVariable("id") Long id){
-        try{
-            RecordReadResponseDto responseDto = recordService.readRecord(id);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
-    }
-
-    @GetMapping("/api/v1/records")
-    public ResponseEntity<?> readAllRecord(
-            @RequestParam(value = "scope") ScopeType scope,
-            @RequestParam(value = "pageIndex") Integer pageIndex,
-            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
-    {
-        try{
-            RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
-    }
-
-
-
-    @PatchMapping("/api/v1/records/{id}")
-    public ResponseEntity<?> updateRecord(@PathVariable Long id, @RequestBody RecordUpdateRequestDto requestDto){
         try {
-            RecordUpdateResponseDto responseDto = recordService.updateRecord(id, requestDto);
+            RecordReadResponseDto responseDto = recordService.readRecord(id);
+
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e) {
@@ -66,7 +42,38 @@ public class RecordController {
         }
     }
 
-    @DeleteMapping("/api/v1/records/{id}")
+    @GetMapping
+    public ResponseEntity<?> readAllRecord(
+            @RequestParam(value = "scope") ScopeType scope,
+            @RequestParam(value = "pageIndex") Integer pageIndex,
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
+            @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
+    {
+        try {
+            RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId, sizePerPage);
+
+            return ResponseEntity.ok(responseDto);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
+        }
+    }
+
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateRecord(@PathVariable Long id, @RequestBody RecordUpdateRequestDto requestDto){
+        try {
+            RecordUpdateResponseDto responseDto = recordService.updateRecord(id, requestDto);
+
+            return ResponseEntity.ok(responseDto);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecord(@PathVariable("id") Long id){
         try {
             recordService.deleteRecord(id);
@@ -77,5 +84,4 @@ public class RecordController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
         }
     }
-
 }

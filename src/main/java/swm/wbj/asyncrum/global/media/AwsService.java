@@ -27,6 +27,9 @@ public class AwsService {
     public static final String IMAGE_BUCKET_NAME = "images";
     public static final String IMAGE_FILE_PREFIX = "member_image";
 
+    public static final String RECORD_BUCKET_NAME = "records";
+    public static final String RECORD_FILE_PREFIX ="record";
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 

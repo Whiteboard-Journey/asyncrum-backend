@@ -103,8 +103,10 @@ public class MemberServiceTest {
 
         // then
         assertNotNull(currentMember);
+        assertEquals(currentMember.getId(), Long.parseLong(CURRENT_MEMBER_ID));
         assertEquals(currentMember.getEmail(), member.getEmail());
         assertEquals(currentMember.getFullname(), member.getFullname());
+        assertEquals(currentMember.getRoleType(), member.getRoleType());
     }
 
     @Test

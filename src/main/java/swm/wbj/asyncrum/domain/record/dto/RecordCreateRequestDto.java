@@ -7,7 +7,6 @@ import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
-
 @Data
 @Getter
 @NoArgsConstructor
