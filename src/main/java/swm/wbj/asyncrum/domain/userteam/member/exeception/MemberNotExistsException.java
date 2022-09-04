@@ -1,8 +1,5 @@
 package swm.wbj.asyncrum.domain.userteam.member.exeception;
 
-/**
- * 멤버 조회 예외처리
- */
 public class MemberNotExistsException extends RuntimeException {
 
     public MemberNotExistsException() {

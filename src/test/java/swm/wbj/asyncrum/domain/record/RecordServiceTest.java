@@ -23,8 +23,6 @@ import javax.persistence.EntityManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
@@ -43,7 +41,7 @@ public class RecordServiceTest {
     final static String CURRENT_MEMBER_ROLE_TYPE = "USER";
 
     @BeforeEach
-    public void setUpEntity() throws IOException {
+    public void setUpEntity() {
         Member member = Member.createMember()
                 .email("email")
                 .password("password")
@@ -87,7 +85,7 @@ public class RecordServiceTest {
     @DisplayName("새 녹화본 생성")
     @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
     @Test
-    public void createRecord() throws IOException {
+    public void createRecord() {
         // given
         String title = "title2";
         String description = "description2";
@@ -113,9 +111,9 @@ public class RecordServiceTest {
     @DisplayName("단일 녹화본 가져오기")
     @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
     @Test
-    public void readRecord() throws Exception {
+    public void readRecord() {
         // given
-        Member member = memberRepository.findById(Long.parseLong(CURRENT_MEMBER_ID)).orElseThrow();
+        // @WithMockUser
 
         // when
         RecordReadResponseDto responseDto = recordService.readRecord(CURRENT_RECORD_ID);
@@ -135,13 +133,13 @@ public class RecordServiceTest {
         // given
         Integer pageIndex = 0;
         Long topId = 0L;
-        int RECORD_LIST_SIZE = 1;
+        Integer sizePerPage = 12;
 
         // when
-        RecordReadAllResponseDto responseDto = recordService.readAllRecord(privateScope, pageIndex, topId);
+        RecordReadAllResponseDto responseDto = recordService.readAllRecord(privateScope, pageIndex, topId, sizePerPage);
 
         // then
-        assertEquals(responseDto.getRecords().size(), RECORD_LIST_SIZE);
+        assertEquals(responseDto.getRecords().size(), 1);
 
         Record record = responseDto.getRecords().get(0);
         assertNotNull(record);
@@ -154,7 +152,7 @@ public class RecordServiceTest {
     @DisplayName("녹화본 정보 업데이트")
     @WithMockUser(username = CURRENT_MEMBER_ID, roles = CURRENT_MEMBER_ROLE_TYPE)
     @Test
-    public void updateRecord() throws IOException {
+    public void updateRecord() {
         // given
         String updatedTitle = "update title";
         String updatedScope = "team";
