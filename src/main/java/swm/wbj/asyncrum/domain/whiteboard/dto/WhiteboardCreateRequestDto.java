@@ -5,9 +5,12 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class WhiteboardCreateRequestDto {
 
+    @NotNull
     private String title;
     private String description;
     private String scope;

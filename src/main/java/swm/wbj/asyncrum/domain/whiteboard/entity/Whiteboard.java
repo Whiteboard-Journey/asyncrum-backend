@@ -11,6 +11,7 @@ import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
@@ -23,13 +24,13 @@ public class Whiteboard extends BaseEntity {
     private Long id;
 
     @Column
-    @JsonIgnore
     private String whiteboardFileKey;
 
     @Column
     private String whiteboardFileUrl;
 
     @Column
+    @NotNull
     private String title;
 
     @Column
@@ -39,7 +40,7 @@ public class Whiteboard extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ScopeType scope;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id")
     private Member author;
@@ -57,6 +58,6 @@ public class Whiteboard extends BaseEntity {
         if(description != null ) this.description = description;
         if(whiteboardFileKey != null ) this.whiteboardFileKey = whiteboardFileKey;
         if(whiteboardFileUrl != null ) this.whiteboardFileUrl = whiteboardFileUrl;
-        if(scope != null ) this.scope = scope;
+        if(scope != null) this.scope = scope;
     }
 }
