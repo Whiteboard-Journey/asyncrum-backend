@@ -69,6 +69,4 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
-
-    Boolean existsByTitle(String title);
 }
