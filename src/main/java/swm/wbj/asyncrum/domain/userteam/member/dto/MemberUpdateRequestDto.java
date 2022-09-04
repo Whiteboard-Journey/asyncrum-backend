@@ -6,5 +6,4 @@ import lombok.Data;
 public class MemberUpdateRequestDto {
 
     private String fullname;
-
 }
