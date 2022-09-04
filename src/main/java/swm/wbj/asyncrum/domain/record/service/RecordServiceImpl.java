@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.record.dto.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.exception.RecordNotExistsException;
-import swm.wbj.asyncrum.domain.record.exception.TitleAlreadyInUseException;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
@@ -19,8 +18,6 @@ import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.ScopeType;
-
-import java.util.List;
 
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_FILE_PREFIX;
@@ -70,15 +67,11 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto) {
-        String title = requestDto.getTitle();
-        if(recordRepository.existsByTitle(title)){
-            throw new TitleAlreadyInUseException();
-        }
-
-        Record record = requestDto.toEntity(memberService.getCurrentMember());
+        Member currentMember = memberService.getCurrentMember();
+        Record record = requestDto.toEntity(currentMember);
         Long recordId = recordRepository.save(record).getId();
 
-        String recordFileKey = createRecordFileKey(memberService.getCurrentMember().getId(), recordId);
+        String recordFileKey = createRecordFileKey(currentMember.getId(), recordId);
         String preSignedURL = awsService.generatePresignedURL(recordFileKey, RECORD_BUCKET_NAME, FileType.MP4);
 
         record.updateRecordFileMetadata(recordFileKey, awsService.getObjectURL(recordFileKey, RECORD_BUCKET_NAME));
@@ -131,22 +124,22 @@ public class RecordServiceImpl implements RecordService {
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
     }
 
-    public String createRecordFileKey(Long memberId, Long recordId) {
+    private String createRecordFileKey(Long memberId, Long recordId) {
         return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + "." + FileType.MP4.getName();
     }
 
-    public boolean hasAdminRole(Member currentMember) {
+    private boolean hasAdminRole(Member currentMember) {
         return currentMember.getRoleType().equals(RoleType.ADMIN);
     }
-    public boolean hasUserRole(Member currentMember) {
+    private boolean hasUserRole(Member currentMember) {
         return currentMember.getRoleType().equals(RoleType.USER);
     }
 
-    public boolean ownsRecord(Member currentMember, Record record) {
+    private boolean ownsRecord(Member currentMember, Record record) {
         return record.getAuthor().equals(currentMember);
     }
 
-    public boolean isTeamScopeAndTeamMember(Member currentMember, ScopeType scope) {
+    private boolean isTeamScopeAndTeamMember(Member currentMember, ScopeType scope) {
         return scope == ScopeType.TEAM && currentMember.getTeam() != null;
     }
 }
