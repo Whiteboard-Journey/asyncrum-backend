@@ -16,11 +16,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 //@ToString
 @Builder
+@Table(name = "record")
 public class Record extends BaseEntity{
 
     @Id
     @Column(name = "record_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
