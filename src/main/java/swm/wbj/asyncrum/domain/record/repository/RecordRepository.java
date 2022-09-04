@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import swm.wbj.asyncrum.domain.record.entity.Record;
-import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
 import java.util.List;
 
@@ -49,9 +48,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             Pageable pageable
     );
 
-
-
-
     @Query(
             value = "SELECT * FROM record AS r WHERE r.member_id = :memberId",
             countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.member_id = :memberId",
@@ -73,8 +69,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
-
-
 
     Boolean existsByTitle(String title);
 }

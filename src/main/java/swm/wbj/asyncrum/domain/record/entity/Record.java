@@ -10,39 +10,34 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-//@ToString
-@Builder
 @Table(name = "record")
-public class Record extends BaseEntity{
+@Entity
+public class Record extends BaseEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "record_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     @JsonIgnore
+    @Column
     private String recordFileKey;
 
     @Column
     private String recordFileUrl;
 
-    @Column
+    @Column(length = 50)
     private String title;
 
-    @Column
+    @Column(length = 200)
     private String description;
 
     @Column
     @Enumerated(EnumType.STRING)
     private ScopeType scope;
 
-
-//    @JsonIgnore
     @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id")
@@ -56,11 +51,17 @@ public class Record extends BaseEntity{
         this.author = author;
     }
 
-    public void update( String title, String description, String recordFileKey, String recordFileUrl, ScopeType scope){
+    public void updateTitleAndDescription(String title, String description) {
         if(title != null) this.title = title;
         if(description != null) this.description = description;
+    }
+
+    public void updateRecordFileMetadata(String recordFileKey, String recordFileUrl) {
         if(recordFileKey != null) this.recordFileKey = recordFileKey;
         if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
+    }
+
+    public void updateScope(ScopeType scope) {
         if (scope != null) this.scope = scope;
     }
 }
