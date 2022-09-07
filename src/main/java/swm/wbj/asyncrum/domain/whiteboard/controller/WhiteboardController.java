@@ -10,6 +10,8 @@ import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/whiteboards")
@@ -18,9 +20,8 @@ public class WhiteboardController {
 
     private final WhiteboardService whiteboardService;
 
-    // 화이트보드 문서 생성
     @PostMapping
-    public ResponseEntity<?> createWhiteboard(@RequestBody WhiteboardCreateRequestDto requestDto) {
+    public ResponseEntity<?> createWhiteboard(@Valid @RequestBody WhiteboardCreateRequestDto requestDto) {
         try {
             WhiteboardCreateResponseDto responseDto = whiteboardService.createWhiteboard(requestDto);
 
@@ -31,7 +32,6 @@ public class WhiteboardController {
         }
     }
 
-    // 화이트보드 문서 개별 조회
     @GetMapping("/{id}")
     public ResponseEntity<?> readWhiteboard(@PathVariable Long id) {
         try {
@@ -44,7 +44,6 @@ public class WhiteboardController {
         }
     }
 
-    // 화이트보드 문서 전체 조희
     @GetMapping
     public ResponseEntity<?> readAllWhiteboard(
             @RequestParam(value = "scope") ScopeType scope,
@@ -61,9 +60,8 @@ public class WhiteboardController {
         }
     }
 
-    // 화이트보드 문서 정보 업데이트
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateWhiteboard(@PathVariable Long id, @RequestBody WhiteboardUpdateRequestDto requestDto) {
+    public ResponseEntity<?> updateWhiteboard(@PathVariable Long id, @Valid @RequestBody WhiteboardUpdateRequestDto requestDto) {
         try {
             WhiteboardUpdateResponseDto responseDto = whiteboardService.updateWhiteboard(id, requestDto);
 
@@ -74,7 +72,6 @@ public class WhiteboardController {
         }
     }
 
-    // 화이트보드 문서 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteWhiteboard(@PathVariable Long id) {
         try {
