@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class WhiteboardUpdateRequestDto {
 
-    @NotNull
+
     private String title;
     private String description;
     private String scope;
