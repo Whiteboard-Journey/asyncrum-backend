@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
 import swm.wbj.asyncrum.domain.whiteboard.service.WhiteboardService;
+import swm.wbj.asyncrum.global.annotation.AdminRole;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
@@ -44,14 +45,32 @@ public class WhiteboardController {
         }
     }
 
-    @GetMapping
+    @GetMapping(params = "scope")
     public ResponseEntity<?> readAllWhiteboard(
             @RequestParam(value = "scope") ScopeType scope,
             @RequestParam(value = "pageIndex") Integer pageIndex,
-            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId)
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
+            @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
     {
         try {
-            WhiteboardReadAllResponseDto responseDto = whiteboardService.readAllWhiteboard(scope, pageIndex, topId);
+            WhiteboardReadAllResponseDto responseDto = whiteboardService.readAllWhiteboard(scope, pageIndex, topId, sizePerPage);
+
+            return ResponseEntity.ok(responseDto);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto((e.getMessage())));
+        }
+    }
+
+    @AdminRole
+    @GetMapping(params = "!scope")
+    public ResponseEntity<?> readAllWhiteboard(
+            @RequestParam(value = "pageIndex") Integer pageIndex,
+            @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
+            @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
+    {
+        try {
+            WhiteboardReadAllResponseDto responseDto = whiteboardService.readAllWhiteboard(pageIndex, topId, sizePerPage);
 
             return ResponseEntity.ok(responseDto);
         }
