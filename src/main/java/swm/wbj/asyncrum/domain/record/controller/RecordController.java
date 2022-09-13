@@ -20,26 +20,16 @@ public class RecordController {
 
     @PostMapping
     public ResponseEntity<?> createRecord(@RequestBody RecordCreateRequestDto requestDto){
-        try {
-            RecordCreateResponseDto responseDto= recordService.createRecord(requestDto);
+        RecordCreateResponseDto responseDto= recordService.createRecord(requestDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?>  readRecord(@PathVariable("id") Long id){
-        try {
-            RecordReadResponseDto responseDto = recordService.readRecord(id);
+        RecordReadResponseDto responseDto = recordService.readRecord(id);
 
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping
@@ -49,39 +39,24 @@ public class RecordController {
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
             @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
     {
-        try {
-            RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId, sizePerPage);
+        RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId, sizePerPage);
 
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        return ResponseEntity.ok(responseDto);
     }
 
 
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateRecord(@PathVariable Long id, @RequestBody RecordUpdateRequestDto requestDto){
-        try {
-            RecordUpdateResponseDto responseDto = recordService.updateRecord(id, requestDto);
+        RecordUpdateResponseDto responseDto = recordService.updateRecord(id, requestDto);
 
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecord(@PathVariable("id") Long id){
-        try {
-            recordService.deleteRecord(id);
+        recordService.deleteRecord(id);
 
-            return ResponseEntity.noContent().build();
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        return ResponseEntity.noContent().build();
     }
 }

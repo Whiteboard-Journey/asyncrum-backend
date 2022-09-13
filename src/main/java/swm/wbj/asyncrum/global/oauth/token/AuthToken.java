@@ -19,7 +19,7 @@ public class AuthToken {
     private final String token;
     private final Key key;
 
-    private static final String AUTHORITIES_KEY = "role";
+    public static final String AUTHORITIES_KEY = "role";
 
     // Role 제외 생성자
     AuthToken(String id, Date expiry, Key key) {
@@ -95,5 +95,11 @@ public class AuthToken {
             return e.getClaims();
         }
         return null;
+    }
+
+    // 토큰의 Claim 안에 담긴 payload 가져오기
+    public String getPayloads(String name) {
+        Claims claims = getTokenClaims();
+        return claims.get(name).toString();
     }
 }
