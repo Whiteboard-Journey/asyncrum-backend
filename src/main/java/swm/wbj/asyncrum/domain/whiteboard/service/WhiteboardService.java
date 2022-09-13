@@ -7,10 +7,10 @@ import java.io.IOException;
 
 public interface WhiteboardService {
 
-    WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) throws IOException;
-    WhiteboardReadResponseDto readWhiteboard(Long id) throws IOException;
+    WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto);
+    WhiteboardReadResponseDto readWhiteboard(Long id);
     WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId, Integer sizePerPage);
     WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage);
-    WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) throws IOException;
+    WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto);
     void deleteWhiteboard(Long id);
 }

@@ -10,6 +10,7 @@ import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
 @Repository
 public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
+
     /**
      * ADMIN QUERY
      */
@@ -28,7 +29,6 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
             @Param("topId") Long topId,
             Pageable pageable
     );
-
 
     /**
      * USER QUERY

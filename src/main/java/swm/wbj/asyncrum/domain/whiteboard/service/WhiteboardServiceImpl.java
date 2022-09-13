@@ -32,7 +32,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     private static final String WHITEBOARD_FILE_PREFIX ="whiteboard";
 
     @Override
-    public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) throws IOException {
+    public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) {
         String title = requestDto.getTitle();
 
         if(whiteboardRepository.existsByTitle(title)) {
@@ -47,7 +47,8 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME, FileType.TLDR);
 
         // 화이트보드 엔티티에 화이트보드 문서 파일명 저장
-        whiteboard.update(null, null, whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME), null);
+        whiteboard.updateWhiteboardFileMetadata(
+                whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME));
 
         return new WhiteboardCreateResponseDto(whiteboard.getId(), preSignedURL);
     }
@@ -67,7 +68,8 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
         Page<Whiteboard> whiteboardPage = getWhiteboardPage(topId, pageable);
 
-        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
+        return new WhiteboardReadAllResponseDto(
+                whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
     private Page<Whiteboard> getWhiteboardPage(Long topId, Pageable pageable) {
@@ -83,22 +85,26 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
     @Transactional(readOnly = true)
     @Override
-    public WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
+    public WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex,
+                                                          Long topId, Integer sizePerPage) {
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "whiteboard_id");
         Member currentMember = memberService.getCurrentMember();
         Page<Whiteboard> whiteboardPage = getWhiteboards(scope, topId, pageable, currentMember);
 
-        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
+        return new WhiteboardReadAllResponseDto(
+                whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
     private Page<Whiteboard> getWhiteboards(ScopeType scope, Long topId, Pageable pageable, Member currentMember) {
         Page<Whiteboard> whiteboardPage;
         if (scope == ScopeType.TEAM && currentMember.getTeam() != null) {
             if(topId == 0) {
-                whiteboardPage = whiteboardRepository.findAllByTeam(currentMember.getTeam().getId(), currentMember.getId(), pageable);
+                whiteboardPage = whiteboardRepository.findAllByTeam(
+                        currentMember.getTeam().getId(), currentMember.getId(), pageable);
             }
             else {
-                whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
+                whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(
+                        currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
             }
         }
         else if (scope == ScopeType.PRIVATE || currentMember.getTeam() == null) {
@@ -116,13 +122,15 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     }
 
     @Override
-    public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) throws IOException {
+    public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 화이트보드 문서가 존재하지 않습니다."));
 
-        whiteboard.update(requestDto.getTitle(), requestDto.getDescription(), null, null, ScopeType.of(requestDto.getScope()));
+        whiteboard.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
+        whiteboard.updateScope(ScopeType.of(requestDto.getScope()));
 
-        String preSignedURL = awsService.generatePresignedURL(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME, FileType.TLDR);
+        String preSignedURL = awsService.generatePresignedURL(
+                whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME, FileType.TLDR);
 
         return new WhiteboardUpdateResponseDto(whiteboardRepository.save(whiteboard).getId(), preSignedURL);
     }

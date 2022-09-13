@@ -53,11 +53,17 @@ public class Whiteboard extends BaseEntity {
         this.author = author;
     }
 
-    public void update(String title, String description, String whiteboardFileKey, String whiteboardFileUrl, ScopeType scope) {
-        if(title != null ) this.title = title;
-        if(description != null ) this.description = description;
-        if(whiteboardFileKey != null ) this.whiteboardFileKey = whiteboardFileKey;
-        if(whiteboardFileUrl != null ) this.whiteboardFileUrl = whiteboardFileUrl;
-        if(scope != null) this.scope = scope;
+    public void updateTitleAndDescription(String title, String description) {
+        if(title != null) this.title = title;
+        if(description != null) this.description = description;
+    }
+
+    public void updateWhiteboardFileMetadata(String whiteboardFileKey, String whiteboardFileUrl) {
+        if(whiteboardFileKey != null) this.whiteboardFileKey = whiteboardFileKey;
+        if(whiteboardFileUrl != null) this.whiteboardFileUrl = whiteboardFileUrl;
+    }
+
+    public void updateScope(ScopeType scope) {
+        if (scope != null) this.scope = scope;
     }
 }
