@@ -13,6 +13,10 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
     /**
      * ADMIN QUERY
      */
+    @Query(
+            value = "SELECT w FROM Whiteboard w JOIN FETCH w.author m",
+            countQuery = "SELECT COUNT(w) FROM Whiteboard w JOIN w.author m"
+    )
     Page<Whiteboard> findAll(Pageable pageable);
 
     @Query(
