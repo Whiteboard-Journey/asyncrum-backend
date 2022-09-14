@@ -9,7 +9,6 @@ public interface WhiteboardService {
 
     WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto);
     WhiteboardReadResponseDto readWhiteboard(Long id);
-    WhiteboardReadAllResponseDto readAllWhiteboard(Integer pageIndex, Long topId, Integer sizePerPage);
     WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage);
     WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto);
     void deleteWhiteboard(Long id);

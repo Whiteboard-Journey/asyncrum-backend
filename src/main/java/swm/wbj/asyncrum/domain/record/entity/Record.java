@@ -2,9 +2,8 @@ package swm.wbj.asyncrum.domain.record.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
@@ -39,17 +38,22 @@ public class Record extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ScopeType scope;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member author;
+    private Member member;
+
+    @JsonIgnore
+    @ManyToOne(targetEntity = Team.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @Builder(builderMethodName = "createRecord")
-    public Record(String title, String description, ScopeType scope, Member author) {
+    public Record(String title, String description, ScopeType scope, Member member, Team team) {
         this.title = title;
         this.description = description;
         this.scope = scope;
-        this.author = author;
+        this.member = member;
+        this.team = team;
     }
 
     public void updateTitleAndDescription(String title, String description) {

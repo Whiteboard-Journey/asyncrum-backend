@@ -2,6 +2,7 @@ package swm.wbj.asyncrum.domain.whiteboard.dto;
 
 import lombok.Data;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
@@ -14,13 +15,15 @@ public class WhiteboardCreateRequestDto {
     private String title;
     private String description;
     private String scope;
+    private Long teamId;
 
-    public Whiteboard toEntity(Member author) {
+    public Whiteboard toEntity(Member member, Team team) {
         return Whiteboard.createWhiteboard()
                 .title(title)
                 .description(description)
                 .scope(ScopeType.of(scope))
-                .author(author)
+                .member(member)
+                .team(team)
                 .build();
     }
 }

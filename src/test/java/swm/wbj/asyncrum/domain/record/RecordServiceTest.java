@@ -104,7 +104,7 @@ public class RecordServiceTest {
         assertEquals(createdRecord.getTitle(), title);
         assertEquals(createdRecord.getDescription(), description);
         assertEquals(createdRecord.getScope(), ScopeType.PRIVATE);
-        assertEquals(createdRecord.getAuthor().getId(), Long.parseLong(CURRENT_MEMBER_ID));
+        assertEquals(createdRecord.getMember().getId(), Long.parseLong(CURRENT_MEMBER_ID));
         assertTrue(createdRecord.getRecordFileKey().contains(CURRENT_MEMBER_ID));
     }
 
