@@ -1,13 +1,16 @@
 package swm.wbj.asyncrum.domain.userteam.team.service;
 
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
-import java.io.IOException;
 
 public interface TeamService {
 
     // 팀 생성
     TeamCreateResponseDto createTeam(TeamCreateRequestDto requestDto);
+
+    // 현재 요청된 팀 조회
+    Team getCurrentTeamWithValidation(Long id);
 
     // 단일 팀 조회
     TeamReadResponseDto readTeam(Long id);
@@ -33,6 +36,6 @@ public interface TeamService {
     // 팀 삭제
     void deleteTeam(Long id);
 
-    TeamImageCreateResponseDto createImage(Long id) throws IOException;
+    TeamImageCreateResponseDto createImage(Long id);
 
 }

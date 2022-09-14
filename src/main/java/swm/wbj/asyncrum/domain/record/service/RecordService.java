@@ -7,7 +7,7 @@ public interface RecordService {
 
     RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto);
     RecordReadResponseDto readRecord(Long id);
-    RecordReadAllResponseDto readAllRecord(ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage);
+    RecordReadAllResponseDto readAllRecord(Long teamId, ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage);
     RecordUpdateResponseDto updateRecord(Long id, RecordUpdateRequestDto requestDto);
     void deleteRecord(Long id);
 }
