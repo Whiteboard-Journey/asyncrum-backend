@@ -30,6 +30,9 @@ public class AwsService {
     public static final String RECORD_BUCKET_NAME = "records";
     public static final String RECORD_FILE_PREFIX ="record";
 
+    public static final String WHITEBOARD_BUCKET_NAME = "whiteboards";
+    public static final String WHITEBOARD_FILE_PREFIX ="whiteboard";
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 

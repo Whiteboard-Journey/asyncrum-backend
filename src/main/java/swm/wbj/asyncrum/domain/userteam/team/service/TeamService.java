@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.userteam.team.service;
 
+import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 
@@ -10,7 +11,7 @@ public interface TeamService {
     TeamCreateResponseDto createTeam(TeamCreateRequestDto requestDto);
 
     // 현재 요청된 팀 조회
-    Team getCurrentTeamWithValidation(Long id);
+    Team getTeamWithValidation(Long id, Member member);
 
     // 단일 팀 조회
     TeamReadResponseDto readTeam(Long id);

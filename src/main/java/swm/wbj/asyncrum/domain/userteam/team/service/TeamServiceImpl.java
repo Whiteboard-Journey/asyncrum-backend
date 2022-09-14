@@ -17,12 +17,8 @@ import swm.wbj.asyncrum.domain.userteam.teammember.repository.TeamMemberReposito
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.type.FileType;
-import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.type.TeamRoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
-
-import java.io.IOException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -61,12 +57,12 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional(readOnly = true)
-    public Team getCurrentTeamWithValidation(Long id) {
-        Member currentMember = memberService.getCurrentMember();
+    public Team getTeamWithValidation(Long id, Member member) {
+
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, currentMember)
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀에 속해있지 않습니다."));
 
         return teamMember.getTeam();
@@ -76,7 +72,8 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional(readOnly = true)
     public TeamReadResponseDto readTeam(Long id) {
-        return new TeamReadResponseDto(getCurrentTeamWithValidation(id));
+        Member currentMember = memberService.getCurrentMember();
+        return new TeamReadResponseDto(getTeamWithValidation(id, currentMember));
     }
 
     // 팀 전체 조회
@@ -221,5 +218,4 @@ public class TeamServiceImpl implements TeamService {
     public String createImageFileKey(Long memberId) {
         return IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
-
 }

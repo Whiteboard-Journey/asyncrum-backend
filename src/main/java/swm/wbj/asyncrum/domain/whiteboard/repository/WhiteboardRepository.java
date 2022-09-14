@@ -6,19 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
+
+import java.util.List;
 
 @Repository
 public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
 
-    /**
-     * ADMIN QUERY
-     */
-    @Query(
-            value = "SELECT w FROM Whiteboard w JOIN FETCH w.author m",
-            countQuery = "SELECT COUNT(w) FROM Whiteboard w JOIN w.author m"
-    )
-    Page<Whiteboard> findAll(Pageable pageable);
+    List<Whiteboard> findAll();
 
     @Query(
             value = "SELECT * FROM whiteboard AS w WHERE w.whiteboard_id <= :topId",
@@ -30,23 +27,11 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
             Pageable pageable
     );
 
-    /**
-     * USER QUERY
-     */
-    @Query(
-            value = "SELECT * FROM whiteboard AS w WHERE (w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId)",
-            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE (w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId)",
-            nativeQuery = true
-    )
-    Page<Whiteboard> findAllByTeam(
-            @Param("teamId") Long teamId,
-            @Param("memberId") Long memberId,
-            Pageable pageable
-    );
+    Page<Whiteboard> findAllByTeam(Team team, Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM whiteboard AS w WHERE (w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId) AND (w.whiteboard_id <= :topId)",
-            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE (w.member_id in (select member_id from member as m where m.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId) AND (w.whiteboard_id <= :topId)",
+            value = "SELECT * FROM whiteboard AS w WHERE (w.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId) AND (w.whiteboard_id <= :topId)",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE (w.team_id = :teamId) AND (w.scope = \"TEAM\")) OR (w.member_id = :memberId) AND (w.whiteboard_id <= :topId)",
             nativeQuery = true
     )
     Page<Whiteboard> findAllByTeamAndTopId(
@@ -56,29 +41,17 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
             Pageable pageable
     );
 
-    @Query(
-            value = "SELECT * FROM whiteboard AS w WHERE w.member_id = :memberId",
-            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id = :memberId",
-            nativeQuery = true
-    )
-    Page<Whiteboard> findAllByAuthor(
-            @Param("memberId") Long memberId,
-            Pageable pageable
-    );
+    Page<Whiteboard> findAllByTeamAndMember(Team currentTeam, Member currentMember, Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM whiteboard AS w WHERE w.member_id = :memberId AND w.whiteboard_id <= :topId",
-            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.member_id = :memberId AND w.whiteboard_id <= :topId",
+            value = "SELECT * FROM whiteboard AS w WHERE w.team_id = :teamId AND w.member_id = :memberId AND w.whiteboard_id <= :topId",
+            countQuery = "SELECT COUNT(*) FROM whiteboard AS w WHERE w.team_id = :teamId AND w.member_id = :memberId AND w.whiteboard_id <= :topId",
             nativeQuery = true
     )
-    Page<Whiteboard> findAllByAuthorAndTopId(
+    Page<Whiteboard> findAllByTeamAndMemberAndTopId(
+            @Param("teamId") Long teamId,
             @Param("memberId") Long memberId,
             @Param("topId") Long topId,
             Pageable pageable
     );
-
-    /**
-     * UNIVERSAL QUERY
-     */
-    Boolean existsByTitle(String title);
 }
