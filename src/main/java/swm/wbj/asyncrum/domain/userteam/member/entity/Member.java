@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.userteam.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
@@ -68,17 +69,8 @@ public class Member extends BaseEntity {
     private RoleType roleType;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private Team team;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private List<Record> records = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private List<Whiteboard> whiteboards = new ArrayList<>();
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<TeamMember> teams = new ArrayList<>();
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -117,12 +109,11 @@ public class Member extends BaseEntity {
         this.roleType = roleType;
     }
 
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.addMember(this);
+    public void addTeam(TeamMember team) {
+        this.teams.add(team);
     }
 
-    public void leaveTeam() {
-        this.team = null;
+    public void leaveTeam(TeamMember team) {
+        this.teams.remove(team);
     }
 }

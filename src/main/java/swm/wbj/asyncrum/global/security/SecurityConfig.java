@@ -74,10 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .antMatchers("/api/v1/auth/*").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/v1/members").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/members/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/members/email/verification").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/teams/*/members/invitation").permitAll()
-                    .antMatchers("/api/v1/**").hasAnyAuthority(RoleType.USER.getCode(), RoleType.ADMIN.getCode())
+                    .antMatchers("/api/v1/**").hasAnyAuthority(RoleType.USER.getCode())
                     .anyRequest().authenticated()
 
                 // 1. OAuth 로그인 요청 시 사용하는 엔드포인트 관련 설정
