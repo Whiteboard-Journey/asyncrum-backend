@@ -12,6 +12,8 @@ import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.exception.RecordNotExistsException;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
@@ -29,12 +31,14 @@ public class RecordServiceImpl implements RecordService {
 
     private final RecordRepository recordRepository;
     private final MemberService memberService;
+    private final TeamService teamService;
     private final AwsService awsService;
 
     @Override
     @Transactional(readOnly = true)
-    public RecordReadAllResponseDto readAllRecord(ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
+    public RecordReadAllResponseDto readAllRecord(Long teamId, ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
+        Team team = teamService.getCurrentTeamWithValidation(teamId);
 
         Page<Record> recordPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "record_id");
@@ -45,12 +49,12 @@ public class RecordServiceImpl implements RecordService {
                     recordRepository.findAllByTopId(topId, pageable);
         }
         else if(hasUserRole(currentMember)) {
-            if(isTeamScopeAndTeamMember(currentMember, scope)) {
+            if(isTeamScope(scope)) {
                 recordPage = (topId == 0L) ?
                         recordRepository.findAllByTeam(
-                                currentMember.getTeam().getId(), currentMember.getId(), pageable) :
+                                team.getId(), currentMember.getId(), pageable) :
                         recordRepository.findAllByTeamAndTopId(
-                                currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
+                                team.getId(), currentMember.getId(), topId, pageable);
             }
             else {
                 recordPage = (topId == 0L) ?
@@ -139,7 +143,7 @@ public class RecordServiceImpl implements RecordService {
         return record.getAuthor().equals(currentMember);
     }
 
-    private boolean isTeamScopeAndTeamMember(Member currentMember, ScopeType scope) {
-        return scope == ScopeType.TEAM && currentMember.getTeam() != null;
+    private boolean isTeamScope(ScopeType scope) {
+        return scope == ScopeType.TEAM;
     }
 }

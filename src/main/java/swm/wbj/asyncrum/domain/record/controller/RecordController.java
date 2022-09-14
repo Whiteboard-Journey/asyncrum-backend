@@ -34,17 +34,16 @@ public class RecordController {
 
     @GetMapping
     public ResponseEntity<?> readAllRecord(
+            @RequestParam(value = "teamId") Long teamId,
             @RequestParam(value = "scope") ScopeType scope,
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
             @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
     {
-        RecordReadAllResponseDto responseDto = recordService.readAllRecord(scope, pageIndex, topId, sizePerPage);
+        RecordReadAllResponseDto responseDto = recordService.readAllRecord(teamId, scope, pageIndex, topId, sizePerPage);
 
         return ResponseEntity.ok(responseDto);
     }
-
-
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateRecord(@PathVariable Long id, @RequestBody RecordUpdateRequestDto requestDto){

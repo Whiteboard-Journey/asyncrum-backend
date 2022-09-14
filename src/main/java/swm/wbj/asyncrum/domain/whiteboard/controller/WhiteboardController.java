@@ -37,13 +37,14 @@ public class WhiteboardController {
 
     @GetMapping(params = "scope")
     public ResponseEntity<?> readAllWhiteboard(
+            @RequestParam(value = "teamId") Long teamId,
             @RequestParam(value = "scope") ScopeType scope,
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
             @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer sizePerPage)
     {
         WhiteboardReadAllResponseDto responseDto =
-                whiteboardService.readAllWhiteboard(scope, pageIndex, topId, sizePerPage);
+                whiteboardService.readAllWhiteboard(teamId, scope, pageIndex, topId, sizePerPage);
 
         return ResponseEntity.ok(responseDto);
     }

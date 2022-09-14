@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 import swm.wbj.asyncrum.domain.whiteboard.dto.*;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.domain.whiteboard.repository.WhiteboardRepository;
@@ -26,6 +28,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
     private final WhiteboardRepository whiteboardRepository;
     private final MemberService memberService;
+    private final TeamService teamService;
     private final AwsService awsService;
 
     private static final String WHITEBOARD_BUCKET_NAME = "whiteboards";
@@ -85,29 +88,32 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
     @Transactional(readOnly = true)
     @Override
-    public WhiteboardReadAllResponseDto readAllWhiteboard(ScopeType scope, Integer pageIndex,
+    public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
                                                           Long topId, Integer sizePerPage) {
-        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "whiteboard_id");
         Member currentMember = memberService.getCurrentMember();
-        Page<Whiteboard> whiteboardPage = getWhiteboards(scope, topId, pageable, currentMember);
+        Team currentTeam = teamService.getCurrentTeamWithValidation(teamId);
+
+        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "whiteboard_id");
+        Page<Whiteboard> whiteboardPage = getWhiteboards(currentTeam, scope, topId, pageable, currentMember);
+
 
         return new WhiteboardReadAllResponseDto(
                 whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
-    private Page<Whiteboard> getWhiteboards(ScopeType scope, Long topId, Pageable pageable, Member currentMember) {
+    private Page<Whiteboard> getWhiteboards(Team currentTeam, ScopeType scope, Long topId, Pageable pageable, Member currentMember) {
         Page<Whiteboard> whiteboardPage;
-        if (scope == ScopeType.TEAM && currentMember.getTeam() != null) {
+        if (scope == ScopeType.TEAM) {
             if(topId == 0) {
                 whiteboardPage = whiteboardRepository.findAllByTeam(
-                        currentMember.getTeam().getId(), currentMember.getId(), pageable);
+                        currentTeam.getId(), currentMember.getId(), pageable);
             }
             else {
                 whiteboardPage = whiteboardRepository.findAllByTeamAndTopId(
-                        currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
+                        currentTeam.getId(), currentMember.getId(), topId, pageable);
             }
         }
-        else if (scope == ScopeType.PRIVATE || currentMember.getTeam() == null) {
+        else if (scope == ScopeType.PRIVATE) {
             if(topId == 0) {
                 whiteboardPage = whiteboardRepository.findAllByAuthor(currentMember.getId(), pageable);
             }
