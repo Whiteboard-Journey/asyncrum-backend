@@ -28,4 +28,8 @@ public enum ScopeType {
                 .findAny()
                 .orElse(PRIVATE);
     }
+
+    public static boolean isTeamScope(ScopeType scope) {
+        return scope == ScopeType.TEAM;
+    }
 }

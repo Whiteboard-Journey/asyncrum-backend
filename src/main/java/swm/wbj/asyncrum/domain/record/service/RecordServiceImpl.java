@@ -12,8 +12,9 @@ import swm.wbj.asyncrum.domain.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.exception.RecordNotExistsException;
 import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
-import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.type.FileType;
@@ -21,6 +22,7 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_FILE_PREFIX;
+import static swm.wbj.asyncrum.global.type.ScopeType.isTeamScope;
 
 @RequiredArgsConstructor
 @Transactional
@@ -29,46 +31,15 @@ public class RecordServiceImpl implements RecordService {
 
     private final RecordRepository recordRepository;
     private final MemberService memberService;
+    private final TeamService teamService;
     private final AwsService awsService;
-
-    @Override
-    @Transactional(readOnly = true)
-    public RecordReadAllResponseDto readAllRecord(ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
-        Member currentMember = memberService.getCurrentMember();
-
-        Page<Record> recordPage;
-        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "record_id");
-
-        if(hasAdminRole(currentMember)) {
-            recordPage = (topId == 0L) ?
-                    recordRepository.findAll(pageable) :
-                    recordRepository.findAllByTopId(topId, pageable);
-        }
-        else if(hasUserRole(currentMember)) {
-            if(isTeamScopeAndTeamMember(currentMember, scope)) {
-                recordPage = (topId == 0L) ?
-                        recordRepository.findAllByTeam(
-                                currentMember.getTeam().getId(), currentMember.getId(), pageable) :
-                        recordRepository.findAllByTeamAndTopId(
-                                currentMember.getTeam().getId(), currentMember.getId(), topId, pageable);
-            }
-            else {
-                recordPage = (topId == 0L) ?
-                        recordRepository.findAllByAuthor(currentMember.getId(), pageable) :
-                        recordRepository.findAllByAuthorAndTopId(currentMember.getId(), topId, pageable);
-            }
-        }
-        else {
-            throw new OperationNotAllowedException();
-        }
-
-        return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast());
-    }
 
     @Override
     public RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Record record = requestDto.toEntity(currentMember);
+        Team currentTeam = teamService.getTeamWithValidation(requestDto.getTeamId(), currentMember);
+
+        Record record = requestDto.toEntity(currentMember, currentTeam);
         Long recordId = recordRepository.save(record).getId();
 
         String recordFileKey = createRecordFileKey(currentMember.getId(), recordId);
@@ -80,17 +51,26 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public void deleteRecord(Long id) {
+    @Transactional(readOnly = true)
+    public RecordReadAllResponseDto readAllRecord(Long teamId, ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Record record = recordRepository.findById(id)
-                .orElseThrow(RecordNotExistsException::new);
+        Team currentTeam = teamService.getTeamWithValidation(teamId, currentMember);
 
-        if (!ownsRecord(currentMember, record) && !hasAdminRole(currentMember)) {
-            throw new OperationNotAllowedException();
+        Page<Record> recordPage;
+        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
+
+        if(isTeamScope(scope)) {
+            recordPage = (topId == 0L) ?
+                    recordRepository.findAllByTeam(currentTeam, pageable) :
+                    recordRepository.findAllByTeamAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
+        }
+        else {
+            recordPage = (topId == 0L) ?
+                    recordRepository.findAllByTeamAndMember(currentTeam, currentMember, pageable) :
+                    recordRepository.findAllByTeamAndMemberAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
         }
 
-        awsService.deleteFile(record.getRecordFileKey(), RECORD_BUCKET_NAME);
-        recordRepository.delete(record);
+        return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast());
     }
 
     @Override
@@ -100,7 +80,7 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordRepository.findById(id)
                 .orElseThrow(RecordNotExistsException::new);
 
-        if (!ownsRecord(currentMember, record) && !hasAdminRole(currentMember)) {
+        if (!ownsRecord(currentMember, record)) {
             throw new OperationNotAllowedException();
         }
 
@@ -113,33 +93,38 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordRepository.findById(id)
                 .orElseThrow(RecordNotExistsException::new);
 
-        if (!ownsRecord(currentMember, record) && !hasAdminRole(currentMember)) {
+        if (!ownsRecord(currentMember, record)) {
             throw new OperationNotAllowedException();
         }
 
         record.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
         record.updateScope(ScopeType.of(requestDto.getScope()));
-        String preSignedURL = awsService.generatePresignedURL(record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
+
+        String preSignedURL = awsService.generatePresignedURL(
+                record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
 
         return new RecordUpdateResponseDto(recordRepository.save(record).getId(), preSignedURL);
+    }
+
+    @Override
+    public void deleteRecord(Long id) {
+        Member currentMember = memberService.getCurrentMember();
+        Record record = recordRepository.findById(id)
+                .orElseThrow(RecordNotExistsException::new);
+
+        if (!ownsRecord(currentMember, record)) {
+            throw new OperationNotAllowedException();
+        }
+
+        awsService.deleteFile(record.getRecordFileKey(), RECORD_BUCKET_NAME);
+        recordRepository.delete(record);
     }
 
     private String createRecordFileKey(Long memberId, Long recordId) {
         return RECORD_FILE_PREFIX + "_" + memberId + "_" + recordId + "." + FileType.MP4.getName();
     }
 
-    private boolean hasAdminRole(Member currentMember) {
-        return currentMember.getRoleType().equals(RoleType.ADMIN);
-    }
-    private boolean hasUserRole(Member currentMember) {
-        return currentMember.getRoleType().equals(RoleType.USER);
-    }
-
     private boolean ownsRecord(Member currentMember, Record record) {
-        return record.getAuthor().equals(currentMember);
-    }
-
-    private boolean isTeamScopeAndTeamMember(Member currentMember, ScopeType scope) {
-        return scope == ScopeType.TEAM && currentMember.getTeam() != null;
+        return record.getMember().equals(currentMember);
     }
 }
