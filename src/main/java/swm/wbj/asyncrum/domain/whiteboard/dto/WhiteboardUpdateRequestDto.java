@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class WhiteboardUpdateRequestDto {
 
-
     private String title;
     private String description;
     private String scope;

@@ -12,13 +12,13 @@ import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
+import swm.wbj.asyncrum.domain.userteam.teammember.entity.TeamMember;
+import swm.wbj.asyncrum.domain.userteam.teammember.repository.TeamMemberRepository;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.type.FileType;
-import swm.wbj.asyncrum.global.type.RoleType;
+import swm.wbj.asyncrum.global.type.TeamRoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @Transactional
@@ -26,6 +26,7 @@ import java.io.IOException;
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final MemberService memberService;
     private final MailService mailService;
     private final UrlService urlService;
@@ -44,53 +45,50 @@ public class TeamServiceImpl implements TeamService {
             throw new IllegalArgumentException("해당 코드는 이미 사용중입니다.");
         }
 
-        Team team = requestDto.toEntity();
-        team.addMember(member);
-        return new TeamCreateResponseDto(teamRepository.save(team).getId());
+        Team team = teamRepository.save(requestDto.toEntity());
+        TeamMember teamMember = TeamMember.createTeamMember()
+                .team(team)
+                .member(member)
+                .teamRoleType(TeamRoleType.OWNER)
+                .build();
+
+        return new TeamCreateResponseDto(teamMemberRepository.save(teamMember).getTeam().getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Team getTeamWithValidation(Long id, Member member) {
+
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
+
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀에 속해있지 않습니다."));
+
+        return teamMember.getTeam();
     }
 
     // 단일 팀 조회
     @Override
     @Transactional(readOnly = true)
     public TeamReadResponseDto readTeam(Long id) {
-        Team team;
         Member currentMember = memberService.getCurrentMember();
-        RoleType memberRoleType = currentMember.getRoleType();
-
-        switch (memberRoleType) {
-            case ADMIN:
-                team = teamRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
-                break;
-            case USER:
-                Team currentTeam = currentMember.getTeam();
-                if (currentTeam == null) {
-                    throw new IllegalArgumentException("팀에 속해있지 않습니다.");
-                }
-                team = teamRepository.findById(currentTeam.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
-                break;
-            case GUEST:
-            default:
-                throw new IllegalArgumentException("허용되지 않은 작업입니다.");
-        }
-
-        return new TeamReadResponseDto(team);
+        return new TeamReadResponseDto(getTeamWithValidation(id, currentMember));
     }
 
     // 팀 전체 조회
     @Override
     @Transactional(readOnly = true)
-    public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId, Integer SIZE_PER_PAGE) {
-
-        Page<Team> teamPage;
-        Pageable pageable = PageRequest.of(pageIndex, SIZE_PER_PAGE, Sort.Direction.DESC, "id");
+    public TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId, Integer sizePerPage) {
+        Member currentMember = memberService.getCurrentMember();
+        Page<TeamMember> teamPage;
+        Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
 
         if(topId == 0) {
-            teamPage = teamRepository.findAll(pageable);
+            teamPage = teamMemberRepository.findAllByMember(currentMember, pageable);
         }
         else {
-            teamPage = teamRepository.findAllByTopId(topId, pageable);
+            teamPage = teamMemberRepository.findAllByMemberAndTopId(currentMember.getId(), topId, pageable);
         }
 
         return new TeamReadAllResponseDto(teamPage.getContent(), teamPage.getPageable(), teamPage.isLast());
@@ -105,7 +103,10 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        if(!team.getMembers().contains(requestMember)) {
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀에 속해있지 않습니다."));
+
+        if(!teamMember.getTeamRoleType().equals(TeamRoleType.OWNER)) {
             throw new IllegalArgumentException("해당 팀에 팀원을 추가할 수 있는 권한이 없습니다.");
         }
 
@@ -122,25 +123,32 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
         Member member = memberService.getUserByIdOrEmail(memberId, null);
 
-        team.addMember(member);
-        teamRepository.save(team);
+        TeamMember teamMember = TeamMember.createTeamMember()
+                .team(team)
+                .member(member)
+                .teamRoleType(TeamRoleType.USER)
+                .build();
+
+        teamMemberRepository.save(teamMember);
     }
 
     // 팀원 추가: 수동 방식
     @Override
     public TeamMemberAddResponseDto addMember(Long id, TeamMemberAddRequestDto requestDto) {
         // 요청자가 해당 팀의 속해 있는지 검증
-        Member requestMember = memberService.getCurrentMember();
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        if(!team.getMembers().contains(requestMember)) {
-            throw new IllegalArgumentException("해당 팀에 팀원을 추가할 수 있는 권한이 없습니다.");
-        }
-
         // 추가할 팀원 정보 가져온 후 팀에 추가
         Member member = memberService.getUserByIdOrEmail(requestDto.getMemberId(), null);
-        team.addMember(member);
+
+        TeamMember teamMember = TeamMember.createTeamMember()
+                .team(team)
+                .member(member)
+                .teamRoleType(TeamRoleType.USER)
+                .build();
+
+        teamMemberRepository.save(teamMember);
 
         return new TeamMemberAddResponseDto(id, member.getId());
     }
@@ -150,19 +158,23 @@ public class TeamServiceImpl implements TeamService {
     public void removeMember(Long id, Long memberId) {
         // 요청자와 제거할 팀원 모두가 해당 팀의 속해 있는지 검증
         Member requestMember = memberService.getCurrentMember();
-        Member member = memberService.getUserByIdOrEmail(memberId, null);
+        Member removeMember = memberService.getUserByIdOrEmail(memberId, null);
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        if(!team.getMembers().contains(requestMember)) {
-            throw new IllegalArgumentException("해당 팀에 팀원을 제거할 수 있는 권한이 없습니다.");
-        }
-        if(!team.getMembers().contains(member)) {
-            throw new IllegalArgumentException("해당 팀에 해당 팀원이 없습니다.");
+        TeamMember requestTeamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀에 속해있지 않습니다."));
+
+        if(!requestTeamMember.getTeamRoleType().equals(TeamRoleType.OWNER)) {
+            throw new IllegalArgumentException("해당 팀에 팀원을 추가할 수 있는 권한이 없습니다.");
         }
 
+        TeamMember removeTeamMember = teamMemberRepository.findByTeamAndMember(team, removeMember)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀원이 해당 팀에 속해있지 않습니다."));
+
         // 해당 팀원 팀에서 제거
-        team.removeMember(member);
+        team.removeMember(removeTeamMember);
+        teamMemberRepository.delete(removeTeamMember);
     }
 
     // 팀 정보 업데이트
@@ -171,7 +183,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        team.update(requestDto.getName(), null, null);
+        team.updateName(requestDto.getName());
 
         return new TeamUpdateResponseDto(teamRepository.save(team).getId());
     }
@@ -179,27 +191,31 @@ public class TeamServiceImpl implements TeamService {
     // 팀 삭제
     @Override
     public void deleteTeam(Long id) {
+        Member requestMember = memberService.getCurrentMember();
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
 
-        team.getMembers().forEach(Member::leaveTeam);
+        TeamMember requestTeamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀에 속해있지 않습니다."));
+
+        if(!requestTeamMember.getTeamRoleType().equals(TeamRoleType.OWNER)) {
+            throw new IllegalArgumentException("해당 팀에 팀원을 추가할 수 있는 권한이 없습니다.");
+        }
+        
         teamRepository.delete(team);
     }
 
     @Override
-    public TeamImageCreateResponseDto createImage(Long id) throws IOException {
-
-
+    public TeamImageCreateResponseDto createImage(Long id) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀이 존재하지 않습니다."));
         String imageFileKey = createImageFileKey(team.getId());
         String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
-        team.update(null, imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
+        team.updateProfileImage(imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
         return new TeamImageCreateResponseDto(id, preSignedURL);
     }
 
     public String createImageFileKey(Long memberId) {
         return IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
-
 }

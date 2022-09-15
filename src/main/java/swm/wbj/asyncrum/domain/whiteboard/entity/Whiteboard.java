@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
@@ -41,16 +40,21 @@ public class Whiteboard extends BaseEntity {
     private ScopeType scope;
 
     @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "member_id")
-    private Member author;
+    private Member member;
+
+    @JsonIgnore
+    @ManyToOne(targetEntity = Team.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @Builder(builderMethodName = "createWhiteboard")
-    public Whiteboard(String title, String description, ScopeType scope, Member author) {
+    public Whiteboard(String title, String description, ScopeType scope, Member member, Team team) {
         this.title = title;
         this.description = description;
         this.scope = scope;
-        this.author = author;
+        this.member = member;
+        this.team = team;
     }
 
     public void updateTitleAndDescription(String title, String description) {

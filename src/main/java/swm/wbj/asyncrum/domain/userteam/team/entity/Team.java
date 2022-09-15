@@ -3,6 +3,7 @@ package swm.wbj.asyncrum.domain.userteam.team.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.userteam.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 
 import javax.persistence.*;
@@ -26,42 +27,37 @@ public class Team extends BaseEntity {
     @Column(unique = true)
     private String code;
 
-    @Column
     @JsonIgnore
+    @Column
     private String profileImageFileKey;
 
     @Column
     private String profileImageUrl;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
-    private List<Member> members = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<TeamMember> members = new ArrayList<>();
 
     @Builder
     public Team(String name, String code) {
-
         this.name = name;
         this.code = code;
-
     }
 
-    public void update(String name, String profileImageFileKey, String profileImageUrl) {
+    public void updateName(String name) {
+        if(name != null) this.name = name;
+    }
 
-        this.name = name;
+    public void updateProfileImage(String profileImageFileKey, String profileImageUrl) {
         if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
-        if(profileImageUrl != null) this.profileImageUrl = profileImageUrl;
-
+        if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
     }
 
-    public void addMember(Member member) {
-
-        member.changeTeam(this);
+    public void addMember(TeamMember member) {
         this.members.add(member);
     }
 
-    public void removeMember(Member member) {
-
-        member.leaveTeam();
+    public void removeMember(TeamMember member) {
         this.members.remove(member);
     }
-
 }

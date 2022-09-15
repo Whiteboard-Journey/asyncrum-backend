@@ -104,7 +104,7 @@ public class RecordServiceTest {
         assertEquals(createdRecord.getTitle(), title);
         assertEquals(createdRecord.getDescription(), description);
         assertEquals(createdRecord.getScope(), ScopeType.PRIVATE);
-        assertEquals(createdRecord.getAuthor().getId(), Long.parseLong(CURRENT_MEMBER_ID));
+        assertEquals(createdRecord.getMember().getId(), Long.parseLong(CURRENT_MEMBER_ID));
         assertTrue(createdRecord.getRecordFileKey().contains(CURRENT_MEMBER_ID));
     }
 
@@ -131,12 +131,13 @@ public class RecordServiceTest {
     @Test
     public void readAllRecord() {
         // given
+        Long teamId = 0L;
         Integer pageIndex = 0;
         Long topId = 0L;
         Integer sizePerPage = 12;
 
         // when
-        RecordReadAllResponseDto responseDto = recordService.readAllRecord(privateScope, pageIndex, topId, sizePerPage);
+        RecordReadAllResponseDto responseDto = recordService.readAllRecord(teamId, privateScope, pageIndex, topId, sizePerPage);
 
         // then
         assertEquals(responseDto.getRecords().size(), 1);
