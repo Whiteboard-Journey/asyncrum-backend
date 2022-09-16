@@ -23,6 +23,7 @@ public class Whiteboard extends BaseEntity {
     @Column(name = "whiteboard_id")
     private Long id;
 
+    @JsonIgnore
     @Column
     private String whiteboardFileKey;
 

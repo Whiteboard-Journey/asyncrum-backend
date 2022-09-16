@@ -37,7 +37,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Override
     public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithTeamMemberValidation(requestDto.getTeamId(), currentMember);
+        Team currentTeam = validateWhiteboardTeamMember(currentMember, requestDto.getTeamId());
 
         Whiteboard whiteboard = requestDto.toEntity(currentMember, currentTeam);
         Long whiteboardId = whiteboardRepository.save(whiteboard).getId();
@@ -55,7 +55,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
                                                           Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithTeamMemberValidation(teamId, currentMember);
+        Team currentTeam = validateWhiteboardTeamMember(currentMember, teamId);
 
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
@@ -80,9 +80,17 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadResponseDto readWhiteboard(Long id) {
-        Whiteboard whiteboard = getMemberWhiteboard(id);
+        Member currentMember = memberService.getCurrentMember();
+        Whiteboard whiteboard = whiteboardRepository.findById(id)
+                .orElseThrow(WhiteboardNotExistsException::new);
+
+        validateWhiteboardTeamMember(currentMember, whiteboard.getTeam().getId());
 
         return new WhiteboardReadResponseDto(whiteboard);
+    }
+
+    private Team validateWhiteboardTeamMember(Member currentMember, Long id) {
+        return teamService.getTeamWithTeamMemberValidation(id, currentMember);
     }
 
     @Override
