@@ -63,13 +63,13 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(isTeamScope(scope)) {
             whiteboardPage = (topId == 0L) ?
                     whiteboardRepository.findAllByTeam(currentTeam, pageable) :
-                    whiteboardRepository.findAllByTeamAndTopIdJQPL(currentTeam, topId, pageable);
+                    whiteboardRepository.findAllByTeamWithTopId(currentTeam, topId, pageable);
         }
         else {
             whiteboardPage = (topId == 0L) ?
                     whiteboardRepository.findAllByTeamAndMember(
                             currentTeam, currentMember, pageable) :
-                    whiteboardRepository.findAllByTeamAndMemberAndTopIdJQPL(
+                    whiteboardRepository.findAllByTeamAndMemberWithTopId(
                             currentTeam, currentMember, topId, pageable);
         }
 

@@ -89,7 +89,7 @@ public class TeamServiceImpl implements TeamService {
             teamPage = teamMemberRepository.findAllByMember(currentMember, pageable);
         }
         else {
-            teamPage = teamMemberRepository.findAllByMemberAndTopId(currentMember.getId(), topId, pageable);
+            teamPage = teamMemberRepository.findAllByMemberWithTopId(currentMember, topId, pageable);
         }
 
         return new TeamReadAllResponseDto(teamPage.getContent(), teamPage.getPageable(), teamPage.isLast());
