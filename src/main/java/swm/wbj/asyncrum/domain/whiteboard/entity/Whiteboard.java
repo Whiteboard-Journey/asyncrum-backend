@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
+@Table(name = "whiteboard")
 @Entity
 public class Whiteboard extends BaseEntity {
 

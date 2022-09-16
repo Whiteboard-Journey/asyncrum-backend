@@ -8,5 +8,4 @@ import lombok.Data;
 public class TeamCreateResponseDto {
 
     private Long id;
-
 }
