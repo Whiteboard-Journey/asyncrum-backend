@@ -19,13 +19,9 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     Page<TeamMember> findAllByMember(Member currentMember, Pageable pageable);
 
-    @Query(
-            value = "SELECT * FROM team_member AS tm WHERE tm.member_id = :memberId AND tm.id <= :topId",
-            countQuery = "SELECT COUNT(*) FROM team_member AS tm  WHERE tm.member_id = :memberId AND tm.id <= :topId",
-            nativeQuery = true
-    )
-    Page<TeamMember> findAllByMemberAndTopId(
-            @Param("memberId") Long memberId,
+    @Query("SELECT tm FROM TeamMember tm WHERE tm.member = :member AND tm.id <= :topId")
+    Page<TeamMember> findAllByMemberWithTopId(
+            @Param("member") Member member,
             @Param("topId") Long topId,
             Pageable pageable);
 }
