@@ -199,6 +199,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public String createImageFileKey(Long memberId) {
-        return AwsService.IMAGE_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
+        return AwsService.IMAGE_MEMBER_FILE_PREFIX + "_" + memberId + "." + FileType.PNG.getName();
     }
 }

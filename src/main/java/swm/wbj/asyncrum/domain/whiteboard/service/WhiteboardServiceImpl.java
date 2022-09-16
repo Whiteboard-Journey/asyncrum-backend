@@ -37,7 +37,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Override
     public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(requestDto.getTeamId(), currentMember);
+        Team currentTeam = teamService.getTeamWithTeamMemberValidation(requestDto.getTeamId(), currentMember);
 
         Whiteboard whiteboard = requestDto.toEntity(currentMember, currentTeam);
         Long whiteboardId = whiteboardRepository.save(whiteboard).getId();
@@ -55,7 +55,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
                                                           Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(teamId, currentMember);
+        Team currentTeam = teamService.getTeamWithTeamMemberValidation(teamId, currentMember);
 
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
