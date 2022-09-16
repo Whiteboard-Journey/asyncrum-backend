@@ -17,10 +17,8 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
 
     Page<Whiteboard> findAllByTeam(Team team, Pageable pageable);
 
-    @Query("SELECT w FROM Whiteboard w" +
-            " WHERE w.team = :team" +
-            " AND w.id <= :topId")
-    Page<Whiteboard> findAllByTeamAndTopIdJQPL(
+    @Query("SELECT w FROM Whiteboard w WHERE w.team = :team AND w.id <= :topId")
+    Page<Whiteboard> findAllByTeamWithTopId(
             @Param("team") Team team,
             @Param("topId") Long topId,
             Pageable pageable
@@ -28,12 +26,8 @@ public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
 
     Page<Whiteboard> findAllByTeamAndMember(Team currentTeam, Member currentMember, Pageable pageable);
 
-    @Query("SELECT w FROM Whiteboard w" +
-            " WHERE w.team = :team" +
-            " AND w.member = :member" +
-            " AND w.id <= :topId"
-    )
-    Page<Whiteboard> findAllByTeamAndMemberAndTopIdJQPL(
+    @Query("SELECT w FROM Whiteboard w WHERE w.team = :team AND w.member = :member AND w.id <= :topId")
+    Page<Whiteboard> findAllByTeamAndMemberWithTopId(
             @Param("team") Team team,
             @Param("member") Member member,
             @Param("topId") Long topId,
