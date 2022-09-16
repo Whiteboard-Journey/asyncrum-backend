@@ -25,7 +25,8 @@ public class AwsService {
     private final AmazonS3Client amazonS3Client;
 
     public static final String IMAGE_BUCKET_NAME = "images";
-    public static final String IMAGE_FILE_PREFIX = "member_image";
+    public static final String IMAGE_MEMBER_FILE_PREFIX = "member_image";
+    public static final String IMAGE_TEAM_FILE_PREFIX ="team_image";
 
     public static final String RECORD_BUCKET_NAME = "records";
     public static final String RECORD_FILE_PREFIX ="record";

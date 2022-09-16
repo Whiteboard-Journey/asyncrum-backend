@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
-import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,24 +18,16 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<?> createTeam(@RequestBody TeamCreateRequestDto requestDto) {
-        try {
-            TeamCreateResponseDto responseDto = teamService.createTeam(requestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        TeamCreateResponseDto responseDto = teamService.createTeam(requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> readTeam(@PathVariable Long id) {
-        try {
-            TeamReadResponseDto responseDto = teamService.readTeam(id);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        TeamReadResponseDto responseDto = teamService.readTeam(id);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping
@@ -45,13 +36,9 @@ public class TeamController {
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
             @RequestParam(value = "sizePerPage", required = false, defaultValue = "12") Integer SIZE_PER_PAGE)
     {
-        try {
-            TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId, SIZE_PER_PAGE);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        TeamReadAllResponseDto responseDto = teamService.readAllTeam(pageIndex, topId, SIZE_PER_PAGE);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     /**
@@ -59,13 +46,12 @@ public class TeamController {
      * TODO: 팀원이 아직 서비스에 가입하지 않은 경우 고려
      */
     @PostMapping("/{id}/members/invitation")
-    public ResponseEntity<?> sendTeamInvitationLinkByEmail(@PathVariable Long id, @RequestBody TeamMemberAddRequestDto requestDto) {
-        try {
-            teamService.sendTeamInvitationLinkByEmail(id, requestDto);
-            return ResponseEntity.ok().build();
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+    public ResponseEntity<?> sendTeamInvitationLinkByEmail(
+            @PathVariable Long id,
+            @RequestBody TeamMemberAddRequestDto requestDto) throws Exception {
+        teamService.sendTeamInvitationLinkByEmail(id, requestDto);
+
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -73,13 +59,12 @@ public class TeamController {
      * TODO: 프론트엔드 특정 페이지로 REDIRECT (JWT 토큰 없이 가능)
      */
     @GetMapping("/{id}/members/invitation")
-    public String verifyTeamInvitationLinkAndAddMember(@PathVariable Long id, @RequestParam("memberId") Long memberId) {
-        try {
-            teamService.verifyTeamInvitationLinkAndAddMember(id, memberId);
-            return "팀 합류 성공";
-        } catch (Exception e){
-            return "팀 합류 실패";
-        }
+    public String verifyTeamInvitationLinkAndAddMember(
+            @PathVariable Long id,
+            @RequestParam("memberId") Long memberId) {
+        teamService.verifyTeamInvitationLinkAndAddMember(id, memberId);
+
+        return "팀 합류 성공";
     }
 
     /**
@@ -87,13 +72,9 @@ public class TeamController {
      */
     @PostMapping("/{id}/members")
     public ResponseEntity<?> addMember(@PathVariable Long id, @RequestBody TeamMemberAddRequestDto requestDto) {
-        try {
-            TeamMemberAddResponseDto responseDto = teamService.addMember(id, requestDto);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        TeamMemberAddResponseDto responseDto = teamService.addMember(id, requestDto);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     /**
@@ -101,50 +82,29 @@ public class TeamController {
      */
     @DeleteMapping("/{id}/members/{memberId}")
     public ResponseEntity<?> removeMember(@PathVariable Long id, @PathVariable Long memberId) {
-        try {
-            teamService.removeMember(id, memberId);
-            return ResponseEntity.noContent().build();
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        teamService.removeMember(id, memberId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateTeam(@PathVariable Long id, @RequestBody TeamUpdateRequestDto requestDto) {
-        try {
-            TeamUpdateResponseDto responseDto = teamService.updateTeam(id, requestDto);
-            return ResponseEntity.ok(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        TeamUpdateResponseDto responseDto = teamService.updateTeam(id, requestDto);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTeam(@PathVariable Long id) {
-        try {
-            teamService.deleteTeam(id);
-            return ResponseEntity.noContent().build();
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
-        }
+        teamService.deleteTeam(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/images/{id}")
     public ResponseEntity<?> createTeamImage(@PathVariable("id") Long id) {
-        try {
+        TeamImageCreateResponseDto responseDto = teamService.createImage(id);
 
-            TeamImageCreateResponseDto responseDto = teamService.createImage(id);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto((e.getMessage())));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
-
-
-
 }

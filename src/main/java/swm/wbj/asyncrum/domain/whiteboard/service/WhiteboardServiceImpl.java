@@ -37,16 +37,13 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Override
     public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(requestDto.getTeamId(), currentMember);
+        Team currentTeam = validateWhiteboardTeamMember(currentMember, requestDto.getTeamId());
 
         Whiteboard whiteboard = requestDto.toEntity(currentMember, currentTeam);
         Long whiteboardId = whiteboardRepository.save(whiteboard).getId();
 
         String whiteboardFileKey = createWhiteboardFileKey(memberService.getCurrentMember().getId(), whiteboardId);
-
         String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME, FileType.TLDR);
-
-        // 화이트보드 엔티티에 화이트보드 문서 파일명 저장
         whiteboard.updateWhiteboardFileMetadata(
                 whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME));
 
@@ -58,7 +55,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
                                                           Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(teamId, currentMember);
+        Team currentTeam = validateWhiteboardTeamMember(currentMember, teamId);
 
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
@@ -66,15 +63,18 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(isTeamScope(scope)) {
             whiteboardPage = (topId == 0L) ?
                     whiteboardRepository.findAllByTeam(currentTeam, pageable) :
-                    whiteboardRepository.findAllByTeamAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
+                    whiteboardRepository.findAllByTeamWithTopId(currentTeam, topId, pageable);
         }
         else {
             whiteboardPage = (topId == 0L) ?
-                    whiteboardRepository.findAllByTeamAndMember(currentTeam, currentMember, pageable) :
-                    whiteboardRepository.findAllByTeamAndMemberAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
+                    whiteboardRepository.findAllByTeamAndMember(
+                            currentTeam, currentMember, pageable) :
+                    whiteboardRepository.findAllByTeamAndMemberWithTopId(
+                            currentTeam, currentMember, topId, pageable);
         }
 
-        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
+        return new WhiteboardReadAllResponseDto(
+                whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
     @Transactional(readOnly = true)
@@ -84,22 +84,18 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(WhiteboardNotExistsException::new);
 
-        if(!ownsWhiteboard(currentMember, whiteboard)) {
-            throw new OperationNotAllowedException();
-        }
+        validateWhiteboardTeamMember(currentMember, whiteboard.getTeam().getId());
 
         return new WhiteboardReadResponseDto(whiteboard);
     }
 
+    private Team validateWhiteboardTeamMember(Member currentMember, Long id) {
+        return teamService.getTeamWithTeamMemberValidation(id, currentMember);
+    }
+
     @Override
     public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) {
-        Member currentMember = memberService.getCurrentMember();
-        Whiteboard whiteboard = whiteboardRepository.findById(id)
-                .orElseThrow(WhiteboardNotExistsException::new);
-
-        if(!ownsWhiteboard(currentMember, whiteboard)) {
-            throw new OperationNotAllowedException();
-        }
+        Whiteboard whiteboard = getMemberWhiteboard(id);
 
         whiteboard.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
         whiteboard.updateScope(ScopeType.of(requestDto.getScope()));
@@ -112,6 +108,13 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
     @Override
     public void deleteWhiteboard(Long id) {
+        Whiteboard whiteboard = getMemberWhiteboard(id);
+
+        awsService.deleteFile(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME);
+        whiteboardRepository.delete(whiteboard);
+    }
+
+    private Whiteboard getMemberWhiteboard(Long id) {
         Member currentMember = memberService.getCurrentMember();
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(WhiteboardNotExistsException::new);
@@ -119,9 +122,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(!ownsWhiteboard(currentMember, whiteboard)) {
             throw new OperationNotAllowedException();
         }
-
-        awsService.deleteFile(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME);
-        whiteboardRepository.delete(whiteboard);
+        return whiteboard;
     }
 
     private boolean ownsWhiteboard(Member currentMember, Whiteboard whiteboard) {

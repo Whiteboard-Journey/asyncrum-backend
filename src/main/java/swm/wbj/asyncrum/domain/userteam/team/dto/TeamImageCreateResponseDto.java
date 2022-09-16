@@ -9,5 +9,4 @@ public class TeamImageCreateResponseDto {
 
     private Long id;
     private String preSignedURL;
-
 }
