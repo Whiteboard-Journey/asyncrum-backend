@@ -43,10 +43,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Long whiteboardId = whiteboardRepository.save(whiteboard).getId();
 
         String whiteboardFileKey = createWhiteboardFileKey(memberService.getCurrentMember().getId(), whiteboardId);
-
         String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME, FileType.TLDR);
-
-        // 화이트보드 엔티티에 화이트보드 문서 파일명 저장
         whiteboard.updateWhiteboardFileMetadata(
                 whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME));
 
@@ -66,40 +63,31 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(isTeamScope(scope)) {
             whiteboardPage = (topId == 0L) ?
                     whiteboardRepository.findAllByTeam(currentTeam, pageable) :
-                    whiteboardRepository.findAllByTeamAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
+                    whiteboardRepository.findAllByTeamAndTopIdJQPL(currentTeam, topId, pageable);
         }
         else {
             whiteboardPage = (topId == 0L) ?
-                    whiteboardRepository.findAllByTeamAndMember(currentTeam, currentMember, pageable) :
-                    whiteboardRepository.findAllByTeamAndMemberAndTopId(currentTeam.getId(), currentMember.getId(), topId, pageable);
+                    whiteboardRepository.findAllByTeamAndMember(
+                            currentTeam, currentMember, pageable) :
+                    whiteboardRepository.findAllByTeamAndMemberAndTopIdJQPL(
+                            currentTeam, currentMember, topId, pageable);
         }
 
-        return new WhiteboardReadAllResponseDto(whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
+        return new WhiteboardReadAllResponseDto(
+                whiteboardPage.getContent(), whiteboardPage.getPageable(), whiteboardPage.isLast());
     }
 
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadResponseDto readWhiteboard(Long id) {
-        Member currentMember = memberService.getCurrentMember();
-        Whiteboard whiteboard = whiteboardRepository.findById(id)
-                .orElseThrow(WhiteboardNotExistsException::new);
-
-        if(!ownsWhiteboard(currentMember, whiteboard)) {
-            throw new OperationNotAllowedException();
-        }
+        Whiteboard whiteboard = getMemberWhiteboard(id);
 
         return new WhiteboardReadResponseDto(whiteboard);
     }
 
     @Override
     public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) {
-        Member currentMember = memberService.getCurrentMember();
-        Whiteboard whiteboard = whiteboardRepository.findById(id)
-                .orElseThrow(WhiteboardNotExistsException::new);
-
-        if(!ownsWhiteboard(currentMember, whiteboard)) {
-            throw new OperationNotAllowedException();
-        }
+        Whiteboard whiteboard = getMemberWhiteboard(id);
 
         whiteboard.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
         whiteboard.updateScope(ScopeType.of(requestDto.getScope()));
@@ -112,6 +100,13 @@ public class WhiteboardServiceImpl implements WhiteboardService {
 
     @Override
     public void deleteWhiteboard(Long id) {
+        Whiteboard whiteboard = getMemberWhiteboard(id);
+
+        awsService.deleteFile(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME);
+        whiteboardRepository.delete(whiteboard);
+    }
+
+    private Whiteboard getMemberWhiteboard(Long id) {
         Member currentMember = memberService.getCurrentMember();
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(WhiteboardNotExistsException::new);
@@ -119,9 +114,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         if(!ownsWhiteboard(currentMember, whiteboard)) {
             throw new OperationNotAllowedException();
         }
-
-        awsService.deleteFile(whiteboard.getWhiteboardFileKey(), WHITEBOARD_BUCKET_NAME);
-        whiteboardRepository.delete(whiteboard);
+        return whiteboard;
     }
 
     private boolean ownsWhiteboard(Member currentMember, Whiteboard whiteboard) {

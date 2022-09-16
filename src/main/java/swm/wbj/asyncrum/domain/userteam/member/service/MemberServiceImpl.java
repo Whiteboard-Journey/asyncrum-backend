@@ -167,6 +167,7 @@ public class MemberServiceImpl implements MemberService {
     /**
      * 메일 인증 링크 검증 및 처리 (Role Update)
      * TODO: hashing된 링크 검증 및 처리하도록 변경
+     * TODO: Role이 달라졌기 때문에, JWT 토큰 재발급 필요
      */
     @Override
     public void verifyEmailVerificationLink(Long memberId) {
