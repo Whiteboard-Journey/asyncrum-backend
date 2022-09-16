@@ -37,7 +37,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public RecordCreateResponseDto createRecord(RecordCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(requestDto.getTeamId(), currentMember);
+        Team currentTeam = teamService.getTeamWithTeamMemberValidation(requestDto.getTeamId(), currentMember);
 
         Record record = requestDto.toEntity(currentMember, currentTeam);
         Long recordId = recordRepository.save(record).getId();
@@ -54,7 +54,7 @@ public class RecordServiceImpl implements RecordService {
     @Transactional(readOnly = true)
     public RecordReadAllResponseDto readAllRecord(Long teamId, ScopeType scope, Integer pageIndex, Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = teamService.getTeamWithValidation(teamId, currentMember);
+        Team currentTeam = teamService.getTeamWithTeamMemberValidation(teamId, currentMember);
 
         Page<Record> recordPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");

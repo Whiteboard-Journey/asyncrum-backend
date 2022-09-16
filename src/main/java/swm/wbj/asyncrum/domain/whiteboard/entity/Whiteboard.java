@@ -14,14 +14,16 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
+@Table(name = "whiteboard")
 @Entity
 public class Whiteboard extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "whiteboard_id")
     private Long id;
 
+    @JsonIgnore
     @Column
     private String whiteboardFileKey;
 
