@@ -21,6 +21,10 @@ import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.utils.UrlService;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
+
 /**
  * 사용자의 role에 따라 API policy가 달라짐
  * Role.USER : 자신의 정보만 조작 가능
@@ -131,6 +135,7 @@ public class MemberServiceImpl implements MemberService {
                     .orElseThrow(MemberNotExistsException::new);
         }
 
+        member.updateTimeZone(TimeZone.getTimeZone(requestDto.getTimezone()));
         member.updateFullname(requestDto.getFullname());
         return new MemberUpdateResponseDto(member.getId());
     }

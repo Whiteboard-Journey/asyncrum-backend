@@ -4,6 +4,8 @@ import lombok.Data;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.type.RoleType;
 
+import java.util.TimeZone;
+
 @Data
 public class MemberReadResponseDto {
 
@@ -13,11 +15,14 @@ public class MemberReadResponseDto {
     private String email;
     private RoleType roleType;
 
+    private TimeZone timeZone;
+
     public MemberReadResponseDto(Member member){
         this.id = member.getId();
         this.fullname = member.getFullname();
         this.email = member.getEmail();
         this.profileImageUrl = member.getProfileImageUrl();
         this.roleType = member.getRoleType();
+        this.timeZone = member.getTimezone();
     }
 }

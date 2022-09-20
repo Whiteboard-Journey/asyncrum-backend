@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.TimeZone;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -36,6 +37,8 @@ public class MemberServiceTest {
     static String password;
     static String fullname;
     static String profileImageUrl;
+    static TimeZone timeZone;
+
     final static String CURRENT_MEMBER_ID = "1";
     final static String CURRENT_MEMBER_ROLE_TYPE = "USER";
 
@@ -45,6 +48,7 @@ public class MemberServiceTest {
         password = "password";
         fullname = "fullname";
         profileImageUrl = "profileImageUrl";
+        timeZone = TimeZone.getDefault();
     }
 
     @BeforeEach
@@ -88,6 +92,7 @@ public class MemberServiceTest {
         assertNotNull(createdMember);
         assertEquals(createdMember.getEmail(), createEmail);
         assertEquals(createdMember.getFullname(), fullname);
+        assertEquals(createdMember.getTimezone(), timeZone);
     }
 
     @DisplayName("JWT로 현재 멤버 정보 가져오기")
@@ -142,6 +147,7 @@ public class MemberServiceTest {
         assertEquals(responseDto.getProfileImageUrl(), member.getProfileImageUrl());
         assertEquals(responseDto.getEmail(), member.getEmail());
         assertEquals(responseDto.getRoleType(), member.getRoleType());
+        assertEquals(responseDto.getTimeZone(), member.getTimezone());
     }
 
     @DisplayName("모든 멤버 정보 가져오기 (ADMIN ONLY)")
@@ -166,9 +172,11 @@ public class MemberServiceTest {
         // given
         Long updateId = Long.parseLong(CURRENT_MEMBER_ID);
         String updateFullname = "updated fullname";
+        String updateTimeZone = "Asia/Seoul";
 
         MemberUpdateRequestDto requestDto = new MemberUpdateRequestDto();
         requestDto.setFullname(updateFullname);
+        requestDto.setTimezone(updateTimeZone);
 
         // when
         MemberUpdateResponseDto responseDto = memberService.updateMember(updateId, requestDto);
@@ -177,6 +185,7 @@ public class MemberServiceTest {
         Member updatedMember = memberRepository.findById(responseDto.getId()).orElseThrow();
         assertEquals(updatedMember.getId(), updateId);
         assertEquals(updatedMember.getFullname(), updateFullname);
+        assertEquals(updatedMember.getTimezone(), TimeZone.getTimeZone(updateTimeZone));
     }
 
     @DisplayName("멤버 삭제")
