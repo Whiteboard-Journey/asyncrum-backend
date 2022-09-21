@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
+import swm.wbj.asyncrum.domain.userteam.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.properties.AppProperties;
@@ -92,7 +93,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
         // User의 id(OauthId) 정보를 기반으로 Member의 id(memberId) 가져오기
-        String memberId = memberRepository.findByOauthId(userInfo.getId()).getId().toString();
+        String memberId = memberRepository.findByOauthId(userInfo.getId())
+                .orElseThrow(MemberNotExistsException::new)
+                .getId().toString();
 
         // User 정보를 기반으로 Access Token 생성
         Date now = new Date();

@@ -73,7 +73,8 @@ public class MemberServiceImpl implements MemberService {
                     .orElseThrow(MemberNotExistsException::new);
         }
         else {
-            return memberRepository.findByEmail(email);
+            return memberRepository.findByEmail(email)
+                    .orElseThrow(MemberNotExistsException::new);
         }
     }
 

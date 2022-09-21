@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -23,7 +25,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             Pageable pageable
     );
 
-    Member findByEmail(String email);
+    Optional<Member> findByEmail(String email);
     Boolean existsByEmail(String email);
-    Member findByOauthId(String oauthId);
+    Optional<Member> findByOauthId(String oauthId);
 }
