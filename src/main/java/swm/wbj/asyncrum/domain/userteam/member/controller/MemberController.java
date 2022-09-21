@@ -116,7 +116,7 @@ public class MemberController {
     /**
      * 사용자 프로필 이미지 처리
      */
-    @PostMapping("/images/{id}")
+    @PostMapping("/{id}/image")
     public ResponseEntity<?> createMemberImage(@PathVariable("id") Long id) {
         try {
             ImageCreateResponseDto responseDto = memberService.createImage(id);

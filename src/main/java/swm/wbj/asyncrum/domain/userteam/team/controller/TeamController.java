@@ -101,7 +101,7 @@ public class TeamController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/images/{id}")
+    @PostMapping("/{id}/image")
     public ResponseEntity<?> createTeamImage(@PathVariable("id") Long id) {
         TeamImageCreateResponseDto responseDto = teamService.createImage(id);
 

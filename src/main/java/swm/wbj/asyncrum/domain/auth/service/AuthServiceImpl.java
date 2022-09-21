@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
 import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;
 import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
+import swm.wbj.asyncrum.domain.userteam.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
@@ -53,7 +54,9 @@ public class AuthServiceImpl implements AuthService {
         );
 
         String email = requestDto.getEmail();
-        String memberId = memberRepository.findByEmail(email).getId().toString();
+        String memberId = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotExistsException::new)
+                .getId().toString();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Access Token 생성
