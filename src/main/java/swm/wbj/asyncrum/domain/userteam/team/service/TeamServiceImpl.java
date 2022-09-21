@@ -12,6 +12,7 @@ import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.exception.CodeAlreadyInUseException;
+import swm.wbj.asyncrum.domain.userteam.team.exception.MemberAlreadyJoinedException;
 import swm.wbj.asyncrum.domain.userteam.team.exception.MemberNotInTeamException;
 import swm.wbj.asyncrum.domain.userteam.team.exception.TeamNotExistsException;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
@@ -113,6 +114,10 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(TeamNotExistsException::new);
         Member requestMember = memberService.getUserByIdOrEmail(memberId, null);
 
+        if (isMemberAlreadyInTeam(team, requestMember)) {
+            throw new MemberAlreadyJoinedException();
+        }
+
         TeamMember teamMember = TeamMember.createTeamMember()
                                             .team(team)
                                             .member(requestMember)
@@ -127,6 +132,10 @@ public class TeamServiceImpl implements TeamService {
         Member currentMember = memberService.getCurrentMember();
         Team team = getTeamWithTeamMemberValidation(id, currentMember);
         Member requestMember = memberService.getUserByIdOrEmail(requestDto.getMemberId(), null);
+
+        if (isMemberAlreadyInTeam(team, requestMember)) {
+            throw new MemberAlreadyJoinedException();
+        }
 
         TeamMember teamMember = TeamMember.createTeamMember()
                 .team(team)
@@ -180,6 +189,10 @@ public class TeamServiceImpl implements TeamService {
         team.updateProfileImage(imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
 
         return new TeamImageCreateResponseDto(id, preSignedURL);
+    }
+
+    private boolean isMemberAlreadyInTeam(Team team, Member requestMember) {
+        return teamMemberRepository.findByTeamAndMember(team, requestMember).isPresent();
     }
 
     private Team getTeamWithOwnerValidation(Long id, Member requestMember) {
