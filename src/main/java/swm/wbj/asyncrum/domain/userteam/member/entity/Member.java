@@ -2,10 +2,7 @@ package swm.wbj.asyncrum.domain.userteam.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import swm.wbj.asyncrum.domain.record.entity.Record;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.teammember.entity.TeamMember;
-import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
@@ -16,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 @ToString
 @Getter
@@ -54,6 +52,10 @@ public class Member extends BaseEntity {
     @Size(max = 100)
     @Column(name = "fullname", length = 100)
     private String fullname;
+
+    @NotNull
+    @Column
+    private TimeZone timezone;
 
     @JsonIgnore
     @Column
@@ -94,6 +96,7 @@ public class Member extends BaseEntity {
         this.roleType = roleType != null ? roleType : RoleType.GUEST;
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
         this.profileImageUrl = profileImageUrl;
+        this.timezone = TimeZone.getDefault();
     }
 
     public void updateFullname(String fullname) {
@@ -103,6 +106,10 @@ public class Member extends BaseEntity {
     public void updateProfileImage(String profileImageFileKey, String profileImageUrl) {
         if(profileImageFileKey != null) this.profileImageFileKey = profileImageFileKey;
         if(profileImageUrl != null ) this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateTimeZone(TimeZone timezone) {
+        if (timezone != null) this.timezone = timezone;
     }
 
     public void updateRole(RoleType roleType) {
