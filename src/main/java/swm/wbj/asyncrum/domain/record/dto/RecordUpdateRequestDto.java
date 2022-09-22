@@ -7,5 +7,6 @@ public class RecordUpdateRequestDto {
 
     private String title;
     private String description;
+    private String projectMetadata;
     private String scope;
 }

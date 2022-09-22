@@ -10,6 +10,7 @@ public class RecordReadResponseDto {
     private String title;
     private String description;
     private String recordUrl;
+    private String projectMetadata;
     private ScopeType scope;
 
     public RecordReadResponseDto(Record record){
@@ -17,5 +18,6 @@ public class RecordReadResponseDto {
         this.description = record.getDescription();
         this.recordUrl = record.getRecordFileUrl();
         this.scope = record.getScope();
+        this.projectMetadata = record.getProjectMetadata();
     }
 }
