@@ -1,15 +1,15 @@
 package swm.wbj.asyncrum.domain.userteam.member.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.type.RoleType;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class MemberCreateRequestDto {
 
     private String email;
@@ -26,7 +26,7 @@ public class MemberCreateRequestDto {
                 .build();
     }
 
-    private String getProfileImageUrl(String fullname) {
+    private static String getProfileImageUrl(String fullname) {
         return "https://ui-avatars.com/api/?name=" + tokenize(fullname);
     }
 
@@ -34,7 +34,7 @@ public class MemberCreateRequestDto {
      *  1. space를 + 로 치환
      *  2. 대문자 앞에 + 추가. 단, 맨 앞글자는 제외
      */
-    private String tokenize(String fullname) {
+    private static String tokenize(String fullname) {
         StringBuilder result = new StringBuilder("" + fullname.charAt(0));
         for (int i=1; i< fullname.length(); i++) {
             char c = fullname.charAt(i);

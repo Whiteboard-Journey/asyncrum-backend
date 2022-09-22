@@ -73,7 +73,6 @@ public class MemberServiceTest {
     public void createMember() {
         // given
         String createEmail = "email2";
-
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto();
         requestDto.setEmail(createEmail);
         requestDto.setPassword(password);
