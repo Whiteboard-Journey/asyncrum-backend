@@ -98,6 +98,7 @@ public class RecordServiceImpl implements RecordService {
         }
 
         record.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
+        record.updateRecordProjectMetadata(requestDto.getProjectMetadata());
         record.updateScope(ScopeType.of(requestDto.getScope()));
 
         String preSignedURL = awsService.generatePresignedURL(
