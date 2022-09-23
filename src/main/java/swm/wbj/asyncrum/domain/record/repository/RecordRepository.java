@@ -15,42 +15,30 @@ import java.util.List;
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
-    List<Record> findAll();
-
-    @Query(
-            value = "SELECT * FROM record AS r WHERE r.record_id <= :topId",
-            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.record_id <= :topId",
-            nativeQuery = true
-    )
-    Page<Record> findAllByTopId(
-            @Param("topId") Long topId,
+    @Query("SELECT r FROM Record r WHERE r.team = :team" +
+            " AND (r.scope = swm.wbj.asyncrum.global.type.ScopeType.TEAM OR r.member = :member)")
+    Page<Record> findAllByTeam(
+            @Param("team") Team team,
+            @Param("member") Member member,
             Pageable pageable
     );
 
-    Page<Record> findAllByTeam(Team team, Pageable pageable);
-
-    @Query(
-            value = "SELECT * FROM record AS r WHERE (r.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId) AND (r.record_id <= :topId)",
-            countQuery = "SELECT COUNT(*) FROM record AS r WHERE (r.team_id = :teamId) AND (r.scope = \"TEAM\")) OR (r.member_id = :memberId) AND (r.record_id <= :topId)",
-            nativeQuery = true
-    )
+    @Query("SELECT r FROM Record r WHERE r.team = :team" +
+            " AND (r.scope = swm.wbj.asyncrum.global.type.ScopeType.TEAM OR r.member = :member)" +
+            " AND r.id <= :topId")
     Page<Record> findAllByTeamAndTopId(
-            @Param("teamId") Long teamId,
-            @Param("memberId") Long memberId,
+            @Param("team") Team team,
+            @Param("member") Member member,
             @Param("topId") Long topId,
             Pageable pageable
     );
 
-    Page<Record> findAllByTeamAndMember(Team currentTeam, Member currentMember, Pageable pageable);
+    Page<Record> findAllByTeamAndMember(Team team, Member member, Pageable pageable);
 
-    @Query(
-            value = "SELECT * FROM record AS r WHERE r.team_id = :teamId AND r.member_id = :memberId AND r.record_id <= :topId",
-            countQuery = "SELECT COUNT(*) FROM record AS r WHERE r.team_id = :teamId AND r.member_id = :memberId AND r.record_id <= :topId",
-            nativeQuery = true
-    )
+    @Query("SELECT r FROM Record r WHERE r.team = :team AND r.member = :member AND r.id <= :topId")
     Page<Record> findAllByTeamAndMemberAndTopId(
-            @Param("teamId") Long teamId,
-            @Param("memberId") Long memberId,
+            @Param("team") Team team,
+            @Param("member") Member member,
             @Param("topId") Long topId,
             Pageable pageable
     );
