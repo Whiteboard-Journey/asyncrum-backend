@@ -37,12 +37,12 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Override
     public WhiteboardCreateResponseDto createWhiteboard(WhiteboardCreateRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = validateWhiteboardTeamMember(currentMember, requestDto.getTeamId());
+        Team currentTeam = validateWhiteboardTeamMember(requestDto.getTeamId(), currentMember);
 
         Whiteboard whiteboard = requestDto.toEntity(currentMember, currentTeam);
         Long whiteboardId = whiteboardRepository.save(whiteboard).getId();
 
-        String whiteboardFileKey = createWhiteboardFileKey(memberService.getCurrentMember().getId(), whiteboardId);
+        String whiteboardFileKey = createWhiteboardFileKey(currentTeam.getId(), currentMember.getId(), whiteboardId);
         String preSignedURL = awsService.generatePresignedURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME, FileType.TLDR);
         whiteboard.updateWhiteboardFileMetadata(
                 whiteboardFileKey, awsService.getObjectURL(whiteboardFileKey, WHITEBOARD_BUCKET_NAME));
@@ -55,22 +55,20 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
                                                           Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
-        Team currentTeam = validateWhiteboardTeamMember(currentMember, teamId);
+        Team currentTeam = validateWhiteboardTeamMember(teamId, currentMember);
 
         Page<Whiteboard> whiteboardPage;
         Pageable pageable = PageRequest.of(pageIndex, sizePerPage, Sort.Direction.DESC, "id");
 
         if(isTeamScope(scope)) {
             whiteboardPage = (topId == 0L) ?
-                    whiteboardRepository.findAllByTeam(currentTeam, pageable) :
-                    whiteboardRepository.findAllByTeamWithTopId(currentTeam, topId, pageable);
+                    whiteboardRepository.findAllByTeam(currentTeam, currentMember, pageable) :
+                    whiteboardRepository.findAllByTeamWithTopId(currentTeam, currentMember, topId, pageable);
         }
         else {
             whiteboardPage = (topId == 0L) ?
-                    whiteboardRepository.findAllByTeamAndMember(
-                            currentTeam, currentMember, pageable) :
-                    whiteboardRepository.findAllByTeamAndMemberWithTopId(
-                            currentTeam, currentMember, topId, pageable);
+                    whiteboardRepository.findAllByTeamAndMember(currentTeam, currentMember, pageable) :
+                    whiteboardRepository.findAllByTeamAndMemberWithTopId(currentTeam, currentMember, topId, pageable);
         }
 
         return new WhiteboardReadAllResponseDto(
@@ -84,13 +82,9 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         Whiteboard whiteboard = whiteboardRepository.findById(id)
                 .orElseThrow(WhiteboardNotExistsException::new);
 
-        validateWhiteboardTeamMember(currentMember, whiteboard.getTeam().getId());
+        validateWhiteboardTeamMember(whiteboard.getTeam().getId(), currentMember);
 
         return new WhiteboardReadResponseDto(whiteboard);
-    }
-
-    private Team validateWhiteboardTeamMember(Member currentMember, Long id) {
-        return teamService.getTeamWithTeamMemberValidation(id, currentMember);
     }
 
     @Override
@@ -114,6 +108,10 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         whiteboardRepository.delete(whiteboard);
     }
 
+    private Team validateWhiteboardTeamMember(Long teamId, Member currentMember) {
+        return teamService.getTeamWithTeamMemberValidation(teamId, currentMember);
+    }
+
     private Whiteboard getMemberWhiteboard(Long id) {
         Member currentMember = memberService.getCurrentMember();
         Whiteboard whiteboard = whiteboardRepository.findById(id)
@@ -129,7 +127,7 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         return whiteboard.getMember().equals(currentMember);
     }
 
-    public String createWhiteboardFileKey(Long memberId, Long whiteboardId) {
-        return WHITEBOARD_FILE_PREFIX + "_" + memberId + "_" + whiteboardId + "." + FileType.TLDR.getName();
+    public String createWhiteboardFileKey(Long teamId, Long memberId, Long whiteboardId) {
+        return WHITEBOARD_FILE_PREFIX + "_" + teamId + "_" + memberId + "_" + whiteboardId + "." + FileType.TLDR.getName();
     }
 }

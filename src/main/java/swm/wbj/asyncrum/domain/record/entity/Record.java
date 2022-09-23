@@ -34,6 +34,9 @@ public class Record extends BaseEntity {
     @Column(length = 200)
     private String description;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String projectMetadata;
+
     @Column
     @Enumerated(EnumType.STRING)
     private ScopeType scope;
@@ -64,6 +67,10 @@ public class Record extends BaseEntity {
     public void updateRecordFileMetadata(String recordFileKey, String recordFileUrl) {
         if(recordFileKey != null) this.recordFileKey = recordFileKey;
         if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
+    }
+
+    public void updateRecordProjectMetadata(String projectMetadata) {
+        if(projectMetadata != null) this.projectMetadata = projectMetadata;
     }
 
     public void updateScope(ScopeType scope) {
