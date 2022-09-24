@@ -9,7 +9,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.ProviderType;
 import swm.wbj.asyncrum.global.type.RoleType;
@@ -49,8 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // OAuth2 유저 정보의 고유 email 정보를 통해 해당 email을 가지고 있는 Member 검색
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        Member savedMember = memberRepository.findByEmail(userInfo.getEmail())
-                .orElseThrow(MemberNotExistsException::new);
+        Member savedMember = memberRepository.findByEmail(userInfo.getEmail()).orElse(null);
 
         // 해당 Member가 존재한다면
         if (savedMember != null) {
