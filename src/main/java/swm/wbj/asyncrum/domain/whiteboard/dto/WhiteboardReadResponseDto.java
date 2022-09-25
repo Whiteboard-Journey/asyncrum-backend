@@ -8,6 +8,7 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 @Data
 public class WhiteboardReadResponseDto {
 
+    private Long id;
     private String title;
     private String description;
     private String whiteboardUrl;
@@ -15,6 +16,7 @@ public class WhiteboardReadResponseDto {
     private MemberReadResponseDto member;
 
     public WhiteboardReadResponseDto(Whiteboard whiteboard) {
+        this.id = whiteboard.getId();
         this.title = whiteboard.getTitle();
         this.description = whiteboard.getDescription();
         this.whiteboardUrl = whiteboard.getWhiteboardFileUrl();

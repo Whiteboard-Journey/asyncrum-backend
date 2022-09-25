@@ -8,6 +8,7 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 @Data
 public class RecordReadResponseDto {
 
+    private Long id;
     private String title;
     private String description;
     private String recordUrl;
@@ -17,6 +18,7 @@ public class RecordReadResponseDto {
     private MemberReadResponseDto member;
 
     public RecordReadResponseDto(Record record){
+        this.id = record.getId();
         this.title = record.getTitle();
         this.description = record.getDescription();
         this.recordUrl = record.getRecordFileUrl();
