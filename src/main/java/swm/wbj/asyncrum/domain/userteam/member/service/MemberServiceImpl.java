@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
     private final UrlService urlService;
     private final AwsService awsService;
 
-    private static final String EMAIL_VERIFICATION_URL = "/api/v1/members/email/verification";
+    public static final String EMAIL_VERIFICATION_URL = "/api/v1/members/email/verification";
 
     @Override
     public MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto) {

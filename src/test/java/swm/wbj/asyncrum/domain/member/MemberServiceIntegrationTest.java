@@ -24,7 +24,7 @@ import java.util.TimeZone;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-public class MemberServiceTest {
+public class MemberServiceIntegrationTest {
 
     @Autowired
     MemberService memberService;
