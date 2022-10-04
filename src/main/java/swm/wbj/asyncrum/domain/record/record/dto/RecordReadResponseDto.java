@@ -1,9 +1,13 @@
-package swm.wbj.asyncrum.domain.record.dto;
+package swm.wbj.asyncrum.domain.record.record.dto;
 
 import lombok.Data;
-import swm.wbj.asyncrum.domain.record.entity.Record;
+import swm.wbj.asyncrum.domain.record.bookmark.dto.BookmarkReadResponseDto;
+import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadResponseDto;
 import swm.wbj.asyncrum.global.type.ScopeType;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class RecordReadResponseDto {
@@ -12,9 +16,8 @@ public class RecordReadResponseDto {
     private String title;
     private String description;
     private String recordUrl;
-    private String projectMetadata;
+    private List<BookmarkReadResponseDto> bookmarks;
     private ScopeType scope;
-
     private MemberReadResponseDto member;
 
     public RecordReadResponseDto(Record record){
@@ -23,7 +26,9 @@ public class RecordReadResponseDto {
         this.description = record.getDescription();
         this.recordUrl = record.getRecordFileUrl();
         this.scope = record.getScope();
-        this.projectMetadata = record.getProjectMetadata();
+        this.bookmarks = record.getBookmarks().stream()
+                .map(BookmarkReadResponseDto::new)
+                .collect(Collectors.toList());
         this.member = new MemberReadResponseDto(record.getMember());
     }
 }

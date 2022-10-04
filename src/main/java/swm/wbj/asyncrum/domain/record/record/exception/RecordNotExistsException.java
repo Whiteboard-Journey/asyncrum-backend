@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.record.exception;
+package swm.wbj.asyncrum.domain.record.record.exception;
 
 public class RecordNotExistsException extends RuntimeException {
 

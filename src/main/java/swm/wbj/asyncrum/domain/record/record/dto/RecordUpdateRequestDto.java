@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.record.dto;
+package swm.wbj.asyncrum.domain.record.record.dto;
 
 import lombok.Data;
 

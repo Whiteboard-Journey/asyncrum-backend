@@ -1,13 +1,16 @@
-package swm.wbj.asyncrum.domain.record.entity;
+package swm.wbj.asyncrum.domain.record.record.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -34,8 +37,8 @@ public class Record extends BaseEntity {
     @Column(length = 200)
     private String description;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String projectMetadata;
+    @OneToMany(mappedBy = "record", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -67,10 +70,6 @@ public class Record extends BaseEntity {
     public void updateRecordFileMetadata(String recordFileKey, String recordFileUrl) {
         if(recordFileKey != null) this.recordFileKey = recordFileKey;
         if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
-    }
-
-    public void updateRecordProjectMetadata(String projectMetadata) {
-        if(projectMetadata != null) this.projectMetadata = projectMetadata;
     }
 
     public void updateScope(ScopeType scope) {

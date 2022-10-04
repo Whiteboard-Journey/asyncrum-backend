@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.record.service;
+package swm.wbj.asyncrum.domain.record.record.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import swm.wbj.asyncrum.domain.record.dto.*;
-import swm.wbj.asyncrum.domain.record.entity.Record;
-import swm.wbj.asyncrum.domain.record.exception.RecordNotExistsException;
-import swm.wbj.asyncrum.domain.record.repository.RecordRepository;
+import swm.wbj.asyncrum.domain.record.record.dto.*;
+import swm.wbj.asyncrum.domain.record.record.entity.Record;
+import swm.wbj.asyncrum.domain.record.record.exception.RecordNotExistsException;
+import swm.wbj.asyncrum.domain.record.record.repository.RecordRepository;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
@@ -75,12 +75,19 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public RecordReadResponseDto readRecord(Long id){
+    public Record getCurrentRecord(Long id) {
         Member currentMember = memberService.getCurrentMember();
         Record record = recordRepository.findById(id)
                 .orElseThrow(RecordNotExistsException::new);
 
         validateRecordTeamMember(record.getTeam().getId(), currentMember);
+        return record;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RecordReadResponseDto readRecord(Long id){
+        Record record = getCurrentRecord(id);
 
         return new RecordReadResponseDto(record);
     }
@@ -90,7 +97,6 @@ public class RecordServiceImpl implements RecordService {
         Record record = getMemberRecord(id);
 
         record.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
-        record.updateRecordProjectMetadata(requestDto.getProjectMetadata());
         record.updateScope(ScopeType.of(requestDto.getScope()));
 
         String preSignedURL = awsService.generatePresignedURL(
