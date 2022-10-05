@@ -32,9 +32,9 @@ public class CookieUtil {
                 }
             }
         }
+
         return Optional.empty();
     }
-
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
@@ -64,5 +64,4 @@ public class CookieUtil {
                 )
         );
     }
-
 }

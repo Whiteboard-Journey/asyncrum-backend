@@ -3,7 +3,6 @@ package swm.wbj.asyncrum.global.oauth.token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
 
 @Configuration
 public class JwtConfig {
