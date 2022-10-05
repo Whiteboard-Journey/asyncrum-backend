@@ -51,6 +51,25 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(readOnly = true)
+    public Record getCurrentRecord(Long id) {
+        Member currentMember = memberService.getCurrentMember();
+        Record record = recordRepository.findById(id)
+                .orElseThrow(RecordNotExistsException::new);
+
+        validateRecordTeamMember(record.getTeam().getId(), currentMember);
+        return record;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RecordReadResponseDto readRecord(Long id){
+        Record record = getCurrentRecord(id);
+
+        return new RecordReadResponseDto(record);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public RecordReadAllResponseDto readAllRecord(Long teamId, ScopeType scope, Integer pageIndex,
                                                   Long topId, Integer sizePerPage) {
         Member currentMember = memberService.getCurrentMember();
@@ -71,25 +90,6 @@ public class RecordServiceImpl implements RecordService {
         }
 
         return new RecordReadAllResponseDto(recordPage.getContent(), recordPage.getPageable(), recordPage.isLast());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Record getCurrentRecord(Long id) {
-        Member currentMember = memberService.getCurrentMember();
-        Record record = recordRepository.findById(id)
-                .orElseThrow(RecordNotExistsException::new);
-
-        validateRecordTeamMember(record.getTeam().getId(), currentMember);
-        return record;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public RecordReadResponseDto readRecord(Long id){
-        Record record = getCurrentRecord(id);
-
-        return new RecordReadResponseDto(record);
     }
 
     @Override

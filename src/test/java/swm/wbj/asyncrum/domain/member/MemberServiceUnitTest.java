@@ -1,10 +1,12 @@
 package swm.wbj.asyncrum.domain.member;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import swm.wbj.asyncrum.domain.userteam.member.dto.MemberCreateRequestDto;
@@ -26,17 +28,13 @@ import java.util.TimeZone;
 
 public class MemberServiceUnitTest {
 
-    @Mock
     MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
 
-    @Mock
-    MailService mailService;
+    MailService mailService = Mockito.mock(MailService.class);
 
-    @Mock
-    UrlService urlService;
+    UrlService urlService = Mockito.mock(UrlService.class);
 
-    @Mock
-    AwsService awsService;
+    AwsService awsService = Mockito.mock(AwsService.class);
 
     static MockedStatic<TokenUtil> tokenUtil;
 
@@ -47,20 +45,20 @@ public class MemberServiceUnitTest {
             new MemberServiceImpl(memberRepository, passwordEncoder, mailService, urlService, awsService);
 
     static Member mockMember;
-    static Long mockMemberId = 1L;
-    static String mockMemberEmail = "test@test.com";
+    static final Long MOCK_MEMBER_ID = 1L;
+    static final String MOCK_MEMBER_EMAIL = "test@test.com";
 
     @BeforeAll
     static void tearUp() {
         mockMember = new Member() {
             @Override
             public Long getId() {
-                return mockMemberId;
+                return MOCK_MEMBER_ID;
             }
 
             @Override
             public String getEmail() {
-                return mockMemberEmail;
+                return MOCK_MEMBER_EMAIL;
             }
 
             @Override
@@ -109,17 +107,17 @@ public class MemberServiceUnitTest {
     @DisplayName("JWT로 현재 멤버 정보 가져오기")
     @Test
     void getCurrentMember() {
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
 
         // 멤버가 존재하지 않는 경우 테스트
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(Optional.empty());
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(MemberNotExistsException.class, () -> {
             memberServiceImpl.getCurrentMember();
         });
 
         // 멤버가 존재하는 경우 테스트
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(java.util.Optional.of(mockMember));
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(java.util.Optional.of(mockMember));
 
         Assertions.assertEquals(memberServiceImpl.getCurrentMember(), mockMember);
     }
@@ -128,42 +126,42 @@ public class MemberServiceUnitTest {
     @Test
     void getUserByIdOrEmail() {
         // id가 존재하면 id로 조회하는지 테스트
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(java.util.Optional.of(mockMember));
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(java.util.Optional.of(mockMember));
 
-        memberServiceImpl.getUserByIdOrEmail(mockMemberId, null);
-        Mockito.verify(memberRepository).findById(mockMemberId);
+        memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null);
+        Mockito.verify(memberRepository).findById(MOCK_MEMBER_ID);
 
-        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(mockMemberId, null), mockMember);
+        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null), mockMember);
 
 
         // id가 존재하지 않으면 email로 조회
-        Mockito.when(memberRepository.findByEmail(mockMemberEmail)).thenReturn(java.util.Optional.of(mockMember));
+        Mockito.when(memberRepository.findByEmail(MOCK_MEMBER_EMAIL)).thenReturn(java.util.Optional.of(mockMember));
 
-        memberServiceImpl.getUserByIdOrEmail(null, mockMemberEmail);
-        Mockito.verify(memberRepository).findByEmail(mockMemberEmail);
+        memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL);
+        Mockito.verify(memberRepository).findByEmail(MOCK_MEMBER_EMAIL);
 
-        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(null, mockMemberEmail), mockMember);
+        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL), mockMember);
 
         // 없으면 예외 발생
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(Optional.empty());
-        Mockito.when(memberRepository.findByEmail(mockMemberEmail)).thenReturn(Optional.empty());
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(Optional.empty());
+        Mockito.when(memberRepository.findByEmail(MOCK_MEMBER_EMAIL)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(MemberNotExistsException.class, () -> {
-            memberServiceImpl.getUserByIdOrEmail(mockMemberId, null);
+            memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null);
         });
 
         Assertions.assertThrows(MemberNotExistsException.class, () -> {
-            memberServiceImpl.getUserByIdOrEmail(null, mockMemberEmail);
+            memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL);
         });
     }
 
     @DisplayName("(WIP) 멤버 정보 가져오기")
     @Test
     void readMember() {
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(java.util.Optional.of(mockMember));
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(java.util.Optional.of(mockMember));
 
-        memberServiceImpl.readMember(mockMemberId);
+        memberServiceImpl.readMember(MOCK_MEMBER_ID);
 
         // memberServiceImpl의 getCurrentMember()가 한 번 호출되었는지를 검증
     }
@@ -178,7 +176,7 @@ public class MemberServiceUnitTest {
         dto.setTimezone(timezone);
         dto.setFullname(fullname);
 
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
         Mockito.when(memberRepository.findById(mockMember.getId())).thenReturn(Optional.of(mockMember));
 
         memberServiceImpl.updateMember(null, dto);
@@ -193,10 +191,10 @@ public class MemberServiceUnitTest {
     @DisplayName("멤버 삭제")
     @Test
     void deleteMember() {
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
         Mockito.when(memberRepository.findById(mockMember.getId())).thenReturn(Optional.of(mockMember));
 
-        memberServiceImpl.deleteMember(mockMemberId);
+        memberServiceImpl.deleteMember(MOCK_MEMBER_ID);
 
         Mockito.verify(memberRepository).delete(mockMember);
     }
@@ -206,16 +204,14 @@ public class MemberServiceUnitTest {
     void sendEmailVerificationLinkByEmail() throws Exception {
         String verificationLink = "Verification Link";
 
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
         Mockito.when(memberRepository.findById(mockMember.getId())).thenReturn(Optional.of(mockMember));
-
-        // NPE on mocked object, why?
-        Mockito.when(urlService.buildURL(MemberServiceImpl.EMAIL_VERIFICATION_URL, "memberId", mockMemberId)).thenReturn(verificationLink);
+        Mockito.when(urlService.buildURL(MemberServiceImpl.EMAIL_VERIFICATION_URL, "memberId", MOCK_MEMBER_ID)).thenReturn(verificationLink);
 
         memberServiceImpl.sendEmailVerificationLinkByEmail();
 
-        Mockito.verify(urlService).buildURL(MemberServiceImpl.EMAIL_VERIFICATION_URL, "memberId", mockMemberId);
-        Mockito.verify(mailService).sendMailVerificationLink(mockMemberEmail, verificationLink);
+        Mockito.verify(urlService).buildURL(MemberServiceImpl.EMAIL_VERIFICATION_URL, "memberId", MOCK_MEMBER_ID);
+        Mockito.verify(mailService).sendMailVerificationLink(MOCK_MEMBER_EMAIL, verificationLink);
     }
 
     @DisplayName("이메일 인증 검증")
@@ -224,13 +220,13 @@ public class MemberServiceUnitTest {
         Member newMember = new Member() {
             @Override
             public Long getId() {
-                return mockMemberId;
+                return MOCK_MEMBER_ID;
             }
         };
 
-        Mockito.when(memberRepository.findById(mockMemberId)).thenReturn(Optional.of(newMember));
+        Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(Optional.of(newMember));
 
-        memberServiceImpl.verifyEmailVerificationLink(mockMemberId);
+        memberServiceImpl.verifyEmailVerificationLink(MOCK_MEMBER_ID);
 
         Assertions.assertEquals(newMember.getRoleType(), RoleType.USER);
     }
@@ -238,17 +234,16 @@ public class MemberServiceUnitTest {
     @DisplayName("멤버 프로필 이미지 생성")
     @Test
     void createImage() {
-        String imageFileKey = "Test Image Key";
+        String imageFileKey = AwsService.IMAGE_MEMBER_FILE_PREFIX + "_" + MOCK_MEMBER_ID + "." + FileType.PNG.getName();
         String imageFileUrl = "Test Image Url";
 
-        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(mockMemberId);
+        Mockito.when(TokenUtil.getCurrentMemberId()).thenReturn(MOCK_MEMBER_ID);
         Mockito.when(memberRepository.findById(mockMember.getId())).thenReturn(Optional.of(mockMember));
 
-        // NPE on mocked object, why?
-        Mockito.when(awsService.generatePresignedURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME, FileType.PNG)).thenReturn(imageFileKey);
-        Mockito.when(awsService.getObjectURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME)).thenReturn(imageFileUrl);
+        Mockito.when(awsService.generatePresignedURL(Mockito.anyString(), Mockito.anyString(), Mockito.any(FileType.class))).thenReturn(imageFileUrl);
+        Mockito.when(awsService.getObjectURL(Mockito.anyString(), Mockito.anyString())).thenReturn(imageFileUrl);
 
-        memberServiceImpl.createImage(mockMemberId);
+        memberServiceImpl.createImage(MOCK_MEMBER_ID);
 
         // createImageFileKey 를 호출했는지 검증
         Mockito.verify(awsService).generatePresignedURL(imageFileKey, AwsService.IMAGE_BUCKET_NAME, FileType.PNG);
