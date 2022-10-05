@@ -1,11 +1,11 @@
-package swm.wbj.asyncrum.domain.record.dto;
+package swm.wbj.asyncrum.domain.record.record.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RecordCreateResponseDto {
+public class RecordUpdateResponseDto {
 
     private Long id;
     private String preSignedURL;
