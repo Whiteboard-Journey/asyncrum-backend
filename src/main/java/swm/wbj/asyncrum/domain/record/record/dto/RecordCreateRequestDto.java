@@ -1,9 +1,9 @@
-package swm.wbj.asyncrum.domain.record.dto;
+package swm.wbj.asyncrum.domain.record.record.dto;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import swm.wbj.asyncrum.domain.record.entity.Record;
+import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.global.type.ScopeType;

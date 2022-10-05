@@ -1,12 +1,12 @@
-package swm.wbj.asyncrum.domain.record.controller;
+package swm.wbj.asyncrum.domain.record.record.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import swm.wbj.asyncrum.domain.record.dto.*;
-import swm.wbj.asyncrum.domain.record.service.RecordService;
+import swm.wbj.asyncrum.domain.record.record.dto.*;
+import swm.wbj.asyncrum.domain.record.record.service.RecordService;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
 @Slf4j
