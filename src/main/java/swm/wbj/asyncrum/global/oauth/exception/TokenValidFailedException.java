@@ -6,11 +6,10 @@ package swm.wbj.asyncrum.global.oauth.exception;
 public class TokenValidFailedException extends RuntimeException {
 
     public TokenValidFailedException() {
-        super("Failed to generate token.");
+        super("토큰 검증 실패.");
     }
 
     private TokenValidFailedException(String message) {
         super(message);
     }
-
 }

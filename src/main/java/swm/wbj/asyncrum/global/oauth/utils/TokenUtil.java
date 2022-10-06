@@ -8,15 +8,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class TokenUtil {
 
     /**
-     * TokenAuthenticationFilter에서 SecurityContext에 저장한 Authentication -> 유저 정보 (member id) 꺼냄
+     * TokenAuthenticationFilter 에서 SecurityContext 에 저장한 Authentication -> 유저 정보 (member id) 꺼냄
      */
     public static Long getCurrentMemberId() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || authentication.getName() == null) {
-            throw new IllegalArgumentException("Security Context에 인증정보가 없습니다.");
+        if(validateAuthentication(authentication)) {
+            throw new IllegalArgumentException("Security Context 에 인증정보가 없거나 잘못되었습니다.");
         }
 
         return Long.parseLong(authentication.getName());
+    }
+
+    private static boolean validateAuthentication(Authentication authentication) {
+        return authentication == null || authentication.getName() == null;
     }
 }

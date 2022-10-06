@@ -21,19 +21,16 @@ public class AuthToken {
 
     public static final String AUTHORITIES_KEY = "role";
 
-    // Role 제외 생성자
     AuthToken(String id, Date expiry, Key key) {
         this.key = key;
         this.token = createAuthToken(id, expiry);
     }
 
-    // Role 포함 생성자
     AuthToken(String id, String role, Date expiry, Key key) {
         this.key = key;
         this.token = createAuthToken(id, role, expiry);
     }
 
-    // Role 제외 토큰 생성
     private String createAuthToken(String id, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
@@ -42,7 +39,6 @@ public class AuthToken {
                 .compact();
     }
 
-    // Role 포함 토큰 생성
     private String createAuthToken(String id, String role, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
@@ -52,12 +48,10 @@ public class AuthToken {
                 .compact();
     }
 
-    // 토큰 검증
     public boolean validateToken() {
         return this.getTokenClaims() != null;
     }
 
-    // 토큰으로부터 Claim 가져오기
     public Claims getTokenClaims() {
         try {
 
@@ -68,21 +62,20 @@ public class AuthToken {
                     .getBody();
 
         } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
+            log.info("유효하지 않은 JWT 서명입니다.");
         } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token.");
+            log.info("유효하지 않은 JWT 토큰입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
+            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
+            log.info("지원하지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
+            log.info("알 수 없는 JWT 토큰 에러입니다.");
         }
 
         return null;
     }
 
-    // 만료된 토큰의 Claim 가져오기
     public Claims getExpiredTokenClaims() {
         try {
             Jwts.parserBuilder()
@@ -91,15 +84,17 @@ public class AuthToken {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
+            log.info("만료된 JWT 토큰입니다.");
+
             return e.getClaims();
         }
+
         return null;
     }
 
-    // 토큰의 Claim 안에 담긴 payload 가져오기
     public String getPayloads(String name) {
         Claims claims = getTokenClaims();
+
         return claims.get(name).toString();
     }
 }
