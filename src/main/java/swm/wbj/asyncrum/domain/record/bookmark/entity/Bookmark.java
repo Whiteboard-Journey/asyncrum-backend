@@ -30,6 +30,9 @@ public class Bookmark {
     private Member member;
 
     @Column
+    private String emoji;
+
+    @Column
     private String content;
 
     @Column
@@ -49,6 +52,7 @@ public class Bookmark {
 
     public Bookmark(Record record,
                     Member member,
+                    String emoji,
                     String content,
                     Double time,
                     VideoBookmarkCoordinates position,
@@ -56,6 +60,7 @@ public class Bookmark {
                     Double scale) {
         this.record = record;
         this.member = member;
+        this.emoji = emoji;
         this.content = content;
         this.time = time;
         this.position = position;
@@ -63,11 +68,13 @@ public class Bookmark {
         this.scale = scale;
     }
 
-    public void updateBookmark(String content,
+    public void updateBookmark(String emoji,
+                               String content,
                                Double time,
                                VideoBookmarkCoordinates position,
                                String drawing,
                                Double scale) {
+        if(emoji != null) this.emoji = emoji;
         if(content != null) this.content = content;
         if(time != null) this.time = time;
         if(position != null) this.position = position;

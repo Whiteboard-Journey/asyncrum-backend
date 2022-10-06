@@ -14,6 +14,7 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 public class BookmarkCreateRequestDto {
 
     private Long recordId;
+    private String emoji;
     private String content;
     private Double time;
     private VideoBookmarkCoordinates position;
@@ -24,6 +25,7 @@ public class BookmarkCreateRequestDto {
         return Bookmark.createBookmark()
                 .record(record)
                 .member(member)
+                .emoji(emoji)
                 .content(content)
                 .time(time)
                 .position(position)

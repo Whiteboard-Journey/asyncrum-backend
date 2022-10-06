@@ -43,7 +43,7 @@ public class BookmarkController {
             @RequestBody BookmarkUpdateRequestDto requestDto) {
         BookmarkUpdateResponseDto responseDto = bookmarkService.updateBookmark(id, requestDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")

@@ -57,6 +57,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         Bookmark bookmark = bookmarkRepository.findById(id).orElseThrow(BookmarkNotExistsException::new);
 
         bookmark.updateBookmark(
+                requestDto.getEmoji(),
                 requestDto.getContent(),
                 requestDto.getTime(),
                 requestDto.getPosition(),
