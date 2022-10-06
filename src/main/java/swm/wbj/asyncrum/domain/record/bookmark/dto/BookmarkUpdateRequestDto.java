@@ -6,6 +6,7 @@ import swm.wbj.asyncrum.domain.record.bookmark.entity.VideoBookmarkCoordinates;
 @Data
 public class BookmarkUpdateRequestDto {
 
+    private String emoji;
     private String content;
     private Double time;
     private VideoBookmarkCoordinates position;
