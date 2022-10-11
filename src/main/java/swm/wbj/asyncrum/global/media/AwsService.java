@@ -56,7 +56,6 @@ public class AwsService {
      * Presigned URL Request 생성
      */
     private GeneratePresignedUrlRequest generatePresignedUrlRequest(String uploadFileKey, String dirName, FileType fileType) {
-        // 유효 기간 설정
         Date expiration = getExpiration();
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
@@ -65,8 +64,10 @@ public class AwsService {
                         .withMethod(HttpMethod.PUT)
                         .withExpiration(expiration);
 
-        // 별도로 ACL 파라미터도 추가
         generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
+        if (fileType.equals(FileType.PNG)) {
+            generatePresignedUrlRequest.addRequestParameter(Headers.CACHE_CONTROL, "no-cache");
+        }
 
         return generatePresignedUrlRequest;
     }
