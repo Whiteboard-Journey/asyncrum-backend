@@ -9,4 +9,5 @@ public class ImageCreateResponseDto {
 
     private Long id;
     private String preSignedURL;
+    private String imageUrl;
 }
