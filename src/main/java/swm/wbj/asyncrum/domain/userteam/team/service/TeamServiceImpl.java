@@ -185,10 +185,11 @@ public class TeamServiceImpl implements TeamService {
 
         String imageFileKey = createImageFileKey(team.getId());
         String preSignedURL = awsService.generatePresignedURL(imageFileKey, IMAGE_BUCKET_NAME, FileType.PNG);
+        String imageUrl = awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME);
 
-        team.updateProfileImage(imageFileKey, awsService.getObjectURL(imageFileKey, IMAGE_BUCKET_NAME));
+        team.updateProfileImage(imageFileKey, imageUrl);
 
-        return new TeamImageCreateResponseDto(id, preSignedURL);
+        return new TeamImageCreateResponseDto(id, preSignedURL, imageUrl);
     }
 
     private boolean isMemberAlreadyInTeam(Team team, Member requestMember) {

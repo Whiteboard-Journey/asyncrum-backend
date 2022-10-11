@@ -73,6 +73,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .email(userInfo.getEmail())
                 .oauthId(userInfo.getId())
                 .fullname(userInfo.getName())
+                .profileImageUrl(userInfo.getImageUrl())
                 .roleType(RoleType.USER)
                 .providerType(providerType)
                 .build();
@@ -81,8 +82,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void updateMember(Member member, OAuth2UserInfo userInfo) {
-        if (userInfo.getImageUrl() != null && !userInfo.getImageUrl().equals(member.getFullname())) {
-            member.updateProfileImage(null, userInfo.getImageUrl());
-        }
+        // No further update after initial oauth login
     }
 }

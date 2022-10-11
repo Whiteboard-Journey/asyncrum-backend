@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.global.type.RoleType;
+import swm.wbj.asyncrum.global.utils.UiAvatarService;
 
 @Getter
 @NoArgsConstructor
@@ -22,33 +23,7 @@ public class MemberCreateRequestDto {
                 .password(passwordEncoder.encode(password))
                 .fullname(fullname)
                 .roleType(RoleType.GUEST)
-                .profileImageUrl(getProfileImageUrl(fullname))
+                .profileImageUrl(UiAvatarService.getProfileImageUrl(fullname))
                 .build();
-    }
-
-    private String getProfileImageUrl(String fullname) {
-        return "https://ui-avatars.com/api/?name=" + tokenize(fullname);
-    }
-
-    /**
-     *  1. space를 + 로 치환
-     *  2. 대문자 앞에 + 추가. 단, 맨 앞글자는 제외
-     */
-    private String tokenize(String fullname) {
-        StringBuilder result = new StringBuilder("" + fullname.charAt(0));
-        for (int i=1; i< fullname.length(); i++) {
-            char c = fullname.charAt(i);
-            if (c >= 'A' && c <= 'Z') {
-                result.append("+");
-                result.append(c);
-            }
-            else if (c == ' ') {
-                result.append("+");
-            } else {
-                result.append(c);
-            }
-        }
-
-        return result.toString();
     }
 }
