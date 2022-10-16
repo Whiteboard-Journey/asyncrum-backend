@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.userteam.member.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Member")
 @RequestMapping("/api/v1/members")
 @RestController
 public class MemberController {

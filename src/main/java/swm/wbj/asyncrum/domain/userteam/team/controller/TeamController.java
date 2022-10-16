@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.userteam.team.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Team")
 @RequestMapping("/api/v1/teams")
 @RestController
 public class TeamController {

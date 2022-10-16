@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.record.bookmark.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import swm.wbj.asyncrum.domain.record.bookmark.service.BookmarkService;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Bookmark")
 @RequestMapping("/api/v1/bookmarks")
 @RestController
 public class BookmarkController {

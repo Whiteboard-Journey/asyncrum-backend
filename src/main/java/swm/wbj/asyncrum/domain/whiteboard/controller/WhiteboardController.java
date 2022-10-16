@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.whiteboard.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Whiteboard")
 @RequestMapping("/api/v1/whiteboards")
 @RestController
 public class WhiteboardController {

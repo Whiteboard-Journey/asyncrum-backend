@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.record.record.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Record")
 @RequestMapping("/api/v1/records")
 @RestController
 public class RecordController {

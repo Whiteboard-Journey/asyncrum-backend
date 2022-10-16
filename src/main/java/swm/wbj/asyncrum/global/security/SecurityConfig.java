@@ -77,6 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.GET, "/api/v1/members/email/verification").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/teams/*/members/invitation").permitAll()
                     .antMatchers("/api/v1/**").hasAnyAuthority(RoleType.USER.getCode())
+                    .antMatchers("/swagger-ui/*", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll()
                     .anyRequest().authenticated()
 
                 // 1. OAuth 로그인 요청 시 사용하는 엔드포인트 관련 설정
