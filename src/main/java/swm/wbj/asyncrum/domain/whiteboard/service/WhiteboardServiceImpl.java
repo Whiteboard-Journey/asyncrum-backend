@@ -87,11 +87,8 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadResponseDto readWhiteboard(Long id) {
-        Member currentMember = memberService.getCurrentMember();
-        Whiteboard whiteboard = whiteboardRepository.findById(id)
-                .orElseThrow(WhiteboardNotExistsException::new);
 
-        validateWhiteboardTeamMember(whiteboard.getTeam().getId(), currentMember);
+        Whiteboard whiteboard = getCurrentWhiteboard(id);
 
         return new WhiteboardReadResponseDto(whiteboard);
     }

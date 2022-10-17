@@ -10,8 +10,6 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
-import java.util.List;
-
 @Repository
 public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
 
