@@ -21,7 +21,7 @@ public class WhiteboardController {
 
     @PostMapping
     public ResponseEntity<?> createWhiteboard(
-            @Valid @RequestBody WhiteboardCreateRequestDto requestDto) {
+            @RequestBody WhiteboardCreateRequestDto requestDto) {
         WhiteboardCreateResponseDto responseDto = whiteboardService.createWhiteboard(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -51,14 +51,14 @@ public class WhiteboardController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateWhiteboard(
             @PathVariable Long id,
-            @Valid @RequestBody WhiteboardUpdateRequestDto requestDto) {
+            @RequestBody WhiteboardUpdateRequestDto requestDto) {
         WhiteboardUpdateResponseDto responseDto = whiteboardService.updateWhiteboard(id, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteWhiteboard(@PathVariable Long id) {
+    public ResponseEntity<?> deleteWhiteboard(@PathVariable("id") Long id) {
         whiteboardService.deleteWhiteboard(id);
 
         return ResponseEntity.noContent().build();

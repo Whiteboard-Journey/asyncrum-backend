@@ -50,6 +50,15 @@ public class WhiteboardServiceImpl implements WhiteboardService {
         return new WhiteboardCreateResponseDto(whiteboard.getId(), preSignedURL);
     }
 
+    @Override
+    public Whiteboard getCurrentWhiteboard(Long id) {
+        Member currentMember = memberService.getCurrentMember();
+        Whiteboard whiteboard = whiteboardRepository.findById(id)
+                .orElseThrow(WhiteboardNotExistsException::new);
+        validateWhiteboardTeamMember(whiteboard.getTeam().getId(), currentMember);
+        return whiteboard;
+    }
+
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadAllResponseDto readAllWhiteboard(Long teamId, ScopeType scope, Integer pageIndex,
@@ -78,14 +87,13 @@ public class WhiteboardServiceImpl implements WhiteboardService {
     @Transactional(readOnly = true)
     @Override
     public WhiteboardReadResponseDto readWhiteboard(Long id) {
-        Member currentMember = memberService.getCurrentMember();
-        Whiteboard whiteboard = whiteboardRepository.findById(id)
-                .orElseThrow(WhiteboardNotExistsException::new);
 
-        validateWhiteboardTeamMember(whiteboard.getTeam().getId(), currentMember);
+        Whiteboard whiteboard = getCurrentWhiteboard(id);
 
         return new WhiteboardReadResponseDto(whiteboard);
     }
+
+
 
     @Override
     public WhiteboardUpdateResponseDto updateWhiteboard(Long id, WhiteboardUpdateRequestDto requestDto) {
