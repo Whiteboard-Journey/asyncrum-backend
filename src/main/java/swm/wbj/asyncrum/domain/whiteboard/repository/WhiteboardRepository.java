@@ -10,11 +10,14 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
+import java.util.List;
+
 @Repository
 public interface WhiteboardRepository extends JpaRepository<Whiteboard, Long> {
 
     @Query("SELECT w FROM Whiteboard w WHERE w.team = :team" +
             " AND (w.scope = swm.wbj.asyncrum.global.type.ScopeType.TEAM OR w.member = :member)")
+
     Page<Whiteboard> findAllByTeam(
             @Param("team") Team team,
             @Param("member") Member member,

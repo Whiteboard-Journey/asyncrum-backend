@@ -1,6 +1,7 @@
 package swm.wbj.asyncrum.domain.whiteboard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "whiteboard")
 @Entity
