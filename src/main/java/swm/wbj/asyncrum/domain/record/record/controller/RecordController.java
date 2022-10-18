@@ -4,11 +4,14 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.record.record.dto.*;
 import swm.wbj.asyncrum.domain.record.record.service.RecordService;
 import swm.wbj.asyncrum.global.type.ScopeType;
+
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,21 +22,21 @@ public class RecordController {
 
     private final RecordService recordService;
 
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createRecord(@RequestBody RecordCreateRequestDto requestDto) {
         RecordCreateResponseDto responseDto= recordService.createRecord(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?>  readRecord(@PathVariable("id") Long id) {
         RecordReadResponseDto responseDto = recordService.readRecord(id);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readAllRecord(
             @RequestParam(value = "teamId") Long teamId,
             @RequestParam(value = "scope") ScopeType scope,
@@ -47,7 +50,7 @@ public class RecordController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateRecord(
             @PathVariable Long id,
             @RequestBody RecordUpdateRequestDto requestDto)
@@ -57,7 +60,7 @@ public class RecordController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<?> deleteRecord(@PathVariable("id") Long id) {
         recordService.deleteRecord(id);
 

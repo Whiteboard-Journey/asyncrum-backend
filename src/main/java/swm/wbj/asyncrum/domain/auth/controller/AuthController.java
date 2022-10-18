@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
@@ -13,6 +14,8 @@ import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class AuthController {
     /**
      * userId 로그인
      */
-    @PostMapping("/login")
+    @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> localLogin(HttpServletRequest request,
                                    HttpServletResponse response, @RequestBody LoginRequestDto requestDto) {
         try {
@@ -41,7 +44,7 @@ public class AuthController {
      * Access Token refresh
      * Access Token 만료 시 Refresh Token을 통해 refresh
      */
-    @GetMapping("/refresh")
+    @GetMapping(value = "/refresh", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         try {
             TokenResponseDto tokenResponseDto = authService.refreshService(request, response);
@@ -55,8 +58,8 @@ public class AuthController {
      * AWS Target Group Health Check
      * 해당 경로로 요청받으면 항상 HTTP 200 OK 반환
      */
-    @GetMapping("/health")
+    @GetMapping(value = "/health", produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<?> refreshToken() {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok("OK");
     }
 }
