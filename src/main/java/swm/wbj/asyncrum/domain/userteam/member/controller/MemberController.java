@@ -1,23 +1,28 @@
 package swm.wbj.asyncrum.domain.userteam.member.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.member.dto.*;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
+import static org.springframework.http.MediaType.*;
+
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Member")
 @RequestMapping("/api/v1/members")
 @RestController
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createMember(@RequestBody MemberCreateRequestDto requestDto){
         try{
             MemberCreateResponseDto responseDto= memberService.createMember(requestDto);
@@ -29,7 +34,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readMember(@PathVariable("id") Long id){
         try{
             MemberReadResponseDto responseDto = memberService.readMember(id);
@@ -41,7 +46,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readAllMember(
             @RequestParam(value = "pageIndex") Integer pageIndex,
             @RequestParam(value = "topId", required = false, defaultValue = "0") Long topId,
@@ -58,7 +63,7 @@ public class MemberController {
     }
 
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateMember(@PathVariable Long id, @RequestBody MemberUpdateRequestDto requestDto){
         try {
             MemberUpdateResponseDto responseDto = memberService.updateMember(id, requestDto);
@@ -70,7 +75,7 @@ public class MemberController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteMember(@PathVariable("id") Long id){
         try {
             memberService.deleteMember(id);
@@ -87,7 +92,7 @@ public class MemberController {
      * 해당 엔드포인트는 JWT 토큰이 있어야 사용 가능
      *
      */
-    @PostMapping("/email/verification")
+    @PostMapping(value = "/email/verification", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendEmailVerificationLinkByEmail() {
         try {
             memberService.sendEmailVerificationLinkByEmail();
@@ -102,7 +107,7 @@ public class MemberController {
      * 메일 인증 링크 검증 및 처리
      * TODO: 인증 성공 Thymeleaf HTML 만들기 OR 프론트엔드 특정 페이지로 REDIRECT
      */
-    @GetMapping("/email/verification")
+    @GetMapping(value = "/email/verification", produces = TEXT_PLAIN_VALUE)
     public String verifyEmailVerificationLink(@RequestParam("memberId") Long memberId) {
         try {
             memberService.verifyEmailVerificationLink(memberId);
@@ -116,7 +121,7 @@ public class MemberController {
     /**
      * 사용자 프로필 이미지 처리
      */
-    @PostMapping("/{id}/image")
+    @PostMapping(value = "/{id}/image", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createMemberImage(@PathVariable("id") Long id) {
         try {
             ImageCreateResponseDto responseDto = memberService.createImage(id);

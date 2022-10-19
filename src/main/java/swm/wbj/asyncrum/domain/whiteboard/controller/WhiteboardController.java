@@ -1,5 +1,6 @@
 package swm.wbj.asyncrum.domain.whiteboard.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,15 +12,19 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "Whiteboard")
 @RequestMapping("/api/v1/whiteboards")
 @RestController
 public class WhiteboardController {
 
     private final WhiteboardService whiteboardService;
 
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createWhiteboard(
             @RequestBody WhiteboardCreateRequestDto requestDto) {
         WhiteboardCreateResponseDto responseDto = whiteboardService.createWhiteboard(requestDto);
@@ -27,14 +32,14 @@ public class WhiteboardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readWhiteboard(@PathVariable Long id) {
         WhiteboardReadResponseDto responseDto = whiteboardService.readWhiteboard(id);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readAllWhiteboard(
             @RequestParam(value = "teamId") Long teamId,
             @RequestParam(value = "scope") ScopeType scope,
@@ -48,7 +53,7 @@ public class WhiteboardController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateWhiteboard(
             @PathVariable Long id,
             @RequestBody WhiteboardUpdateRequestDto requestDto) {
@@ -57,8 +62,8 @@ public class WhiteboardController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteWhiteboard(@PathVariable("id") Long id) {
+    @DeleteMapping(value = "/{id}", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<?> deleteWhiteboard(@PathVariable Long id) {
         whiteboardService.deleteWhiteboard(id);
 
         return ResponseEntity.noContent().build();
