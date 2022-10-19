@@ -26,7 +26,7 @@ public class WhiteboardController {
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createWhiteboard(
-            @Valid @RequestBody WhiteboardCreateRequestDto requestDto) {
+            @RequestBody WhiteboardCreateRequestDto requestDto) {
         WhiteboardCreateResponseDto responseDto = whiteboardService.createWhiteboard(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -56,7 +56,7 @@ public class WhiteboardController {
     @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateWhiteboard(
             @PathVariable Long id,
-            @Valid @RequestBody WhiteboardUpdateRequestDto requestDto) {
+            @RequestBody WhiteboardUpdateRequestDto requestDto) {
         WhiteboardUpdateResponseDto responseDto = whiteboardService.updateWhiteboard(id, requestDto);
 
         return ResponseEntity.ok(responseDto);
