@@ -3,10 +3,9 @@ package swm.wbj.asyncrum.domain.record.record.dto;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.record.bookmark.dto.BookmarkReadResponseDto;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadResponseDto;
+import swm.wbj.asyncrum.domain.member.dto.MemberReadResponseDto;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

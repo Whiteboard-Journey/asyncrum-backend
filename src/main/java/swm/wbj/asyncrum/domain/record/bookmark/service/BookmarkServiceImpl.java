@@ -9,8 +9,8 @@ import swm.wbj.asyncrum.domain.record.bookmark.exception.BookmarkNotExistsExcept
 import swm.wbj.asyncrum.domain.record.bookmark.repository.BookmarkRepository;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.record.service.RecordService;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.service.MemberService;
 
 import java.util.List;
 

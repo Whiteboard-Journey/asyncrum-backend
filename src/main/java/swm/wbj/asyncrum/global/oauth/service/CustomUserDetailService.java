@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.exeception.MemberNotExistsException;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.exeception.MemberNotExistsException;
+import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 
 /**

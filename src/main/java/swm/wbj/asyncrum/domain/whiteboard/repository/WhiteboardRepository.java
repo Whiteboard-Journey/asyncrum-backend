@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 
 @Repository

@@ -1,7 +1,7 @@
 package swm.wbj.asyncrum.domain.whiteboard.dto;
 
 import lombok.Data;
-import swm.wbj.asyncrum.domain.userteam.member.dto.MemberReadResponseDto;
+import swm.wbj.asyncrum.domain.member.dto.MemberReadResponseDto;
 import swm.wbj.asyncrum.domain.whiteboard.entity.Whiteboard;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
