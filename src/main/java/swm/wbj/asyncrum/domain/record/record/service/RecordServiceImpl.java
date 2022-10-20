@@ -11,12 +11,12 @@ import swm.wbj.asyncrum.domain.record.record.dto.*;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.record.exception.RecordNotExistsException;
 import swm.wbj.asyncrum.domain.record.record.repository.RecordRepository;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
-import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.team.entity.Team;
+import swm.wbj.asyncrum.domain.team.service.TeamService;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.media.AwsService;
-import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.domain.member.service.MemberService;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.ScopeType;
 

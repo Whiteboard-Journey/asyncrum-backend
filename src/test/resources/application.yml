@@ -3,38 +3,10 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-#  # 데이터 소스 설정
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/asyncrum?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
-#    username: asyncrum
-#    password: asyncrum
-#    hikari:
-#      pool-name: jpa-hikari-pool
-#      maximum-pool-size: 5
-#      jdbc-url: ${spring.datasource.url}
-#      username: ${spring.datasource.username}
-#      password: ${spring.datasource.password}
-#      driver-class-name: ${spring.datasource.driver-class-name}
-#      data-source-properties:
-#        rewriteBatchedStatements: true
-#
-#  # JPA 설정
-#  jpa:
-#    generate-ddl: true
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-#        hbm2ddl.import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
-#        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
-#        default_batch_fetch_size: ${chunkSize:100}
-#        jdbc.batch_size: 20
-#        order_inserts: true
-#        order_updates: true
-#        format_sql: true
+  # ControllerHandler 전략 선택
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   # Security OAuth
   security:

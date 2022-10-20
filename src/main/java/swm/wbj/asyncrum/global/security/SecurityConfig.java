@@ -15,8 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.member.repository.MemberRefreshTokenRepository;
+import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.properties.AppProperties;
 import swm.wbj.asyncrum.global.properties.CorsProperties;
 import swm.wbj.asyncrum.global.type.RoleType;

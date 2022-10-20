@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.entity.Member;
 
 import javax.persistence.*;
 

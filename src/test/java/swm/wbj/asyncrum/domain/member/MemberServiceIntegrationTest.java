@@ -7,10 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import swm.wbj.asyncrum.domain.userteam.member.dto.*;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
+import swm.wbj.asyncrum.domain.member.dto.*;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.member.service.MemberService;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.type.RoleType;
 
