@@ -3,8 +3,8 @@ package swm.wbj.asyncrum.domain.record.record.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 

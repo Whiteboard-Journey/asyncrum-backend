@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.global.type.ScopeType;
 

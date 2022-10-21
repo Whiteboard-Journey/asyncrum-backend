@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.VideoBookmarkCoordinates;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.entity.Member;
 
 @Data
 @Getter
