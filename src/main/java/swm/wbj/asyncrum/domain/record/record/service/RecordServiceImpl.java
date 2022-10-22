@@ -20,6 +20,8 @@ import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.ScopeType;
 
+import java.util.*;
+
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.RECORD_FILE_PREFIX;
 import static swm.wbj.asyncrum.global.type.ScopeType.isTeamScope;
@@ -40,6 +42,7 @@ public class RecordServiceImpl implements RecordService {
         Team currentTeam = validateRecordTeamMember(requestDto.getTeamId(), currentMember);
 
         Record record = requestDto.toEntity(currentMember, currentTeam);
+        record.updateSeenMember(Set.of(currentMember.getId()));
         Long recordId = recordRepository.save(record).getId();
 
         String recordFileKey = createRecordFileKey(currentTeam.getId(), currentMember.getId(), recordId);
@@ -94,10 +97,21 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public RecordUpdateResponseDto updateRecord(Long id, RecordUpdateRequestDto requestDto) {
-        Record record = getMemberRecord(id);
+        Member currentMember = memberService.getCurrentMember();
+        Record record = getRecord(id).orElseThrow(RecordNotExistsException::new);
 
-        record.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
-        record.updateScope(ScopeType.of(requestDto.getScope()));
+        if (ownsRecord(currentMember, record)) {
+            // 오너
+            record.updateTitleAndDescription(requestDto.getTitle(), requestDto.getDescription());
+            record.updateScope(ScopeType.of(requestDto.getScope()));
+        } else if (teamService.getTeamWithTeamMemberValidation(record.getTeam().getId(), currentMember) != null) {
+            // 멤버
+            Set<Long> seenMemberIds = Optional.of(record.getSeenMember()).orElse(new HashSet<>());
+            seenMemberIds.add(memberService.getCurrentMember().getId());
+            record.updateSeenMember(seenMemberIds);
+        } else {
+            throw new OperationNotAllowedException();
+        }
 
         String preSignedURL = awsService.generatePresignedURL(
                 record.getRecordFileKey(), RECORD_BUCKET_NAME, FileType.MP4);
@@ -115,6 +129,10 @@ public class RecordServiceImpl implements RecordService {
 
     private Team validateRecordTeamMember(Long teamId, Member currentMember) {
         return teamService.getTeamWithTeamMemberValidation(teamId, currentMember);
+    }
+
+    private Optional<Record> getRecord(Long id) {
+        return recordRepository.findById(id);
     }
 
     private Record getMemberRecord(Long id) {
