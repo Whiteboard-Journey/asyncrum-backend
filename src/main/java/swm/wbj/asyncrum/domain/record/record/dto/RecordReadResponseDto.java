@@ -8,7 +8,9 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -24,6 +26,8 @@ public class RecordReadResponseDto {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 
+    private Set<Long> seenMember;
+
     public RecordReadResponseDto(Record record){
         this.id = record.getId();
         this.title = record.getTitle();
@@ -36,5 +40,6 @@ public class RecordReadResponseDto {
         this.member = new MemberReadResponseDto(record.getMember());
         this.createdDate = record.getCreatedDate();
         this.lastModifiedDate = record.getLastModifiedDate();
+        this.seenMember = new HashSet<>(record.getSeenMember());
     }
 }

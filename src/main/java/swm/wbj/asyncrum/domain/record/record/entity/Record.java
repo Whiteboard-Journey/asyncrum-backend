@@ -10,7 +10,9 @@ import swm.wbj.asyncrum.global.type.ScopeType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
@@ -53,6 +55,16 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "team_id")
     private Team team;
 
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "seenMember",
+            joinColumns = @JoinColumn(name = "record_id")
+    )
+    @Column(name = "seen_member_id")
+    private Set<Long> seenMember = new HashSet<>();
+
     @Builder(builderMethodName = "createRecord")
     public Record(String title, String description, ScopeType scope, Member member, Team team) {
         this.title = title;
@@ -72,7 +84,13 @@ public class Record extends BaseEntity {
         if(recordFileUrl != null) this.recordFileUrl = recordFileUrl;
     }
 
+    public void updateSeenMember(Set<Long> seenMember){
+        if(seenMember != null) this.seenMember = seenMember;
+    }
+
     public void updateScope(ScopeType scope) {
         if (scope != null) this.scope = scope;
     }
+
+
 }

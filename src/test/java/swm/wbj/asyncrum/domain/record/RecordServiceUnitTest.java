@@ -185,6 +185,7 @@ class RecordServiceUnitTest {
         recordService.updateRecord(MOCK_ID, requestDto);
 
         Mockito.verify(memberService).getCurrentMember();
+
         Mockito.verify(recordRepository).findById(MOCK_ID);
         Mockito.verify(awsService).generatePresignedURL(MOCK_FILE_KEY, AwsService.RECORD_BUCKET_NAME, FileType.MP4);
         Assertions.assertEquals(mockRecord.getTitle(), title);
@@ -194,6 +195,7 @@ class RecordServiceUnitTest {
         // 현재 멤버가 녹화를 소유하고 있지 않을 경우 예외 검증
         Member notOwnedMember = new Member();
         Mockito.when(memberService.getCurrentMember()).thenReturn(notOwnedMember);
+        Mockito.when(teamService.getTeamWithTeamMemberValidation(MOCK_ID, notOwnedMember)).thenReturn(null);
 
         Assertions.assertThrows(OperationNotAllowedException.class, () -> {
             recordService.updateRecord(MOCK_ID, requestDto);
