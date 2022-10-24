@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 #  # 데이터 소스 설정
 #  datasource:
