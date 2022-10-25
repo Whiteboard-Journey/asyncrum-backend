@@ -53,7 +53,6 @@ public class TeamServiceImpl implements TeamService {
         }
 
         Team team = teamRepository.save(requestDto.toEntity());
-        team.updateOpenMeeting(Set.of(requestDto.getName()));
         TeamMember teamMember = TeamMember.createTeamMember()
                                             .team(team)
                                             .member(member)
@@ -153,8 +152,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamUpdateResponseDto addRoomName(Long id, TeamAddMeetingRequestDto requestDto) {
-        Member currentMember = memberService.getCurrentMember();
+    public TeamUpdateResponseDto addRoomName(Long id, TeamMeetingRequestDto requestDto) {
         Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
 
         Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
@@ -163,6 +161,14 @@ public class TeamServiceImpl implements TeamService {
         team.updateOpenMeeting(openMeetings);
 
         return new TeamUpdateResponseDto(teamRepository.save(team).getId());
+    }
+
+    @Override
+    public void removeRoomName(Long id, TeamMeetingRequestDto requestDto) {
+        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
+        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
+        openMeetings.remove(requestDto.getRoomName());
+        team.updateOpenMeeting(openMeetings);
     }
 
     @Override
