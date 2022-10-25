@@ -25,6 +25,10 @@ import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.TeamRoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import static swm.wbj.asyncrum.global.media.AwsService.IMAGE_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.IMAGE_TEAM_FILE_PREFIX;
 
@@ -49,6 +53,7 @@ public class TeamServiceImpl implements TeamService {
         }
 
         Team team = teamRepository.save(requestDto.toEntity());
+        team.updateOpenMeeting(Set.of(requestDto.getName()));
         TeamMember teamMember = TeamMember.createTeamMember()
                                             .team(team)
                                             .member(member)
@@ -148,6 +153,19 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public TeamUpdateResponseDto addRoomName(Long id, TeamAddMeetingRequestDto requestDto) {
+        Member currentMember = memberService.getCurrentMember();
+        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
+
+        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
+        // roomName
+        openMeetings.add(requestDto.getRoomName());
+        team.updateOpenMeeting(openMeetings);
+
+        return new TeamUpdateResponseDto(teamRepository.save(team).getId());
+    }
+
+    @Override
     public void removeMember(Long id, Long memberId) {
         Member requestMember = memberService.getCurrentMember();
         Member removeMember = memberService.getUserByIdOrEmail(memberId, null);
@@ -209,6 +227,11 @@ public class TeamServiceImpl implements TeamService {
 
         return team;
     }
+
+    private Optional<Team> getTeam(Long id) {
+        return teamRepository.findById(id);
+    }
+
 
     private Boolean teamCodeAlreadyExists(String code) {
         return teamRepository.existsByCode(code);

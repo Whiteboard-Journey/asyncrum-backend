@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
 import swm.wbj.asyncrum.domain.userteam.team.service.TeamService;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import static org.springframework.http.MediaType.*;
 
 @Slf4j
@@ -79,6 +83,12 @@ public class TeamController {
     public ResponseEntity<?> addMember(@PathVariable Long id, @RequestBody TeamMemberAddRequestDto requestDto) {
         TeamMemberAddResponseDto responseDto = teamService.addMember(id, requestDto);
 
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping(value = "/{id}/roomNames", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addRoomName(@PathVariable Long id, @RequestBody TeamAddMeetingRequestDto requestDto){
+        TeamUpdateResponseDto responseDto = teamService.addRoomName(id, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 

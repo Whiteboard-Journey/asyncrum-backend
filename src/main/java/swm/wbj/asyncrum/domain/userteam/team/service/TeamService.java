@@ -21,6 +21,8 @@ public interface TeamService {
 
     TeamMemberAddResponseDto addMember(Long id, TeamMemberAddRequestDto requestDto);
 
+    TeamUpdateResponseDto addRoomName(Long id, TeamAddMeetingRequestDto requestDto);
+
     void removeMember(Long id, Long memberId);
 
     TeamUpdateResponseDto updateTeam(Long id, TeamUpdateRequestDto requestDto);
