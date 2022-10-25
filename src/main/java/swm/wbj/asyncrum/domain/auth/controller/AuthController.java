@@ -4,12 +4,11 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
 import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;
-import swm.wbj.asyncrum.domain.auth.service.AuthService;
+import swm.wbj.asyncrum.domain.auth.AuthService;
 import swm.wbj.asyncrum.global.exception.ErrorResponseDto;
 
 import javax.servlet.http.HttpServletRequest;
