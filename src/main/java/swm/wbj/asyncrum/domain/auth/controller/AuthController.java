@@ -32,7 +32,7 @@ public class AuthController {
     public ResponseEntity<?> localLogin(HttpServletRequest request,
                                    HttpServletResponse response, @RequestBody LoginRequestDto requestDto) {
         try {
-            TokenResponseDto tokenResponseDto = authService.loginService(request, response, requestDto);
+            TokenResponseDto tokenResponseDto = authService.localLogin(request, response, requestDto);
             return ResponseEntity.ok(tokenResponseDto);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));
@@ -46,7 +46,7 @@ public class AuthController {
     @GetMapping(value = "/refresh", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         try {
-            TokenResponseDto tokenResponseDto = authService.refreshService(request, response);
+            TokenResponseDto tokenResponseDto = authService.refreshToken(request, response);
             return ResponseEntity.ok(tokenResponseDto);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto(e.getMessage()));

@@ -14,7 +14,6 @@ import swm.wbj.asyncrum.domain.member.entity.MemberRefreshToken;
 import swm.wbj.asyncrum.domain.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.member.repository.MemberRefreshTokenRepository;
 import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.member.service.MemberService;
 import swm.wbj.asyncrum.global.properties.AppProperties;
 import swm.wbj.asyncrum.global.type.RoleType;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
@@ -43,120 +42,181 @@ public class AuthServiceImpl implements AuthService {
     public final static String REFRESH_TOKEN = "refresh_token";
 
     @Override
-    public TokenResponseDto loginService(HttpServletRequest request,
-                                         HttpServletResponse response, LoginRequestDto requestDto) {
-        Authentication authentication = authenticationManager.authenticate(
+    public TokenResponseDto localLogin(HttpServletRequest request,
+                                       HttpServletResponse response, LoginRequestDto requestDto) {
+        Authentication authentication = getAuthentication(requestDto);
+        setAuthentication(authentication);
+
+        String memberId = getMemberId(requestDto);
+
+        AuthToken accessToken = renewAccessToken(authentication, memberId);
+        AuthToken refreshToken = createRefreshToken();
+
+        MemberRefreshToken memberRefreshToken = getMemberRefreshToken(memberId);
+        setMemberRefreshToken(memberId, refreshToken, memberRefreshToken);
+
+        setRefreshTokenInCookie(request, response, refreshToken);
+
+        return putAccessTokenInTokenDto(accessToken);
+    }
+
+    @Override
+    public TokenResponseDto refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        AuthToken authToken = getAccessTokenFromRequestHeader(request);
+        validateAccessToken(authToken);
+
+        Claims claims = authToken.getExpiredTokenClaims();
+        validateAccessTokenExpired(claims);
+
+        AuthToken authRefreshToken = getRefreshTokenFromCookie(request);
+        validateRefreshToken(authRefreshToken);
+
+        String memberId = claims.getSubject();
+        RoleType roleType = RoleType.of(claims.get("role", String.class));
+
+        MemberRefreshToken memberRefreshToken = getMemberRefreshTokenWithValidation(authRefreshToken, memberId);
+
+        AuthToken newAccessToken = renewAccessToken(memberId, roleType);
+        if (checkRefreshTokenTimeLessThenThreeDays(authRefreshToken)) {
+            renewRefreshToken(request, response, memberRefreshToken);
+        }
+
+        return putAccessTokenInTokenDto(newAccessToken);
+    }
+
+    private void renewRefreshToken(HttpServletRequest request, HttpServletResponse response, MemberRefreshToken memberRefreshToken) {
+        Date now = new Date();
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        AuthToken authRefreshToken = tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime()+ refreshTokenExpiry)
+        );
+
+        memberRefreshToken.setRefreshToken(authRefreshToken.getToken());
+        setRefreshTokenInCookie(request, response, authRefreshToken);
+    }
+
+    private boolean checkRefreshTokenTimeLessThenThreeDays(AuthToken authRefreshToken) {
+        Date now = new Date();
+        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
+
+        return validTime <= THREE_DAYS_IN_MILLISECONDS;
+    }
+
+    private AuthToken renewAccessToken(String memberId, RoleType roleType) {
+        Date now = new Date();
+
+        return tokenProvider.createAuthToken(
+                memberId,
+                roleType.getCode(),
+                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+        );
+    }
+
+    private MemberRefreshToken getMemberRefreshTokenWithValidation(AuthToken authRefreshToken, String memberId) {
+        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberIdAndRefreshToken(memberId, authRefreshToken.getToken());
+
+        if (memberRefreshToken == null) {
+            throw new IllegalArgumentException("Invalid Refresh Token.");
+        }
+        return memberRefreshToken;
+    }
+
+    private void validateRefreshToken(AuthToken authRefreshToken) {
+        if (!authRefreshToken.validateToken()) {
+            throw new IllegalArgumentException("Invalid Refresh Token.");
+        }
+    }
+
+    private AuthToken getRefreshTokenFromCookie(HttpServletRequest request) {
+        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
+                .map(Cookie::getValue)
+                .orElse((null));
+        return tokenProvider.convertAuthToken(refreshToken);
+    }
+
+    private void validateAccessTokenExpired(Claims claims) {
+        if (claims == null) {
+            throw new IllegalArgumentException("Not Expired Access Token.");
+        }
+    }
+
+    private void validateAccessToken(AuthToken authToken) {
+        if(!authToken.validateToken()) {
+            throw new IllegalArgumentException("Invalid Access Token.");
+        }
+    }
+
+    private AuthToken getAccessTokenFromRequestHeader(HttpServletRequest request) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        return tokenProvider.convertAuthToken(accessToken);
+    }
+
+    private TokenResponseDto putAccessTokenInTokenDto(AuthToken accessToken) {
+        return new TokenResponseDto(accessToken.getToken());
+    }
+
+    private void setRefreshTokenInCookie(HttpServletRequest request, HttpServletResponse response, AuthToken refreshToken) {
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        int cookieMaxAge = (int)refreshTokenExpiry / 60;
+
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+    }
+
+    private void setMemberRefreshToken(String memberId, AuthToken refreshToken, MemberRefreshToken memberRefreshToken) {
+        if (memberRefreshToken == null) {
+            memberRefreshToken = new MemberRefreshToken(memberId, refreshToken.getToken());
+            memberRefreshTokenRepository.saveAndFlush(memberRefreshToken);
+        } else {
+            memberRefreshToken.setRefreshToken(refreshToken.getToken());
+        }
+    }
+
+    private MemberRefreshToken getMemberRefreshToken(String memberId) {
+        return memberRefreshTokenRepository.findByMemberId(memberId);
+    }
+
+    private AuthToken createRefreshToken() {
+        Date now = new Date();
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        return tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime() + refreshTokenExpiry)
+        );
+    }
+
+    private AuthToken renewAccessToken(Authentication authentication, String memberId) {
+        Date now = new Date();
+
+        return tokenProvider.createAuthToken(
+                memberId,
+                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
+                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+        );
+    }
+
+    private String getMemberId(LoginRequestDto requestDto) {
+        String email = requestDto.getEmail();
+
+        return memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotExistsException::new)
+                .getId().toString();
+    }
+
+    private void setAuthentication(Authentication authentication) {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private Authentication getAuthentication(LoginRequestDto requestDto) {
+        return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         requestDto.getEmail(),
                         requestDto.getPassword()
                 )
         );
-
-        String email = requestDto.getEmail();
-        String memberId = memberRepository.findByEmail(email)
-                .orElseThrow(MemberNotExistsException::new)
-                .getId().toString();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Access Token 생성
-        Date now = new Date();
-        AuthToken accessToken = tokenProvider.createAuthToken(
-                memberId,
-                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
-
-        // Refresh Token 생성
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-        AuthToken refreshToken = tokenProvider.createAuthToken(
-                appProperties.getAuth().getTokenSecret(),
-                new Date(now.getTime() + refreshTokenExpiry)
-        );
-
-        // userId Refresh Token 으로 DB 확인
-        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberId(memberId);
-        if (memberRefreshToken == null) {
-            // 없는 경우 새로 등록
-            memberRefreshToken = new MemberRefreshToken(memberId, refreshToken.getToken());
-            memberRefreshTokenRepository.saveAndFlush(memberRefreshToken);
-        } else {
-            // 기존의 정보가 있는 경우 토큰 업데이트
-            memberRefreshToken.setRefreshToken(refreshToken.getToken());
-        }
-
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-        // Access Token JSON 형태로 response
-        return new TokenResponseDto(accessToken.getToken());
-    }
-
-    @Override
-    public TokenResponseDto refreshService(HttpServletRequest request, HttpServletResponse response) {
-
-        // Access Token 검증
-        String accessToken = HeaderUtil.getAccessToken(request);
-        AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
-
-        if(!authToken.validateToken()) {
-            throw new IllegalArgumentException("Invalid Access Token.");
-        }
-
-        // Expired Access Token 검증
-        Claims claims = authToken.getExpiredTokenClaims();
-        if (claims == null) {
-            throw new IllegalArgumentException("Not Expired Access Token.");
-        }
-
-        String memberId = claims.getSubject();
-        RoleType roleType = RoleType.of(claims.get("role", String.class));
-
-        // Refresh Token 검증
-        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
-                .map(Cookie::getValue)
-                .orElse((null));
-        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
-
-        if (!authRefreshToken.validateToken()) {
-            throw new IllegalArgumentException("Invalid Refresh Token.");
-        }
-
-        // userId Refresh Token 으로 DB 확인
-        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberIdAndRefreshToken(memberId, refreshToken);
-
-        if (memberRefreshToken == null) {
-            throw new IllegalArgumentException("Invalid Refresh Token.");
-        }
-
-        // Access Token 또한 갱신
-        Date now = new Date();
-        AuthToken newAccessToken = tokenProvider.createAuthToken(
-                memberId,
-                roleType.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
-
-        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
-
-        // Refresh Token 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
-        if (validTime <= THREE_DAYS_IN_MILLISECONDS) {
-            // Refresh Token 설정
-            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-
-            authRefreshToken = tokenProvider.createAuthToken(
-                    appProperties.getAuth().getTokenSecret(),
-                    new Date(now.getTime()+ refreshTokenExpiry)
-            );
-
-            // DB에 Refresh Token 업데이트
-            memberRefreshToken.setRefreshToken(authRefreshToken.getToken());
-
-            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
-        }
-
-        return new TokenResponseDto(newAccessToken.getToken());
     }
 }
