@@ -202,11 +202,6 @@ public class MemberServiceIntegrationTest {
         assertNull(memberRepository.findById(deleteId).orElse(null));
     }
 
-    @Disabled("EmailService와의 연계 필요")
-    @Test
-    @DisplayName("이메일 인증 보내기")
-    public void sendEmailVerificationLinkByEmail() throws Exception { }
-
     @DisplayName("이메일 인증 검증")
     @Test
     void verifyEmailVerificationLink() throws Exception {

@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.auth.service;
+package swm.wbj.asyncrum.domain.auth;
 
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
 import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;

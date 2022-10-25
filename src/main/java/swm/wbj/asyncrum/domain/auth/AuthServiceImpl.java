@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.auth.service;
+package swm.wbj.asyncrum.domain.auth;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +38,9 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
 
-    private final static long THREE_DAYS_IN_MILLISECONDS = 259200000;
-    private final static String REFRESH_TOKEN = "refresh_token";
+    public final static long THREE_DAYS_IN_MILLISECONDS = 259200000;
+    public final static String REFRESH_TOKEN = "refresh_token";
 
     @Override
     public TokenResponseDto loginService(HttpServletRequest request,
@@ -119,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElse((null));
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
 
-        if (authRefreshToken.validateToken()) {
+        if (!authRefreshToken.validateToken()) {
             throw new IllegalArgumentException("Invalid Refresh Token.");
         }
 
