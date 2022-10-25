@@ -2,7 +2,6 @@ package swm.wbj.asyncrum.domain.auth;
 
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,10 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import swm.wbj.asyncrum.domain.auth.dto.LoginRequestDto;
 import swm.wbj.asyncrum.domain.auth.dto.TokenResponseDto;
-import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
-import swm.wbj.asyncrum.domain.userteam.member.entity.MemberRefreshToken;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRefreshTokenRepository;
-import swm.wbj.asyncrum.domain.userteam.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.entity.MemberRefreshToken;
+import swm.wbj.asyncrum.domain.member.repository.MemberRefreshTokenRepository;
+import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
 import swm.wbj.asyncrum.global.oauth.entity.UserPrincipal;
 import swm.wbj.asyncrum.global.oauth.token.AuthToken;
 import swm.wbj.asyncrum.global.oauth.token.TokenProvider;
@@ -50,7 +49,7 @@ class AuthServiceUnitTest {
     }
 
     @Test
-    void loginService() {
+    void localLogin() {
         Member member = new Member() {
             @Override
             public Long getId() {
@@ -115,7 +114,7 @@ class AuthServiceUnitTest {
         Mockito.when(tokenProvider.createAuthToken(Mockito.anyString(), Mockito.anyString(), Mockito.any(Date.class))).thenReturn(token);
         Mockito.when(tokenProvider.createAuthToken(Mockito.anyString(), Mockito.any(Date.class))).thenReturn(token);
 
-        TokenResponseDto responseDto = authService.loginService(request, response, requestDto);
+        TokenResponseDto responseDto = authService.localLogin(request, response, requestDto);
 
         Mockito.verify(authenticationManager).authenticate(Mockito.any());
         // SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -128,7 +127,7 @@ class AuthServiceUnitTest {
     }
 
     @Test
-    void refreshService() {
+    void refreshToken() {
         AuthToken token = Mockito.mock(AuthToken.class);
         Mockito.when(token.getToken()).thenReturn("token");
 
@@ -152,7 +151,7 @@ class AuthServiceUnitTest {
         Mockito.when(tokenProvider.createAuthToken(Mockito.any(), Mockito.any(), Mockito.any(Date.class))).thenReturn(token);
         Mockito.when(tokenProvider.createAuthToken(Mockito.anyString(), Mockito.any(Date.class))).thenReturn(token);
 
-        TokenResponseDto responseDto = authService.refreshService(request, response);
+        TokenResponseDto responseDto = authService.refreshToken(request, response);
 
         Mockito.verify(tokenProvider, Mockito.times(2)).convertAuthToken(Mockito.any());
         Mockito.verify(mockAuthToken, Mockito.times(2)).validateToken();
