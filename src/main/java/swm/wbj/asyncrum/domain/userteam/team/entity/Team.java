@@ -7,7 +7,9 @@ import swm.wbj.asyncrum.global.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -32,6 +34,14 @@ public class Team extends BaseEntity {
 
     @Column
     private String profileImageUrl;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "openMeeting",
+            joinColumns = @JoinColumn(name = "team_id")
+    )
+    @Column(name = "open_meeting_name")
+    private Set<String> openMeeting = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -59,5 +69,9 @@ public class Team extends BaseEntity {
 
     public void removeMember(TeamMember member) {
         this.members.remove(member);
+    }
+
+    public void updateOpenMeeting(Set<String> openMeeting){
+        if (openMeeting != null) this.openMeeting = openMeeting;
     }
 }

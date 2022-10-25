@@ -11,10 +11,7 @@ import swm.wbj.asyncrum.domain.userteam.member.entity.Member;
 import swm.wbj.asyncrum.domain.userteam.member.service.MemberService;
 import swm.wbj.asyncrum.domain.userteam.team.entity.Team;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
-import swm.wbj.asyncrum.domain.userteam.team.exception.CodeAlreadyInUseException;
-import swm.wbj.asyncrum.domain.userteam.team.exception.MemberAlreadyJoinedException;
-import swm.wbj.asyncrum.domain.userteam.team.exception.MemberNotInTeamException;
-import swm.wbj.asyncrum.domain.userteam.team.exception.TeamNotExistsException;
+import swm.wbj.asyncrum.domain.userteam.team.exception.*;
 import swm.wbj.asyncrum.domain.userteam.team.repository.TeamRepository;
 import swm.wbj.asyncrum.domain.userteam.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.domain.userteam.teammember.repository.TeamMemberRepository;
@@ -24,6 +21,10 @@ import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.TeamRoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static swm.wbj.asyncrum.global.media.AwsService.IMAGE_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.IMAGE_TEAM_FILE_PREFIX;
@@ -148,6 +149,34 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public TeamUpdateResponseDto addRoomName(Long id, TeamMeetingRequestDto requestDto) {
+        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
+
+        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
+
+        //team의 openMeeting에 이미 이름이 있는 경우
+        if (openMeetings.contains(requestDto.getRoomName())) {
+            throw new RoomNameAlreadyException();
+        }
+        // roomName
+        openMeetings.add(requestDto.getRoomName());
+        team.updateOpenMeeting(openMeetings);
+
+        return new TeamUpdateResponseDto(teamRepository.save(team).getId());
+    }
+
+    @Override
+    public void removeRoomName(Long id, TeamMeetingRequestDto requestDto) {
+        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
+        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
+        if (!openMeetings.contains(requestDto.getRoomName())) {
+            throw new RoomNameNotExistsException();
+        }
+        openMeetings.remove(requestDto.getRoomName());
+        team.updateOpenMeeting(openMeetings);
+    }
+
+    @Override
     public void removeMember(Long id, Long memberId) {
         Member requestMember = memberService.getCurrentMember();
         Member removeMember = memberService.getUserByIdOrEmail(memberId, null);
@@ -196,6 +225,7 @@ public class TeamServiceImpl implements TeamService {
         return teamMemberRepository.findByTeamAndMember(team, requestMember).isPresent();
     }
 
+
     private Team getTeamWithOwnerValidation(Long id, Member requestMember) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(TeamNotExistsException::new);
@@ -209,6 +239,11 @@ public class TeamServiceImpl implements TeamService {
 
         return team;
     }
+
+    private Optional<Team> getTeam(Long id) {
+        return teamRepository.findById(id);
+    }
+
 
     private Boolean teamCodeAlreadyExists(String code) {
         return teamRepository.existsByCode(code);

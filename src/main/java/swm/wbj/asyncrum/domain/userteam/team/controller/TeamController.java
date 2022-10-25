@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swm.wbj.asyncrum.domain.userteam.team.dto.*;
@@ -80,6 +79,18 @@ public class TeamController {
         TeamMemberAddResponseDto responseDto = teamService.addMember(id, requestDto);
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping(value = "/{id}/roomNames", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addRoomName(@PathVariable Long id, @RequestBody TeamMeetingRequestDto requestDto){
+        TeamUpdateResponseDto responseDto = teamService.addRoomName(id, requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping(value = "/{id}/roomNames", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteRoomName(@PathVariable Long id, @RequestBody TeamMeetingRequestDto requestDto){
+        teamService.removeRoomName(id, requestDto);
+        return ResponseEntity.noContent().build();
     }
 
     /**
