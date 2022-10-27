@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.userteam.team.exception;
+package swm.wbj.asyncrum.domain.team.exception;
 
 public class RoomNameNotExistsException extends RuntimeException{
 

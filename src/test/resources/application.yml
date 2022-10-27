@@ -3,11 +3,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  # ControllerHandler 전략 선택
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-
   # Security OAuth
   security:
     oauth2.client:

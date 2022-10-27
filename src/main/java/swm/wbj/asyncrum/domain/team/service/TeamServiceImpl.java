@@ -11,10 +11,7 @@ import swm.wbj.asyncrum.domain.member.entity.Member;
 import swm.wbj.asyncrum.domain.member.service.MemberService;
 import swm.wbj.asyncrum.domain.team.dto.*;
 import swm.wbj.asyncrum.domain.team.entity.Team;
-import swm.wbj.asyncrum.domain.team.exception.CodeAlreadyInUseException;
-import swm.wbj.asyncrum.domain.team.exception.MemberAlreadyJoinedException;
-import swm.wbj.asyncrum.domain.team.exception.MemberNotInTeamException;
-import swm.wbj.asyncrum.domain.team.exception.TeamNotExistsException;
+import swm.wbj.asyncrum.domain.team.exception.*;
 import swm.wbj.asyncrum.domain.team.repository.TeamRepository;
 import swm.wbj.asyncrum.domain.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.domain.teammember.repository.TeamMemberRepository;
@@ -228,12 +225,7 @@ public class TeamServiceImpl implements TeamService {
         return teamMemberRepository.findByTeamAndMember(team, requestMember).isPresent();
     }
 
-<<<<<<< HEAD:src/main/java/swm/wbj/asyncrum/domain/userteam/team/service/TeamServiceImpl.java
-
-    private Team getTeamWithOwnerValidation(Long id, Member requestMember) {
-=======
     public Team getTeamWithOwnerValidation(Long id, Member requestMember) {
->>>>>>> 0d654b0 ([feature] add team unit test):src/main/java/swm/wbj/asyncrum/domain/team/service/TeamServiceImpl.java
         Team team = teamRepository.findById(id)
                 .orElseThrow(TeamNotExistsException::new);
 
