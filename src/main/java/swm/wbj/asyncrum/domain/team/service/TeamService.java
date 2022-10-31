@@ -23,7 +23,7 @@ public interface TeamService {
 
     TeamUpdateResponseDto addRoomName(Long id, TeamMeetingRequestDto requestDto);
 
-    void removeRoomName(Long id, TeamMeetingRequestDto requestDto);
+    void removeRoomName(Long id, String roomName);
 
     void removeMember(Long id, Long memberId);
 

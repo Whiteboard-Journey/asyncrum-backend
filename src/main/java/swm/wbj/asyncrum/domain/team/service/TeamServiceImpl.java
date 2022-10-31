@@ -166,13 +166,13 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void removeRoomName(Long id, TeamMeetingRequestDto requestDto) {
+    public void removeRoomName(Long id, String  roomName) {
         Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
         Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
-        if (!openMeetings.contains(requestDto.getRoomName())) {
+        if (!openMeetings.contains(roomName)){
             throw new RoomNameNotExistsException();
         }
-        openMeetings.remove(requestDto.getRoomName());
+        openMeetings.remove(roomName);
         team.updateOpenMeeting(openMeetings);
     }
 
