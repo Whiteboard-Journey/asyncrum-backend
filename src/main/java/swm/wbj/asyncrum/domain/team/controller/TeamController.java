@@ -87,9 +87,9 @@ public class TeamController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping(value = "/{id}/roomNames", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteRoomName(@PathVariable Long id, @RequestBody TeamMeetingRequestDto requestDto){
-        teamService.removeRoomName(id, requestDto);
+    @DeleteMapping(value = "/{id}/roomNames/{roomName}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteRoomName(@PathVariable Long id, @PathVariable String  roomName){
+        teamService.removeRoomName(id, roomName);
         return ResponseEntity.noContent().build();
     }
 
