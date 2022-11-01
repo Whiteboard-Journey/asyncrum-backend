@@ -29,7 +29,7 @@ public class BookmarkController {
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBookmark(@PathVariable Long id) {
+    public ResponseEntity<?> readBookmark(@PathVariable Long id) {
         BookmarkReadResponseDto responseDto = bookmarkService.readBookmark(id);
 
         return ResponseEntity.ok(responseDto);

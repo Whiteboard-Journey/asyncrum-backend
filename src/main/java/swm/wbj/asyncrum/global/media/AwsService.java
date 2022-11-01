@@ -34,6 +34,10 @@ public class AwsService {
     public static final String WHITEBOARD_BUCKET_NAME = "whiteboards";
     public static final String WHITEBOARD_FILE_PREFIX ="whiteboard";
 
+    public static final String COMMENT_BUCKET_NAME = "comments";
+
+    public static final String COMMENT_FILE_PREFIX = "comment";
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
