@@ -49,7 +49,6 @@ public class BookmarkServiceUnitTest {
             @Override
             public Long getId() { return MOCK_ID; }
 
-
             @Override
             public Member getMember() { return mockMember; }
 

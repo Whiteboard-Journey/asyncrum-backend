@@ -7,6 +7,7 @@ import swm.wbj.asyncrum.domain.record.bookmark.dto.*;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
 import swm.wbj.asyncrum.domain.record.bookmark.exception.BookmarkNotExistsException;
 import swm.wbj.asyncrum.domain.record.bookmark.repository.BookmarkRepository;
+import swm.wbj.asyncrum.domain.record.comment.exception.CommentNotExistsException;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.record.service.RecordService;
 import swm.wbj.asyncrum.domain.member.entity.Member;
@@ -44,6 +45,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     @Transactional(readOnly = true)
+    public Bookmark getCurrentBookmark(Long id) {
+        Bookmark bookmark = bookmarkRepository.findById(id)
+                .orElseThrow(CommentNotExistsException::new);
+        return bookmark;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public BookmarkReadAllResponseDto readAllBookmark(Long recordId) {
         Record record = recordService.getCurrentRecord(recordId);
 
@@ -74,4 +83,5 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         bookmarkRepository.delete(bookmark);
     }
+
 }
