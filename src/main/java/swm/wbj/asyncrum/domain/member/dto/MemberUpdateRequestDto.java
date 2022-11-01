@@ -7,4 +7,5 @@ public class MemberUpdateRequestDto {
 
     private String fullname;
     private String timezone;
+    private String fcmRegistrationToken;
 }

@@ -79,6 +79,12 @@ public class Member extends BaseEntity {
     @Column(name = "provider_type", length = 20)
     private ProviderType providerType;
 
+    @Column
+    private String fcmRegistrationToken;
+
+    @Column(nullable = false)
+    private Boolean notification;
+
     @Builder(builderMethodName = "createMember")
     public Member(
             @NotNull @Size(max = 512) String email,
@@ -97,6 +103,7 @@ public class Member extends BaseEntity {
         this.providerType = providerType != null ? providerType : ProviderType.LOCAL;
         this.profileImageUrl = profileImageUrl;
         this.timezone = TimeZone.getDefault();
+        this.notification = true;
     }
 
     public void updateFullname(String fullname) {
@@ -113,7 +120,11 @@ public class Member extends BaseEntity {
     }
 
     public void updateRole(RoleType roleType) {
-        this.roleType = roleType;
+        if (roleType != null) this.roleType = roleType;
+    }
+
+    public void updateFcmRegistrationToken(String fcmRegistrationToken) {
+        if(fcmRegistrationToken != null) this.fcmRegistrationToken = fcmRegistrationToken;
     }
 
     public void addTeam(TeamMember team) {
