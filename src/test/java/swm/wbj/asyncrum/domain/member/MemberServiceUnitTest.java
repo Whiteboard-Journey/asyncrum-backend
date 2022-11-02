@@ -125,30 +125,30 @@ public class MemberServiceUnitTest {
         // id가 존재하면 id로 조회하는지 테스트
         Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(java.util.Optional.of(mockMember));
 
-        memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null);
+        memberServiceImpl.getMemberByIdOrEmail(MOCK_MEMBER_ID, null);
         Mockito.verify(memberRepository).findById(MOCK_MEMBER_ID);
 
-        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null), mockMember);
+        Assertions.assertEquals(memberServiceImpl.getMemberByIdOrEmail(MOCK_MEMBER_ID, null), mockMember);
 
 
         // id가 존재하지 않으면 email로 조회
         Mockito.when(memberRepository.findByEmail(MOCK_MEMBER_EMAIL)).thenReturn(java.util.Optional.of(mockMember));
 
-        memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL);
+        memberServiceImpl.getMemberByIdOrEmail(null, MOCK_MEMBER_EMAIL);
         Mockito.verify(memberRepository).findByEmail(MOCK_MEMBER_EMAIL);
 
-        Assertions.assertEquals(memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL), mockMember);
+        Assertions.assertEquals(memberServiceImpl.getMemberByIdOrEmail(null, MOCK_MEMBER_EMAIL), mockMember);
 
         // 없으면 예외 발생
         Mockito.when(memberRepository.findById(MOCK_MEMBER_ID)).thenReturn(Optional.empty());
         Mockito.when(memberRepository.findByEmail(MOCK_MEMBER_EMAIL)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(MemberNotExistsException.class, () -> {
-            memberServiceImpl.getUserByIdOrEmail(MOCK_MEMBER_ID, null);
+            memberServiceImpl.getMemberByIdOrEmail(MOCK_MEMBER_ID, null);
         });
 
         Assertions.assertThrows(MemberNotExistsException.class, () -> {
-            memberServiceImpl.getUserByIdOrEmail(null, MOCK_MEMBER_EMAIL);
+            memberServiceImpl.getMemberByIdOrEmail(null, MOCK_MEMBER_EMAIL);
         });
     }
 

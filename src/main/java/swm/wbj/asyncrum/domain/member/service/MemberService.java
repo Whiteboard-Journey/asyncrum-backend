@@ -9,7 +9,8 @@ public interface MemberService {
 
     MemberCreateResponseDto createMember(MemberCreateRequestDto requestDto);
     Member getCurrentMember();
-    Member getUserByIdOrEmail(Long id, String email);
+    Member getMemberByIdOrEmail(Long id, String email);
+    Member getMemberByFullname(String fullname);
     MemberReadResponseDto readMember(Long id);
     MemberReadAllResponseDto readAllMember(Integer pageIndex, Long topId, Integer sizePerPage);
     MemberUpdateResponseDto updateMember(Long id, MemberUpdateRequestDto requestDto);

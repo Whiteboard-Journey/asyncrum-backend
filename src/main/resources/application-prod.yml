@@ -147,3 +147,7 @@ logging:
 # Server URL
 server:
   url: ${HOST_DNS}
+
+# Firebase
+logo:
+  url: https://wbj-media.s3.ap-northeast-2.amazonaws.com/assets/asyncrum-logo-small.png

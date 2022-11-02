@@ -22,7 +22,7 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBookmark(@RequestBody BookmarkCreateRequestDto requestDto) {
+    public ResponseEntity<?> createBookmark(@RequestBody BookmarkCreateRequestDto requestDto) throws Exception {
         BookmarkCreateResponseDto responseDto = bookmarkService.createBookmark(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -45,7 +45,7 @@ public class BookmarkController {
     @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBookmark(
             @PathVariable Long id,
-            @RequestBody BookmarkUpdateRequestDto requestDto) {
+            @RequestBody BookmarkUpdateRequestDto requestDto) throws Exception {
         BookmarkUpdateResponseDto responseDto = bookmarkService.updateBookmark(id, requestDto);
 
         return ResponseEntity.ok(responseDto);

@@ -102,7 +102,7 @@ public class TeamServiceImpl implements TeamService {
         Member requestMember = memberService.getCurrentMember();
         Team team = getTeamWithOwnerValidation(id, requestMember);
 
-        Member member = memberService.getUserByIdOrEmail(null, requestDto.getMemberEmail());
+        Member member = memberService.getMemberByIdOrEmail(null, requestDto.getMemberEmail());
         String emailVerificationLink = urlService.buildURL(
                 "/api/v1/teams/" + id + "/members/invitation", "memberId", member.getId());
 
@@ -113,7 +113,7 @@ public class TeamServiceImpl implements TeamService {
     public void verifyTeamInvitationLinkAndAddMember(Long id, Long memberId) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(TeamNotExistsException::new);
-        Member requestMember = memberService.getUserByIdOrEmail(memberId, null);
+        Member requestMember = memberService.getMemberByIdOrEmail(memberId, null);
 
         if (isMemberAlreadyInTeam(team, requestMember)) {
             throw new MemberAlreadyJoinedException();
@@ -132,7 +132,7 @@ public class TeamServiceImpl implements TeamService {
     public TeamMemberAddResponseDto addMember(Long id, TeamMemberAddRequestDto requestDto) {
         Member currentMember = memberService.getCurrentMember();
         Team team = getTeamWithTeamMemberValidation(id, currentMember);
-        Member requestMember = memberService.getUserByIdOrEmail(requestDto.getMemberId(), null);
+        Member requestMember = memberService.getMemberByIdOrEmail(requestDto.getMemberId(), null);
 
         if (isMemberAlreadyInTeam(team, requestMember)) {
             throw new MemberAlreadyJoinedException();
@@ -179,7 +179,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void removeMember(Long id, Long memberId) {
         Member requestMember = memberService.getCurrentMember();
-        Member removeMember = memberService.getUserByIdOrEmail(memberId, null);
+        Member removeMember = memberService.getMemberByIdOrEmail(memberId, null);
         Team team = getTeamWithOwnerValidation(id, requestMember);
 
         TeamMember removeTeamMember = teamMemberRepository.findByTeamAndMember(team, removeMember)

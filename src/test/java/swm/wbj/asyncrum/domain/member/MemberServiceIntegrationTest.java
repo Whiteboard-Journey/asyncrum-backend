@@ -122,7 +122,7 @@ public class MemberServiceIntegrationTest {
         Member member = memberRepository.findById(memberId).orElseThrow();
 
         // when
-        Member findMember = memberService.getUserByIdOrEmail(memberId, email);
+        Member findMember = memberService.getMemberByIdOrEmail(memberId, email);
 
         // then
         assertNotNull(findMember);

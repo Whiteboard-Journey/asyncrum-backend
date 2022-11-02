@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'com.google.firebase:firebase-admin:8.1.0'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
