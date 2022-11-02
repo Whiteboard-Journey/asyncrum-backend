@@ -19,6 +19,7 @@ import swm.wbj.asyncrum.domain.record.bookmark.service.BookmarkServiceImpl;
 import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.record.record.service.RecordService;
 import swm.wbj.asyncrum.domain.record.record.service.RecordServiceImpl;
+import swm.wbj.asyncrum.global.firebase.NotificationPushService;
 
 import java.util.Optional;
 
@@ -29,8 +30,10 @@ public class BookmarkServiceUnitTest {
 
     RecordService recordService = Mockito.mock(RecordServiceImpl.class);
 
+    NotificationPushService notificationPushService = Mockito.mock(NotificationPushService.class);
+
     @InjectMocks
-    BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl(bookmarkRepository, memberService, recordService);
+    BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl(bookmarkRepository, memberService, recordService, notificationPushService);
 
 
     static final Long MOCK_ID = 1L;
@@ -48,7 +51,6 @@ public class BookmarkServiceUnitTest {
         mockBookmark = new Bookmark(){
             @Override
             public Long getId() { return MOCK_ID; }
-
 
             @Override
             public Member getMember() { return mockMember; }
@@ -79,7 +81,7 @@ public class BookmarkServiceUnitTest {
 
     @DisplayName("북마크 생성")
     @Test
-    void createBookmark() {
+    void createBookmark() throws Exception {
 
         String emoji = "U+1F600";
         String content = "test bookmark";
@@ -134,7 +136,7 @@ public class BookmarkServiceUnitTest {
 
     @DisplayName("북마크 수정")
     @Test
-    void updateBookmark() {
+    void updateBookmark() throws Exception {
 
         String emoji = "U+1F601";
         String content = "update bookmark";

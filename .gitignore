@@ -43,3 +43,6 @@ Footer
 
 # OAuth
 google_oauth_secret.json
+
+# Firebase
+/src/main/resources/asyncrum_firebase_service_key.json

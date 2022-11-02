@@ -189,12 +189,12 @@ class TeamServiceImplTest {
         TeamMemberAddRequestDto requestDto = new TeamMemberAddRequestDto();
         requestDto.setMemberEmail(memberEmail);
 
-        Mockito.when(memberService.getUserByIdOrEmail(Mockito.isNull(), Mockito.anyString())).thenReturn(requestMember);
+        Mockito.when(memberService.getMemberByIdOrEmail(Mockito.isNull(), Mockito.anyString())).thenReturn(requestMember);
         Mockito.when(urlService.buildURL(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong())).thenReturn(emailVerificationLink);
 
         teamService.sendTeamInvitationLinkByEmail(MOCK_TEAM_ID, requestDto);
 
-        Mockito.verify(memberService).getUserByIdOrEmail(null, requestMember.getEmail());
+        Mockito.verify(memberService).getMemberByIdOrEmail(null, requestMember.getEmail());
         Mockito.verify(urlService).buildURL("/api/v1/teams/" + MOCK_TEAM_ID + "/members/invitation", "memberId", requestMember.getId());
         Mockito.verify(mailService).sendTeamMemberInvitationLink(requestMember.getEmail(), emailVerificationLink, mockTeam.getName());
     }
@@ -209,7 +209,7 @@ class TeamServiceImplTest {
             }
         };
 
-        Mockito.when(memberService.getUserByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(requestMember);
+        Mockito.when(memberService.getMemberByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(requestMember);
         Mockito.when(teamMemberRepository.findByTeamAndMember(mockTeam, requestMember)).thenReturn(Optional.empty());
 
         teamService.verifyTeamInvitationLinkAndAddMember(MOCK_TEAM_ID, requestMember.getId());
@@ -250,7 +250,7 @@ class TeamServiceImplTest {
         TeamMemberAddRequestDto requestDto = new TeamMemberAddRequestDto();
         requestDto.setMemberId(MOCK_MEMBER_ID + 1);
 
-        Mockito.when(memberService.getUserByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(requestMember);
+        Mockito.when(memberService.getMemberByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(requestMember);
         Mockito.when(teamMemberRepository.findByTeamAndMember(mockTeam, requestMember)).thenReturn(Optional.empty());
         Mockito.when(teamMemberRepository.save(Mockito.any())).thenReturn(mockRequestedTeamMember);
 
@@ -273,7 +273,7 @@ class TeamServiceImplTest {
             }
         };
 
-        Mockito.when(memberService.getUserByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(removeMember);
+        Mockito.when(memberService.getMemberByIdOrEmail(Mockito.anyLong(), Mockito.isNull())).thenReturn(removeMember);
         Mockito.when(teamMemberRepository.findByTeamAndMember(mockTeam, removeMember)).thenReturn(Optional.of(mockTeamMember));
 
         teamService.removeMember(MOCK_TEAM_ID, removeMember.getId());

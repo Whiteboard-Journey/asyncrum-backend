@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public Member getUserByIdOrEmail(Long id, String email) {
+    public Member getMemberByIdOrEmail(Long id, String email) {
         if(id != null) {
             return memberRepository.findById(id)
                     .orElseThrow(MemberNotExistsException::new);
@@ -74,6 +74,13 @@ public class MemberServiceImpl implements MemberService {
             return memberRepository.findByEmail(email)
                     .orElseThrow(MemberNotExistsException::new);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getMemberByFullname(String fullname) {
+        return memberRepository.findByFullname(fullname)
+                .orElseThrow(MemberNotExistsException::new);
     }
 
     @Override
@@ -136,6 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.updateTimeZone(TimeZone.getTimeZone(requestDto.getTimezone()));
         member.updateFullname(requestDto.getFullname());
+        member.updateFcmRegistrationToken(requestDto.getFcmRegistrationToken());
         return new MemberUpdateResponseDto(member.getId());
     }
 

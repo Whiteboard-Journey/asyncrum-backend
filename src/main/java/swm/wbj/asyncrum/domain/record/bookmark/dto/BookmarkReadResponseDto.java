@@ -3,6 +3,10 @@ package swm.wbj.asyncrum.domain.record.bookmark.dto;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
 import swm.wbj.asyncrum.domain.record.bookmark.entity.VideoBookmarkCoordinates;
+import swm.wbj.asyncrum.domain.record.comment.dto.CommentReadResponseDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class BookmarkReadResponseDto {
@@ -17,6 +21,8 @@ public class BookmarkReadResponseDto {
     private Double scale;
     private String author;
 
+    private List<CommentReadResponseDto> comments;
+
     public BookmarkReadResponseDto(Bookmark bookmark) {
         this.id = bookmark.getId();
         this.recordId = bookmark.getRecord().getId();
@@ -27,5 +33,8 @@ public class BookmarkReadResponseDto {
         this.drawing = bookmark.getDrawing();
         this.scale = bookmark.getScale();
         this.author = bookmark.getMember().getFullname();
+        this.comments = bookmark.getComments().stream()
+                .map(CommentReadResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
