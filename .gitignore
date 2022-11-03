@@ -10,6 +10,7 @@ output/
 *.ipr
 *.iws
 
+bin/
 
 # OSX
 .DS_Store
