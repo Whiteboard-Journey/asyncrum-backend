@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenResponseDto refreshToken(HttpServletRequest request, HttpServletResponse response) {
         AuthToken authToken = getAccessTokenFromRequestHeader(request);
-        validateAccessToken(authToken);
+        //validateAccessToken(authToken);
 
         Claims claims = authToken.getExpiredTokenClaims();
         validateAccessTokenExpired(claims);

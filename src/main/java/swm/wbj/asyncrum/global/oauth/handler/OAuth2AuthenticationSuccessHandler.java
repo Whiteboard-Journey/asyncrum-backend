@@ -142,8 +142,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             memberRefreshToken.setRefreshToken(refreshToken.getToken());
         } else {
             memberRefreshToken = new MemberRefreshToken(memberId, refreshToken.getToken());
-            memberRefreshTokenRepository.saveAndFlush(memberRefreshToken);
+
         }
+        memberRefreshTokenRepository.saveAndFlush(memberRefreshToken);
     }
 
     private void renewCookie(HttpServletRequest request, HttpServletResponse response,

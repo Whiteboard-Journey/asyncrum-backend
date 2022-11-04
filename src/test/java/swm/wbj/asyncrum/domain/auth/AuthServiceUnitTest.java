@@ -154,7 +154,7 @@ class AuthServiceUnitTest {
         TokenResponseDto responseDto = authService.refreshToken(request, response);
 
         Mockito.verify(tokenProvider, Mockito.times(2)).convertAuthToken(Mockito.any());
-        Mockito.verify(mockAuthToken, Mockito.times(2)).validateToken();
+        Mockito.verify(mockAuthToken, Mockito.times(1)).validateToken();
         Mockito.verify(mockAuthToken).getExpiredTokenClaims();
         Mockito.verify(memberRefreshTokenRepository).findByMemberIdAndRefreshToken(Mockito.any(), Mockito.any());
         Mockito.verify(tokenProvider).createAuthToken(Mockito.any(), Mockito.any(), Mockito.any(Date.class));
