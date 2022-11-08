@@ -1,7 +1,5 @@
 # Asyncrum Backend API Server [![codecov](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend/branch/main/graph/badge.svg?token=QFY4PP1358)](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend)
 
-![landing_temp.jpg](./images/landing_temp.JPG)
-
 ## 목차
 
 - [1. 프로젝트 개요](#1-프로젝트-개요)
@@ -13,8 +11,8 @@
   - [2-1. 백엔드 아키텍처](#2-1-백엔드-아키텍처)
   - [2-2. AWS 아키텍처](#2-2-aws-아키텍처)
   - [2-3. API 서버 개발 및 API 문서화/테스트](#2-3-api-서버-개발-및-api-문서화테스트)
-  - [2-4. API 서버 리팩토링](#2-4-api-서버-리팩토링)
-  - [2-5. API 서버 단위 테스트 및 테스트 커버리지](#2-5-api-서버-단위-테스트-및-테스트-커버리지)
+  - [2-4. API 서버 단위 테스트 및 테스트 커버리지](#2-4-api-서버-단위-테스트-및-테스트-커버리지)
+  - [2-5. API 서버 리팩토링](#2-5-api-서버-리팩토링)
   - [2-6. API 서버 CI/CD 파이프라인](#2-6-api-서버-cicd-파이프라인)
   - [2-7. AWS S3 Presigned URL 기반 미디어 업로드](#2-7-aws-s3-presigned-url-기반-미디어-업로드)
   - [2-8. Jitsi 기반 화상회의 시스템](#2-8-jitsi-기반-화상회의-시스템)
@@ -98,7 +96,15 @@ API Platform인 Postman을 이용하여, Development 환경과 Deployment 환경
 
 또한 Postman의 Mock Server 기능을 이용하여 프론트엔드가 백엔드의 개발을 기다리지 않고 API를 테스트할 수 있도록 구성하였습니다.
 
-### 2-4. API 서버 리팩토링
+### 2-4. API 서버 단위 테스트 및 테스트 커버리지
+
+![test_coverage.JPG](./images/test_coverage.jpg)
+
+API 서버에 존재하는 모든 도메인의 서비스 레이어에 대한 JUnit/Mockito 기반 단위 테스트를 작성하여 코드 커버리지 51% 수준으로 비즈니스 로직을 검증하였습니다.
+
+또한 해당 테스트 결과를 Codecov를 통해 Code Coverage를 측정 및 트래킹하였습니다.
+
+### 2-5. API 서버 리팩토링
 
 **Reference**: [Asyncrum API 서버 리팩토링 내역 리스트](https://bit.ly/3NwcKf9)
 
@@ -107,14 +113,6 @@ API Platform인 Postman을 이용하여, Development 환경과 Deployment 환경
 API의 핵심적인 부분을 모두 개발한 후, 리팩토링 주기에 맞춰 지속적으로 코드를 개선하고, 로직을 최적화하였습니다.
 
 OSIV OFF를 통한 DB 커넥션 최적화, JQPL FETCH JOIN 및 Batch를 통한 Query 최적화, AOP를 통한 RBAC 권한 로직 분리 및 예외처리 로직 분리 등 다양한 레이어에서 최적화 및 코드 개선을 이루었습니다.
-
-### 2-5. API 서버 단위 테스트 및 테스트 커버리지
-
-![test_coverage.JPG](./images/test_coverage.jpg)
-
-API 서버에 존재하는 모든 도메인의 서비스 레이어에 대한 JUnit/Mockito 기반 단위 테스트를 작성하여 코드 커버리지 51% 수준으로 비즈니스 로직을 검증하였습니다.
-
-또한 해당 테스트 결과를 Codecov를 통해 Code Coverage를 측정 및 트래킹하였습니다.
 
 ### 2-6. API 서버 CI/CD 파이프라인
 
@@ -198,4 +196,6 @@ API 서버에 존재하는 모든 도메인의 서비스 레이어에 대한 JUn
 
 개발을 진행하면서 쌓인 기술 부채를 해결하기 위해 그동안 팀원들과 공부한 클린 코드와 각종 강의/서적들을 기반으로 리팩토링을 진행할 수 있도록 1주 간의 리팩토링 기간을 설정하여 리팩토링을 진행하였습니다.
 
-이 1주일 간의 리팩토링 기간을 통해, 백엔드에서는 AOP를 통한 객체지향적인 구조의 달성, 쿼리 최적화를 통한 DB 통신 비용의 감소 등의 향상을 이끌어낼 수 있었으며, 프론트엔드에서는 컴포넌트의 분리를 통한 프로젝트 구조 재정립 등의 향상을 이끌어 낼 수 있었습니다. 또한 이 과정을 통해 팀원들 스스로가 예전에 비해 얼마나 성장했는지 알 수 있게 된 좋은 계기가 되었습니다.
+이 1주일 간의 리펙토링 기간을 통해, 백엔드에서는 AOP를 통한 객체지향적인 구조의 달성, 쿼리 최적화를 통한 DB 통신 비용의 감소 등의 향상을 이끌어낼 수 있었습니다.
+
+이 과정을 통해 팀원들 스스로가 예전에 비해 얼마나 성장했는지 알 수 있게 된 좋은 계기가 되었습니다.
