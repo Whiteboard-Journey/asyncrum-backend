@@ -1,6 +1,7 @@
 package swm.wbj.asyncrum.domain.team.service;
 
 import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
 import swm.wbj.asyncrum.domain.team.dto.*;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 
@@ -12,6 +13,9 @@ public interface TeamService {
     Team getTeamWithTeamMemberValidation(Long id, Member member);
 
     TeamReadResponseDto readTeam(Long id);
+
+    Team getCurrentTeam(Long id);
+
 
     TeamReadAllResponseDto readAllTeam(Integer pageIndex, Long topId, Integer SIZE_PER_PAGE);
 

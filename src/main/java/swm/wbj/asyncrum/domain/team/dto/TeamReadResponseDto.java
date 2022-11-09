@@ -3,6 +3,7 @@ package swm.wbj.asyncrum.domain.team.dto;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.domain.member.dto.MemberReadResponseDto;
+import swm.wbj.asyncrum.domain.team.meeting.dto.MeetingReadResponseDto;
 import swm.wbj.asyncrum.domain.teammember.entity.TeamMember;
 
 import java.util.HashSet;
@@ -19,7 +20,8 @@ public class TeamReadResponseDto {
     private String pictureUrl;
     private List<MemberReadResponseDto> members;
 
-    private Set<String> openMeetings;
+    private List<MeetingReadResponseDto> meetings;
+
 
     public TeamReadResponseDto(Team team) {
         this.id = team.getId();
@@ -30,6 +32,8 @@ public class TeamReadResponseDto {
                 .map(TeamMember::getMember)
                 .map(MemberReadResponseDto::new)
                 .collect(Collectors.toList());
-        this.openMeetings = team.getOpenMeeting();
+        this.meetings = team.getMeetings().stream()
+                .map(MeetingReadResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
