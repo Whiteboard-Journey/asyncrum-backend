@@ -158,6 +158,8 @@ class MeetingServiceImplTest {
         String fullname = "test Fullname";
         participants.add(fullname);
         mockMeeting.updateParticipants(participants);
+        Assertions.assertEquals(mockMeeting.getParticipants(), participants);
+
     }
 
     @Test
@@ -167,5 +169,7 @@ class MeetingServiceImplTest {
         String fullname = "test Fullname";
         participants.remove(fullname);
         mockMeeting.updateParticipants(participants);
+
+        Assertions.assertEquals(mockMeeting.getParticipants(), participants);
     }
 }
