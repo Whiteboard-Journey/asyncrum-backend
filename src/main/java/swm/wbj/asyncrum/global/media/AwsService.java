@@ -38,6 +38,10 @@ public class AwsService {
 
     public static final String COMMENT_FILE_PREFIX = "comment";
 
+    public static final String MEETING_BUCKET_NAME = "meetings";
+
+    public static final String MEETING_FILE_PREFIX = "meeting";
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 

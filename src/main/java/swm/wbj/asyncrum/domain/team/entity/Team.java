@@ -2,6 +2,7 @@ package swm.wbj.asyncrum.domain.team.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import swm.wbj.asyncrum.domain.team.meeting.entity.Meeting;
 import swm.wbj.asyncrum.domain.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 
@@ -46,6 +47,10 @@ public class Team extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TeamMember> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Meeting> meetings = new ArrayList<>();
+
 
     @Builder
     public Team(String name, String code, String profileImageUrl) {
