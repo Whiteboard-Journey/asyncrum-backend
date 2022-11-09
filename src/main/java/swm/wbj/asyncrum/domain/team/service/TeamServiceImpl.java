@@ -8,7 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.member.entity.Member;
+import swm.wbj.asyncrum.domain.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.member.service.MemberService;
+import swm.wbj.asyncrum.domain.record.bookmark.entity.Bookmark;
+import swm.wbj.asyncrum.domain.record.comment.exception.CommentNotExistsException;
 import swm.wbj.asyncrum.domain.team.dto.*;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.domain.team.exception.*;
@@ -18,6 +21,7 @@ import swm.wbj.asyncrum.domain.teammember.repository.TeamMemberRepository;
 import swm.wbj.asyncrum.global.exception.OperationNotAllowedException;
 import swm.wbj.asyncrum.global.mail.MailService;
 import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.global.oauth.utils.TokenUtil;
 import swm.wbj.asyncrum.global.type.FileType;
 import swm.wbj.asyncrum.global.type.TeamRoleType;
 import swm.wbj.asyncrum.global.utils.UrlService;
@@ -187,6 +191,13 @@ public class TeamServiceImpl implements TeamService {
 
         team.removeMember(removeTeamMember);
         teamMemberRepository.delete(removeTeamMember);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Team getCurrentTeam(Long id) {
+        return teamRepository.findById(id)
+                .orElseThrow(TeamNotExistsException::new);
     }
 
     @Override
