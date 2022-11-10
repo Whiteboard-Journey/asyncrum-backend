@@ -184,7 +184,14 @@ public class TeamServiceImpl implements TeamService {
     public void removeMember(Long id, Long memberId) {
         Member requestMember = memberService.getCurrentMember();
         Member removeMember = memberService.getMemberByIdOrEmail(memberId, null);
-        Team team = getTeamWithOwnerValidation(id, requestMember);
+        Team team;
+
+        if (requestMember.equals(removeMember)) {
+            team = getTeam(id).orElseThrow(TeamNotExistsException::new);
+        }
+        else {
+            team = getTeamWithOwnerValidation(id, requestMember);
+        }
 
         TeamMember removeTeamMember = teamMemberRepository.findByTeamAndMember(team, removeMember)
                 .orElseThrow(MemberNotInTeamException::new);
