@@ -1,5 +1,7 @@
 package swm.wbj.asyncrum.global.oauth.utils;
 
+import com.google.common.net.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -7,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
+
+import static swm.wbj.asyncrum.global.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
 
 /**
  * HTTP 쿠키 CRD 작업 유틸리티
@@ -20,6 +24,18 @@ public class CookieUtil {
         cookie.setMaxAge(maxAge);
 
         response.addCookie(cookie);
+    }
+
+    public static void addRefreshTokenCookie(HttpServletResponse response, String refreshToken, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(maxAge)
+                .sameSite("None")
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
