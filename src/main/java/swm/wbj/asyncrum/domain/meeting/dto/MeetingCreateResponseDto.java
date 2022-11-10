@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.team.meeting.dto;
+package swm.wbj.asyncrum.domain.meeting.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

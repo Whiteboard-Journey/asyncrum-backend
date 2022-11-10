@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.team.meeting.exception;
+package swm.wbj.asyncrum.domain.meeting.exception;
 
 public class MeetingNameAlreadyExistsException extends RuntimeException{
     public MeetingNameAlreadyExistsException(){

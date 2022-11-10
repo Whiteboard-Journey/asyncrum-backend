@@ -1,9 +1,9 @@
-package swm.wbj.asyncrum.domain.team.meeting.dto;
+package swm.wbj.asyncrum.domain.meeting.dto;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import swm.wbj.asyncrum.domain.team.meeting.entity.Meeting;
+import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 @Data
 @Getter

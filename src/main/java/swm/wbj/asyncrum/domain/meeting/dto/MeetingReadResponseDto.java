@@ -1,7 +1,7 @@
-package swm.wbj.asyncrum.domain.team.meeting.dto;
+package swm.wbj.asyncrum.domain.meeting.dto;
 
 import lombok.Data;
-import swm.wbj.asyncrum.domain.team.meeting.entity.Meeting;
+import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
 
 import java.time.LocalDateTime;
 import java.util.Set;

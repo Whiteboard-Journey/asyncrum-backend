@@ -1,6 +1,6 @@
-package swm.wbj.asyncrum.domain.team.meeting.service;
+package swm.wbj.asyncrum.domain.meeting.service;
 
-import swm.wbj.asyncrum.domain.team.meeting.dto.*;
+import swm.wbj.asyncrum.domain.meeting.dto.*;
 
 public interface MeetingService {
 

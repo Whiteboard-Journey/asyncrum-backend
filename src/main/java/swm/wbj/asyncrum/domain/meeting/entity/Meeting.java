@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.team.meeting.entity;
+package swm.wbj.asyncrum.domain.meeting.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

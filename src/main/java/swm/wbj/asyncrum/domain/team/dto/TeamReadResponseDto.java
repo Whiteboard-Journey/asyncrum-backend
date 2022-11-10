@@ -3,12 +3,10 @@ package swm.wbj.asyncrum.domain.team.dto;
 import lombok.Data;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.domain.member.dto.MemberReadResponseDto;
-import swm.wbj.asyncrum.domain.team.meeting.dto.MeetingReadResponseDto;
+import swm.wbj.asyncrum.domain.meeting.dto.MeetingReadResponseDto;
 import swm.wbj.asyncrum.domain.teammember.entity.TeamMember;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data

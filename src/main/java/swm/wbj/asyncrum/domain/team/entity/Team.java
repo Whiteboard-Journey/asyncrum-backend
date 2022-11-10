@@ -2,7 +2,7 @@ package swm.wbj.asyncrum.domain.team.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import swm.wbj.asyncrum.domain.team.meeting.entity.Meeting;
+import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
 import swm.wbj.asyncrum.domain.teammember.entity.TeamMember;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 

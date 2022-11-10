@@ -1,4 +1,4 @@
-package swm.wbj.asyncrum.domain.team.meeting.controller;
+package swm.wbj.asyncrum.domain.meeting.controller;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import swm.wbj.asyncrum.domain.team.meeting.dto.*;
-import swm.wbj.asyncrum.domain.team.meeting.service.MeetingService;
+import swm.wbj.asyncrum.domain.meeting.dto.*;
+import swm.wbj.asyncrum.domain.meeting.service.MeetingService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;

@@ -1,16 +1,16 @@
-package swm.wbj.asyncrum.domain.team.meeting.service;
+package swm.wbj.asyncrum.domain.meeting.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+import swm.wbj.asyncrum.domain.meeting.dto.*;
+import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
+import swm.wbj.asyncrum.domain.meeting.repository.MeetingRepository;
 import swm.wbj.asyncrum.domain.member.entity.Member;
 import swm.wbj.asyncrum.domain.member.exeception.MemberNotExistsException;
 import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
-import swm.wbj.asyncrum.domain.team.meeting.dto.*;
-import swm.wbj.asyncrum.domain.team.meeting.entity.Meeting;
-import swm.wbj.asyncrum.domain.team.meeting.exception.MeetingNotExistsException;
-import swm.wbj.asyncrum.domain.team.meeting.repository.MeetingRepository;
+import swm.wbj.asyncrum.domain.meeting.exception.MeetingNotExistsException;
 import swm.wbj.asyncrum.domain.team.service.TeamService;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.global.media.AwsService;
