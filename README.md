@@ -10,13 +10,14 @@
 - [2. 개발 결과물](#2-개발-결과물)
   - [2-1. 백엔드 아키텍처](#2-1-백엔드-아키텍처)
   - [2-2. AWS 아키텍처](#2-2-aws-아키텍처)
-  - [2-3. API 서버 개발 및 API 문서화/테스트](#2-3-api-서버-개발-및-api-문서화테스트)
-  - [2-4. API 서버 단위 테스트 및 테스트 커버리지](#2-4-api-서버-단위-테스트-및-테스트-커버리지)
-  - [2-5. API 서버 리팩토링](#2-5-api-서버-리팩토링)
-  - [2-6. API 서버 CI/CD 파이프라인](#2-6-api-서버-cicd-파이프라인)
-  - [2-7. AWS S3 Presigned URL 기반 미디어 업로드](#2-7-aws-s3-presigned-url-기반-미디어-업로드)
-  - [2-8. Jitsi 기반 화상회의 시스템](#2-8-jitsi-기반-화상회의-시스템)
-  - [2-9. AWS 기반 API Gateway](#2-9-aws-기반-api-gateway)
+  - [2-3. 데이터베이스 ERD 및 RDB 구조](#2-3-데이터베이스-erd-및-rdb-구조)
+  - [2-4. API 서버 개발 및 API 문서화/테스트](#2-4-api-서버-개발-및-api-문서화테스트)
+  - [2-5. API 서버 단위 테스트 및 테스트 커버리지](#2-5-api-서버-단위-테스트-및-테스트-커버리지)
+  - [2-6. API 서버 리팩토링](#2-6-api-서버-리팩토링)
+  - [2-7. API 서버 CI/CD 파이프라인](#2-7-api-서버-cicd-파이프라인)
+  - [2-8. AWS S3 Presigned URL 기반 미디어 업로드](#2-8-aws-s3-presigned-url-기반-미디어-업로드)
+  - [2-9. Jitsi 기반 화상회의 시스템](#2-9-jitsi-기반-화상회의-시스템)
+  - [2-10. AWS 기반 API Gateway](#2-10-aws-기반-api-gateway)
 - [3. 수행 방법 및 프로젝트 관리](#3-수행-방법-및-프로젝트-관리)
   - [3-1. 개발 프로세스](#3-1-개발-프로세스)
   - [3-2. 형상 관리 프로세스](#3-2-형상-관리-프로세스)
@@ -76,7 +77,13 @@ SW마에스트로 벤처 프로젝트로써 네이버 SmartStudio Alto 팀, York
 
 AWS 기반 Asyncrum 웹 호스팅 아키텍처는 VPC를 통한 레이어링과 Multi-AZ를 통한 이중화, S3 Presigned URL 도입 및 Lambda 함수 도입을 통한 미디어 업로드/다운로드 시스템 구축, API Gateway 및 Congnito 도입을 통한 Access Layer 구축, K8s 기반 EKS 도입을 통한 앱 레이어 서버들의 컨테이너화 및 컨테이너 관리 시스템 구축 등의 과정을 거치며 발전하였습니다.
 
-### 2-3. API 서버 개발 및 API 문서화/테스트
+### 2-3. 데이터베이스 ERD 및 RDB 구조
+
+![erd.png](./images/erd.png)
+
+서비스의 도메인에 맞추어 멤버, 팀, 레코드, 북마크, 코멘트, 화이트보드, 미팅 테이블을 설계하였으며, 생성 시간과 최종 수정 시간이 표시된 BaseEntity를 부모 테이블로 하여 모든 테이블의 데이터가 생성/수정 시간을 포함하도록 구성하였습니다.
+
+### 2-4. API 서버 개발 및 API 문서화/테스트
 
 백엔드 API 서버 개발은 Java와 Spring 기반으로 진행하였으며, OpenAPI Spec에 맞는 RESTful한 API를 개발하였습니다. API 서버 개발은 Swagger와 Postman을 통해 문서화 및 테스트를 진행하였습니다.
 
@@ -96,7 +103,7 @@ API Platform인 Postman을 이용하여, Development 환경과 Deployment 환경
 
 또한 Postman의 Mock Server 기능을 이용하여 프론트엔드가 백엔드의 개발을 기다리지 않고 API를 테스트할 수 있도록 구성하였습니다.
 
-### 2-4. API 서버 단위 테스트 및 테스트 커버리지
+### 2-5. API 서버 단위 테스트 및 테스트 커버리지
 
 ![test_coverage.JPG](./images/test_coverage.jpg)
 
@@ -104,7 +111,7 @@ API 서버에 존재하는 모든 도메인의 서비스 레이어에 대한 JUn
 
 또한 해당 테스트 결과를 Codecov를 통해 Code Coverage를 측정 및 트래킹하였습니다.
 
-### 2-5. API 서버 리팩토링
+### 2-6. API 서버 리팩토링
 
 **Reference**: [Asyncrum API 서버 리팩토링 내역 리스트](https://bit.ly/3NwcKf9)
 
@@ -114,7 +121,7 @@ API의 핵심적인 부분을 모두 개발한 후, 리팩토링 주기에 맞�
 
 OSIV OFF를 통한 DB 커넥션 최적화, JQPL FETCH JOIN 및 Batch를 통한 Query 최적화, AOP를 통한 RBAC 권한 로직 분리 및 예외처리 로직 분리 등 다양한 레이어에서 최적화 및 코드 개선을 이루었습니다.
 
-### 2-6. API 서버 CI/CD 파이프라인
+### 2-7. API 서버 CI/CD 파이프라인
 
 **Reference**: [Jenkins/ArgoCD를 통한 API Server CI/CD (지속적 통합/지속적 배포) Ver 1. to Ver.2](https://bit.ly/3WfwEPH)
 
@@ -132,7 +139,7 @@ OSIV OFF를 통한 DB 커넥션 최적화, JQPL FETCH JOIN 및 Batch를 통한 Q
 
 ![argo_cd_ui.png](./images/argo_cd_ui.png)
 
-### 2-7. AWS S3 Presigned URL 기반 미디어 업로드
+### 2-8. AWS S3 Presigned URL 기반 미디어 업로드
 
 **Reference**: [AWS S3 Presigned URL 기반 파일 업로드 및 스트리밍](https://bit.ly/3zFQV7o)
 
@@ -142,7 +149,7 @@ OSIV OFF를 통한 DB 커넥션 최적화, JQPL FETCH JOIN 및 Batch를 통한 Q
 
 별도의 인증과정 없이 파일을 업로드 또는 다운로드하는 것을 막기 위해, AWS S3에서 제공하는 Presigned URL를 통해 파일 업로드/다운로드의 안전성을 확보하였습니다.
 
-### 2-8. Jitsi 기반 화상회의 시스템
+### 2-9. Jitsi 기반 화상회의 시스템
 
 ![jitsi_architecture.png](./images/jitsi_architecture.png)
 
@@ -150,7 +157,7 @@ OSIV OFF를 통한 DB 커넥션 최적화, JQPL FETCH JOIN 및 Batch를 통한 Q
 
 또한 Jitsi Docker와 Kubernetes/Helm 등을 사용하여 K8s 형상으로 Jitsi Central을 AWS EKS 위에 구축하였습니다.
 
-### 2-9. AWS 기반 API Gateway
+### 2-10. AWS 기반 API Gateway
 
 ![api_gateway_stage.JPG](./images/api_gateway_stage.jpg)
 
