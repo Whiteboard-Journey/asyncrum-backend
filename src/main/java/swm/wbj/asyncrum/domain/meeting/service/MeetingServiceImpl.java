@@ -44,15 +44,22 @@ public class MeetingServiceImpl implements MeetingService{
         Meeting savedMeeting = meetingRepository.save(meeting);
         Long meetingId = meetingRepository.save(meeting).getId();
 
-        String meetingFileKey = createMeetingFileKey(currentTeam.getId(), meetingId);
-        String preSignedURL = awsService.generatePresignedURL(meetingFileKey, MEETING_BUCKET_NAME, FileType.MP4);
-        meeting.updateMeetingFileMetadata(meetingFileKey, awsService.getObjectURL(meetingFileKey, MEETING_BUCKET_NAME));
 
-        return new MeetingCreateResponseDto(savedMeeting.getId(), preSignedURL);
+
+        return new MeetingCreateResponseDto(savedMeeting.getId());
     }
 
-    private String createMeetingFileKey(Long teamId, Long meetingId) {
-        return MEETING_FILE_PREFIX  + "_" + teamId + "_" + meetingId + "." + FileType.MP4.getName();
+    @Override
+    public MeetingFileCreateResponseDto createMeetingFile(Long id) {
+        String meetingFileKey = createMeetingFileKey(id);
+        String preSignedURL = awsService.generatePresignedURL(meetingFileKey, MEETING_BUCKET_NAME, FileType.MP4);
+        Meeting meeting = meetingRepository.findById(id).orElseThrow(MeetingNotExistsException::new);
+        meeting.updateMeetingFileMetadata(meetingFileKey, awsService.getObjectURL(meetingFileKey, MEETING_BUCKET_NAME));
+        return new MeetingFileCreateResponseDto(preSignedURL);
+    }
+
+    private String createMeetingFileKey(Long meetingId) {
+        return MEETING_FILE_PREFIX + "_" + meetingId + "." + FileType.MP4.getName();
     }
 
     @Override

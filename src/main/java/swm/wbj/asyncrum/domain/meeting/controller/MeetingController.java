@@ -28,6 +28,13 @@ public class MeetingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+    @PostMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createMeetingFile(@PathVariable Long id) {
+        MeetingFileCreateResponseDto responseDto = meetingService.createMeetingFile(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> readMeeting(@PathVariable Long id) {
         MeetingReadResponseDto responseDto = meetingService.readMeeting(id);

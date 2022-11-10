@@ -5,10 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MeetingCreateResponseDto {
+public class MeetingFileCreateResponseDto {
 
-    private Long id;
-
-
-
+    private String preSignedURL;
 }

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import swm.wbj.asyncrum.domain.member.entity.Member;
 import swm.wbj.asyncrum.domain.member.repository.MemberRepository;
+import swm.wbj.asyncrum.domain.record.record.entity.Record;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.domain.meeting.dto.MeetingCreateRequestDto;
 import swm.wbj.asyncrum.domain.meeting.dto.MeetingUpdateRequestDto;
@@ -18,6 +19,7 @@ import swm.wbj.asyncrum.domain.meeting.service.MeetingServiceImpl;
 import swm.wbj.asyncrum.domain.team.service.TeamService;
 import swm.wbj.asyncrum.domain.team.service.TeamServiceImpl;
 import swm.wbj.asyncrum.global.media.AwsService;
+import swm.wbj.asyncrum.global.type.FileType;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -39,6 +41,8 @@ class MeetingServiceImplTest {
 
     static final Long MOCK_ID = 1L;
 
+    static final String MOCK_FILE_KEY = "FILE KEY";
+
     Meeting mockMeeting;
     Member mockMember;
     Team mockTeam;
@@ -51,6 +55,11 @@ class MeetingServiceImplTest {
 
             @Override
             public Team getTeam() { return mockTeam;}
+
+            @Override
+            public String getMeetingFileKey() {
+                return MOCK_FILE_KEY;
+            }
 
         };
 
@@ -92,6 +101,18 @@ class MeetingServiceImplTest {
 
 
     }
+
+    @DisplayName("미팅 녹화 파일 생성")
+    @Test
+    void createMeetingFile(){
+
+        String preSignedURL = "preSigned URL";
+        Mockito.when(awsService.generatePresignedURL(Mockito.anyString(), Mockito.anyString(), Mockito.any(FileType.class))).thenReturn(preSignedURL);
+        meetingService.createMeetingFile(MOCK_ID);
+        Mockito.verify(awsService).generatePresignedURL(Mockito.isA(String.class), Mockito.isA(String.class), Mockito.isA(FileType.class));
+
+    }
+
 
     @DisplayName("현재 미팅 가져오기")
     @Test

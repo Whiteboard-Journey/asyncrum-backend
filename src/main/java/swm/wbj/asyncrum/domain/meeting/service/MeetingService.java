@@ -6,6 +6,8 @@ public interface MeetingService {
 
     MeetingCreateResponseDto createMeeting(MeetingCreateRequestDto requestDto);
 
+    MeetingFileCreateResponseDto createMeetingFile(Long id);
+
     MeetingReadResponseDto readMeeting(Long id);
 
     MeetingReadAllResponseDto readAllMeeting(Long teamId);
