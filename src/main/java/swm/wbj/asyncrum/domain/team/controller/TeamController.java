@@ -81,18 +81,6 @@ public class TeamController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping(value = "/{id}/roomNames", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addRoomName(@PathVariable Long id, @RequestBody TeamMeetingRequestDto requestDto){
-        TeamUpdateResponseDto responseDto = teamService.addRoomName(id, requestDto);
-        return ResponseEntity.ok(responseDto);
-    }
-
-    @DeleteMapping(value = "/{id}/roomNames/{roomName}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteRoomName(@PathVariable Long id, @PathVariable String  roomName){
-        teamService.removeRoomName(id, roomName);
-        return ResponseEntity.noContent().build();
-    }
-
     /**
      * 팀원 제외
      */

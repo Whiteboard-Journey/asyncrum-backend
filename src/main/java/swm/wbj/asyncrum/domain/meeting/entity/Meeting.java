@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import swm.wbj.asyncrum.global.entity.BaseEntity;
 import swm.wbj.asyncrum.domain.team.entity.Team;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,7 +40,7 @@ public class Meeting extends BaseEntity {
             joinColumns = @JoinColumn(name = "meeting_id")
     )
     @Column(name = "participants")
-    private Set<String> participants = new HashSet<>();
+    private List<String> participants = new ArrayList<>();
 
     @JsonIgnore
     @Column
@@ -65,7 +67,7 @@ public class Meeting extends BaseEntity {
         if(meetingFileUrl != null) this.meetingFileUrl = meetingFileUrl;
     }
 
-    public void updateParticipants(Set<String> participants){
+    public void updateParticipants(List<String> participants){
         if (participants != null) this.participants = participants;
     }
 

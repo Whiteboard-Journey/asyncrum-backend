@@ -152,33 +152,6 @@ public class TeamServiceImpl implements TeamService {
         return new TeamMemberAddResponseDto(savedTeamMember.getTeam().getId(), savedTeamMember.getMember().getId());
     }
 
-    @Override
-    public TeamUpdateResponseDto addRoomName(Long id, TeamMeetingRequestDto requestDto) {
-        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
-
-        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
-
-        //team의 openMeeting에 이미 이름이 있는 경우
-        if (openMeetings.contains(requestDto.getRoomName())) {
-            throw new RoomNameAlreadyException();
-        }
-        // roomName
-        openMeetings.add(requestDto.getRoomName());
-        team.updateOpenMeeting(openMeetings);
-
-        return new TeamUpdateResponseDto(teamRepository.save(team).getId());
-    }
-
-    @Override
-    public void removeRoomName(Long id, String  roomName) {
-        Team team = getTeam(id).orElseThrow(TeamNotExistsException::new);
-        Set<String> openMeetings = Optional.of(team.getOpenMeeting()).orElse(new HashSet<>());
-        if (!openMeetings.contains(roomName)){
-            throw new RoomNameNotExistsException();
-        }
-        openMeetings.remove(roomName);
-        team.updateOpenMeeting(openMeetings);
-    }
 
     @Override
     public void removeMember(Long id, Long memberId) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.wbj.asyncrum.domain.meeting.dto.*;
 import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
+import swm.wbj.asyncrum.domain.meeting.exception.MeetingMemberAlreadyInUseException;
 import swm.wbj.asyncrum.domain.meeting.repository.MeetingRepository;
 import swm.wbj.asyncrum.domain.member.entity.Member;
 import swm.wbj.asyncrum.domain.member.exeception.MemberNotExistsException;
@@ -16,10 +17,7 @@ import swm.wbj.asyncrum.domain.team.entity.Team;
 import swm.wbj.asyncrum.global.media.AwsService;
 import swm.wbj.asyncrum.global.type.FileType;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static swm.wbj.asyncrum.global.media.AwsService.MEETING_BUCKET_NAME;
 import static swm.wbj.asyncrum.global.media.AwsService.MEETING_FILE_PREFIX;
@@ -103,8 +101,18 @@ public class MeetingServiceImpl implements MeetingService{
         Meeting meeting = getMeeting(id).orElseThrow(MeetingNotExistsException::new);
         Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(MemberNotExistsException::new);
-        Set<String> participants = Optional.of(meeting.getParticipants()).orElse(new HashSet<>());
-        participants.add(member.getFullname());
+        //한번만 초대할 수 있도록 이름이랑 멤버 아이디
+        List<String> participants = Optional.of(meeting.getParticipants()).orElse(new ArrayList<>());
+        if(participants.contains(("[" + member.getFullname()+", "+ member.getProfileImageUrl()+", "+ member.getId().toString()+"]"))){
+            throw new MeetingMemberAlreadyInUseException();
+        }
+        // 이름이 같은 사람이 있을수도 있으므로 리스트 처리
+        ArrayList<String> participant = new ArrayList<>();
+        participant.add(member.getFullname());
+        participant.add(member.getProfileImageUrl());
+        participant.add(member.getId().toString());
+        participants.add(String.valueOf(participant));
+
         meeting.updateParticipants(participants);
         return new MeetingUpdateResponseDto(meetingRepository.save(meeting).getId());
     }
@@ -114,7 +122,7 @@ public class MeetingServiceImpl implements MeetingService{
         Meeting meeting = getMeeting(id).orElseThrow(MeetingNotExistsException::new);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
-        Set<String> participants = Optional.of(meeting.getParticipants()).orElse(new HashSet<>());
+        List<String> participants = Optional.of(meeting.getParticipants()).orElse(new ArrayList<>());
         participants.remove(member.getFullname());
         meeting.updateParticipants(participants);
 

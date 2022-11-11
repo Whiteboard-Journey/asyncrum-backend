@@ -36,14 +36,6 @@ public class Team extends BaseEntity {
     @Column
     private String profileImageUrl;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "openMeeting",
-            joinColumns = @JoinColumn(name = "team_id")
-    )
-    @Column(name = "open_meeting_name")
-    private Set<String> openMeeting = new HashSet<>();
-
     @JsonIgnore
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TeamMember> members = new ArrayList<>();
@@ -76,7 +68,4 @@ public class Team extends BaseEntity {
         this.members.remove(member);
     }
 
-    public void updateOpenMeeting(Set<String> openMeeting){
-        if (openMeeting != null) this.openMeeting = openMeeting;
-    }
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 import swm.wbj.asyncrum.domain.meeting.entity.Meeting;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -23,7 +24,7 @@ public class MeetingReadResponseDto {
 
     private LocalDateTime lastModifiedDate;
 
-    private Set<String> participants;
+    private List<String> participants;
 
     public MeetingReadResponseDto(Meeting meeting){
         this.id = meeting.getId();

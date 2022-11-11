@@ -170,27 +170,4 @@ class MeetingServiceImplTest {
             meetingService.deleteMeeting(MOCK_ID + 1L);
         });
     }
-
-    @Test
-    @DisplayName("미팅에 멤버 초대")
-    void addMeetingMember() {
-
-        Set<String> participants = Optional.of(mockMeeting.getParticipants()).orElse(new HashSet<>());
-        String fullname = "test Fullname";
-        participants.add(fullname);
-        mockMeeting.updateParticipants(participants);
-        Assertions.assertEquals(mockMeeting.getParticipants(), participants);
-
-    }
-
-    @Test
-    @DisplayName("미팅에 멤버 삭제")
-    void removeMeetingMember() {
-        Set<String> participants = Optional.of(mockMeeting.getParticipants()).orElse(new HashSet<>());
-        String fullname = "test Fullname";
-        participants.remove(fullname);
-        mockMeeting.updateParticipants(participants);
-
-        Assertions.assertEquals(mockMeeting.getParticipants(), participants);
-    }
 }

@@ -25,10 +25,6 @@ public interface TeamService {
 
     TeamMemberAddResponseDto addMember(Long id, TeamMemberAddRequestDto requestDto);
 
-    TeamUpdateResponseDto addRoomName(Long id, TeamMeetingRequestDto requestDto);
-
-    void removeRoomName(Long id, String roomName);
-
     void removeMember(Long id, Long memberId);
 
     TeamUpdateResponseDto updateTeam(Long id, TeamUpdateRequestDto requestDto);
