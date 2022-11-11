@@ -163,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
         int cookieMaxAge = (int)refreshTokenExpiry / 60;
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+        CookieUtil.addRefreshTokenCookie(response, refreshToken.getToken(), cookieMaxAge);
     }
 
     private void setMemberRefreshToken(String memberId, AuthToken refreshToken, MemberRefreshToken memberRefreshToken) {
