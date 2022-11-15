@@ -105,7 +105,7 @@ spring:
 
 # cors 설정
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+  allowed-origins: ${ORIGINS}
   allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
   allowed-headers: '*'
   max-age: 3600
@@ -120,9 +120,7 @@ app:
     tokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:
-    authorizedRedirectUris:
-      - http://localhost:3000/oauth/redirect
-      - https://test.asyncrum.com/oauth/redirect
+    authorizedRedirectUris: ${ORIGINS}
 
 # AWS
 cloud:
