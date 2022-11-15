@@ -33,6 +33,7 @@ public class CookieUtil {
                 .secure(true)
                 .maxAge(maxAge)
                 .sameSite("None")
+                .domain("asyncrum.com")
                 .build();
 
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
