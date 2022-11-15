@@ -1,8 +1,11 @@
 <div align="center">
-<img src="https://github.com/Whiteboard-Journey/asyncrum-backend/blob/main/images/asyncrum-logo-cool.png?raw=true" />
 
-# Asyncrum Backend API Server 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FWhiteboard-Journey%2Fasyncrum-backend&count_bg=%233D71C8&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com) [![codecov](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend/branch/main/graph/badge.svg?token=QFY4PP1358)](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend) 
+![asyncrum_image.png](./images/asyncrum_image.png)
+
+# Asyncrum Backend API Server
+
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FWhiteboard-Journey%2Fasyncrum-backend&count_bg=%233D71C8&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com) [![codecov](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend/branch/main/graph/badge.svg?token=QFY4PP1358)](https://codecov.io/gh/Whiteboard-Journey/asyncrum-backend)
+
 </div>
 
 ## 목차
@@ -41,6 +44,8 @@ SW마에스트로 벤처 프로젝트로써 네이버 SmartStudio Alto 팀, York
 ![system_architecture.jpg](./images/system_architecture.jpg)
 
 ### 1-3. 주요 기능
+
+![landing_feature_list.png](./images/landing_feature_list.png)
 
 - 팀 워크스페이스(Team Dashboard)
   - 데일리 스크럼 리스트
