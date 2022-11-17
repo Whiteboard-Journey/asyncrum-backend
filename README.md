@@ -47,23 +47,10 @@ SW마에스트로 벤처 프로젝트로써 네이버 SmartStudio Alto 팀, York
 
 ![landing_feature_list.png](./images/landing_feature_list.png)
 
-- 팀 워크스페이스(Team Dashboard)
-  - 데일리 스크럼 리스트
-  - 화이트보드 문서 리스트
-  - 화상 회의 리스트
-- 데일리 스크럼(Daily Standups)
-  - 데일리 스크럼 녹화
-  - 데일리 스크럼 시청: 드로밍 및 북마크가 가능한 비디오 플레이어 드로밍 및 북마크가 가능한 비디오 플레이어
-- 화이트보드 문서
-  - 이미지/동영상을 업로드 할 수 있는 화이트보드
-  - 동시편집 화이트보드
-- 화상 회의
-  - 미팅 초대, 실시간 채팅, 리액션 등 완전한 화상 회의가 가능한 화상 회의
-
 ### 1-4. 개발 환경
 
-- Front-end: JavaScript, TypeScript, React.js, Redux, SCSS, Yorkie
-- Back-end: Java, Spring Boot, JPA, Mysql, MongoDB, AWS, K8S, Docker, WebRTC, Jitsi, gRPC
+- Front-end: `JavaScript`, `TypeScript`, `React.js`, `Redux`, `SCSS`, `Yorkie`
+- Back-end: `Java`, `Spring Boot`, `JPA`, `Mysql`, `MongoDB`, `AWS`, `K8S`, `Docker`, `WebRTC`, `Jitsi`, `gRPC`
 
 ## 2. 개발 결과물
 

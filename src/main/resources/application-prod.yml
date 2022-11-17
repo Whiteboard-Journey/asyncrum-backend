@@ -117,8 +117,8 @@ jwt.secret: ${JWT_SECRET}
 app:
   auth:
     tokenSecret: ${APP_AUTH_TOKEN_SECRET}
-    tokenExpiry: 1800000
-    refreshTokenExpiry: 604800000
+    tokenExpiry: ${APP_AUTH_ACCESS_TOKEN_EXPIRY}
+    refreshTokenExpiry: ${APP_AUTH_REFRESH_TOKEN_EXPIRY}
   oauth2:
     authorizedRedirectUris: ${ORIGINS}
 
