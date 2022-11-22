@@ -132,7 +132,7 @@ class MeetingServiceImplTest {
     void readAllMeeting() {
         meetingService.readAllMeeting(MOCK_ID);
 
-        Mockito.verify(meetingRepository).findAllByTeam(mockTeam);
+        Mockito.verify(meetingRepository).findAllByTeamOrderByIdDesc(mockTeam);
     }
 
     @DisplayName("미팅 정보 업데이트")

@@ -73,7 +73,7 @@ public class MeetingServiceImpl implements MeetingService{
     @Transactional(readOnly = true)
     public MeetingReadAllResponseDto readAllMeeting(Long teamId) {
         Team team = teamService.getCurrentTeam(teamId);
-        List<Meeting> meetings = meetingRepository.findAllByTeam(team);
+        List<Meeting> meetings = meetingRepository.findAllByTeamOrderByIdDesc(team);
         return new MeetingReadAllResponseDto(meetings);
     }
 
